@@ -4,16 +4,56 @@
     <meta charset="UTF-8">
     <title>Minecraft Facts UZ - Modlar va Profil</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: #fff; text-align: center; padding: 50px; }
-        h1 { color: #4CAF50; }
-        .box { background: #2b2b2b; padding: 20px; border-radius: 10px; display: inline-block; margin-top: 20px; }
+        body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: #fff; margin: 0; padding: 0; text-align: center; }
+        header { background: #2b2b2b; padding: 20px; border-bottom: 3px solid #4CAF50; }
+        h1 { color: #4CAF50; margin: 0; }
+        .container { padding: 30px; max-width: 800px; margin: auto; }
+        .card { background: #2b2b2b; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        input, button { padding: 10px; margin: 10px 0; border-radius: 5px; border: none; font-size: 16px; }
+        input { width: 80%; max-width: 400px; background: #3b3b3b; color: #fff; }
+        button { background: #4CAF50; color: white; cursor: pointer; font-weight: bold; }
+        button:hover { background: #45a049; }
     </style>
 </head>
 <body>
-    <h1>Minecraft Facts UZ Saytiga Xush Kelibsiz!</h1>
-    <div class="box">
-        <p>Bu yerda foydalanuvchilar o'z profiliga ega bo'ladi va modlar qo'shishi mumkin.</p>
-        <p><b>Tez kunda yangi funksiyalar qo'shiladi!</b></p>
+    <header>
+        <h1>Minecraft Facts UZ</h1>
+        <p>Rasmiy modlar va foydalanuvchilar platformasi</p>
+    </header>
+
+    <div class="container">
+        <!-- Profil Bo'limi -->
+        <div class="card">
+            <h2>👤 Foydalanuvchi Profili</h2>
+            <p>O'z profilingizni yarating va ID oling:</p>
+            <input type="text" id="username" placeholder="Minecraft Nickname (Username)...">
+            <br>
+            <button onclick="saveProfile()">Profilni Saqlash</button>
+            <p id="profile-info" style="color: #4CAF50; font-weight: bold;"></p>
+        </div>
+
+        <!-- Mod Yuklash Bo'limi -->
+        <div class="card">
+            <h2>📦 Mod Yuklash</h2>
+            <p>O'zingiz yasagan modlarni bu yerga joylang:</p>
+            <input type="text" placeholder="Mod nomi...">
+            <br>
+            <input type="file">
+            <br>
+            <button onclick="alert('Mod muvaffaqiyatli qabul qilindi!')">Modni Yuklash</button>
+        </div>
     </div>
+
+    <script>
+        function saveProfile() {
+            const name = document.getElementById('username').value;
+            if(name) {
+                const randomId = Math.floor(10000 + Math.random() * 90000);
+                document.getElementById('profile-info').innerText = `Xush kelibsiz, ${name}! Sizning ID raqamingiz: #${randomId}`;
+            } else {
+                alert('Iltimos, ismingizni kiriting!');
+            }
+        }
+    </script>
 </body>
 </html>
