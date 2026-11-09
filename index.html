@@ -179,7 +179,7 @@ nav svg{
 
 <header>
   <div class="logo">
-    ⚡ Minecraft Facts UZ <span class="version">V0.3</span>
+    ⚡ Minecraft Facts UZ <span class="version">V0.4</span>
   </div>
   <input id="search" class="search" type="search"
     placeholder="🔎 Mod qidirish..." aria-label="Mod qidirish">
@@ -349,13 +349,13 @@ nav svg{
 (() => {
   'use strict';
 
-  const VERSION = 'V0.3';
+  const VERSION = 'V0.4';
   document.querySelector('.version').textContent = VERSION;
   document.title = 'Minecraft Facts UZ — ' + VERSION;
 
   // Avval yuborilgan Supabase manzili va public kalit
-  const SUPABASE_URL = 'https://swbnidsmwnqwjzfrlorr.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_-yjtMQSDiq7_L1Z1NFcSQ_GiXFD';
+  const SUPABASE_URL = 'https://swbnidsmwnqwjzfrlorr.supabase.co/rest/v1/';
+  const SUPABASE_KEY = 'sb_publishable_-yjtMQSDiq7_L1ZiNfBcSQ_GiXEDPka';
 
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? '').replace(/[&<>"']/g,
