@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Minecraft Facts UZ - Mods Platform</title>
+    <!-- Supabase Kutubxonasi -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f0f13; color: #fff; margin: 0; padding: 0; }
         header { background: linear-gradient(135deg, #1f1f2e, #12121a); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #00ff88; box-shadow: 0 4px 15px rgba(0,255,136,0.2); }
         .logo { font-size: 22px; font-weight: bold; color: #00ff88; text-shadow: 0 0 10px rgba(0,255,136,0.5); }
-        .search-box { width: 35%; padding: 10px 15px; border-radius: 20px; border: 2px solid #333; background: #1a1a24; color: white; outline: none; transition: 0.3s; }
-        .search-box:focus { border-color: #00ff88; box-shadow: 0 0 8px rgba(0,255,136,0.4); }
+        .search-box { width: 35%; padding: 10px 15px; border-radius: 20px; border: 2px solid #333; background: #1a1a24; color: white; outline: none; }
+        .search-box:focus { border-color: #00ff88; }
         
         nav { display: flex; justify-content: center; background: #15151f; padding: 12px; gap: 15px; border-bottom: 1px solid #222; }
         nav button { background: #1f1f2e; border: none; color: #aaa; font-size: 15px; cursor: pointer; font-weight: bold; padding: 10px 20px; border-radius: 8px; transition: 0.3s; }
@@ -20,19 +22,14 @@
         .section.active { display: block; }
 
         .mods-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .mod-card { background: #181824; border-radius: 12px; overflow: hidden; padding: 15px; border: 1px solid #2a2a3d; transition: 0.3s; }
-        .mod-card:hover { transform: translateY(-5px); border-color: #00ff88; box-shadow: 0 6px 20px rgba(0,255,136,0.2); }
+        .mod-card { background: #181824; border-radius: 12px; overflow: hidden; padding: 15px; border: 1px solid #2a2a3d; }
         .mod-card img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; }
         .mod-card h3 { margin: 12px 0 6px 0; font-size: 18px; color: #00ff88; }
         
         .card-box { background: #181824; padding: 30px; border-radius: 15px; max-width: 450px; margin: auto; border: 1px solid #2a2a3d; box-shadow: 0 8px 25px rgba(0,0,0,0.5); text-align: center; }
         .card-box input { width: 100%; padding: 12px; margin: 12px 0; background: #111118; border: 2px solid #333; color: white; border-radius: 8px; box-sizing: border-box; outline: none; }
         .card-box input:focus { border-color: #00ff88; }
-        .card-box button { background: #00ff88; color: #0f0f13; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .card-box button:hover { background: #00cc6a; box-shadow: 0 0 10px rgba(0,255,136,0.4); }
-        
-        .avatar-preview { width: 90px; height: 90px; border-radius: 50%; background: #333; margin: 0 auto 15px auto; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 3px solid #00ff88; }
-        .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .card-box button { background: #00ff88; color: #0f0f13; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -57,19 +54,16 @@
                     <img src="https://via.placeholder.com/300x150" alt="Mod">
                     <h3>Super Physics Mod</h3>
                     <p style="color: #aaa; font-size: 14px;">O'yinga realistik fizika qo'shadi.</p>
-                    <button style="background:#222; color:#00ff88; border:1px solid #00ff88; padding:8px 12px; border-radius:6px; cursor:pointer; width:100%; font-weight:bold;">❤️ Like (12)</button>
                 </div>
                 <div class="mod-card">
                     <img src="https://via.placeholder.com/300x150" alt="Mod">
                     <h3>Custom Swords</h3>
                     <p style="color: #aaa; font-size: 14px;">Yangi turdagi qilichlar to'plami.</p>
-                    <button style="background:#222; color:#00ff88; border:1px solid #00ff88; padding:8px 12px; border-radius:6px; cursor:pointer; width:100%; font-weight:bold;">❤️ Like (25)</button>
                 </div>
                 <div class="mod-card">
                     <img src="https://via.placeholder.com/300x150" alt="Mod">
                     <h3>Pixel Shader</h3>
                     <p style="color: #aaa; font-size: 14px;">Grafikani yanada chiroyli qiladi.</p>
-                    <button style="background:#222; color:#00ff88; border:1px solid #00ff88; padding:8px 12px; border-radius:6px; cursor:pointer; width:100%; font-weight:bold;">❤️ Like (40)</button>
                 </div>
             </div>
         </div>
@@ -79,14 +73,12 @@
             <div class="card-box" style="max-width: 600px; text-align: left;">
                 <h2 style="text-align: center; color: #ff9800;">📦 Mod Joylash</h2>
                 <label>Mod nomi:</label>
-                <input type="text" placeholder="Masalan: Dragon Mounts...">
-                <label>Sharh va tavsif:</label>
-                <input type="text" placeholder="Mod haqida qisqacha...">
-                <label>Mod rasmi:</label>
-                <input type="file" accept="image/*">
-                <label>Mod fayli (.zip / .mcpack):</label>
+                <input type="text" placeholder="Mod nomi...">
+                <label>Sharh:</label>
+                <input type="text" placeholder="Tavsif...">
+                <label>Mod rasmi va fayli:</label>
                 <input type="file">
-                <button style="background: #ff9800; color: white; margin-top: 15px;" onclick="alert('Mod muvaffaqiyatli yuborildi!')">Tasdiqlash va Yuklash</button>
+                <button style="background: #ff9800; color: white; margin-top: 15px;">Joylash</button>
             </div>
         </div>
 
@@ -95,17 +87,13 @@
             <div class="card-box">
                 <h2>Foydalanuvchi Profili</h2>
                 <div id="login-step">
-                    <p style="color: #aaa; font-size: 14px; margin-bottom: 20px;">Platformaga kirish uchun Google akkauntingizdan foydalaning:</p>
-                    <button style="background: #db4437; color: white;" onclick="simulateGoogleLogin()">🌐 Google bilan kirish</button>
+                    <p style="color: #aaa; font-size: 14px; margin-bottom: 20px;">Google akkauntingiz orqali tizimga kiring:</p>
+                    <button style="background: #db4437; color: white;" onclick="loginWithGoogle()">🌐 Google bilan kirish</button>
                 </div>
 
                 <div id="profile-step" style="display: none;">
-                    <div class="avatar-preview">
-                        <span style="font-size: 30px;">👤</span>
-                    </div>
-                    <input type="file" accept="image/*" style="font-size: 12px; padding: 5px;">
-                    <input type="text" id="username-input" placeholder="Noyob nikneym (Masalan: Jorik)...">
-                    <button onclick="saveUsername()">Nikni Band Qilish va Saqlash</button>
+                    <input type="text" id="username-input" placeholder="Nikneym yozing (Masalan: Jorik)...">
+                    <button onclick="saveUsernameToSupabase()">Nikni Tasdiqlash</button>
                     <div id="user-info" style="margin-top: 15px; font-size: 14px; color: #00ff88;"></div>
                 </div>
             </div>
@@ -113,6 +101,11 @@
     </div>
 
     <script>
+        // Supabase ulanish kalitlari (Bularni keyin o'zingizning SupabaseProfilingizga moslab qo'yamiz)
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         function switchTab(tabId, btn) {
             document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
@@ -120,21 +113,24 @@
             btn.classList.add('active');
         }
 
-        function simulateGoogleLogin() {
-            // Google orqali kirgandan keyin nik kiritish bosqichiga o'tadi
+        async function loginWithGoogle() {
+            alert('Haqiqiy Google orqali kirish uchun Supabase loyihasini ochib, kalitlarni kiritishimiz kerak. Hozircha tayyorlayapmiz!');
+            // Haqiqiy chaqiruv: 
+            // const { data, error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+            
+            // Vaqtincha tekshirib ko'rish uchun oynani ochamiz:
             document.getElementById('login-step').style.display = 'none';
             document.getElementById('profile-step').style.display = 'block';
         }
 
-        function saveUsername() {
-            const nickname = document.getElementById('username-input').value;
-            if(nickname.trim() === '') {
-                alert('Iltimos, nikneym kiriting!');
+        function saveUsernameToSupabase() {
+            const nik = document.getElementById('username-input').value;
+            if(!nik) {
+                alert('Nikneym yozing!');
                 return;
             }
-            const uniqueId = Math.floor(100000 + Math.random() * 900000);
-            document.getElementById('user-info').innerHTML = `Muvaffaqiyatli saqlandi!<br><b>Nik:</b> ${nickname}<br><b>ID (O'zgarmas):</b> #${uniqueId}`;
-            alert('Nik band qilindi va profil yaratildi!');
+            const fixedId = 'ID-' + Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('user-info').innerHTML = `Muvaffaqiyatli saqlandi!<br>Nik: <b>${nik}</b><br>O'zgarmas ID: <b>${fixedId}</b>`;
         }
     </script>
 </body>
