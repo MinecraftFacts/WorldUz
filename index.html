@@ -1,955 +1,704 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Minecraft Facts UZ — V0.4</title>
+<title>Minecraft Facts UZ — V0.5</title>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="app.js"></script>
 <style>
 :root{
-  --bg:#0b0b10;--panel:#14141f;--line:#303044;
-  --green:#00ef8b;--text:#f8f8ff;--muted:#aaaac0
+  --bg:#080d13;
+  --panel:#121c24;
+  --panel2:#1b2a33;
+  --line:#31454b;
+  --mint:#50f3ab;
+  --mint2:#13b77f;
+  --text:#f3fbf8;
+  --muted:#9db1b4;
+  --red:#ff6e78;
+  --gold:#e6b95a
 }
+[hidden]{display:none!important}
 *{box-sizing:border-box}
+html{scroll-behavior:smooth}
 body{
-  margin:0;background:var(--bg);color:var(--text);
-  font:15px/1.5 system-ui,"Segoe UI",sans-serif
+  margin:0;min-height:100vh;color:var(--text);
+  font:15px/1.55 system-ui,'Segoe UI',sans-serif;
+  background:
+    radial-gradient(ellipse 900px 600px at 95% 0%,#184a4270,transparent),
+    radial-gradient(ellipse 700px 650px at 0% 80%,#0f385650,transparent),
+    var(--bg)
+}
+body:before{
+  content:"";position:fixed;inset:0;z-index:-1;
+  pointer-events:none;
+  background:
+    linear-gradient(#ffffff04 1px,transparent 1px),
+    linear-gradient(90deg,#ffffff04 1px,transparent 1px);
+  background-size:38px 38px;
+  mask-image:linear-gradient(to bottom,black,transparent 85%)
 }
 button,input,textarea{font:inherit}
 button{cursor:pointer}
-button:disabled{opacity:.55;cursor:wait}
+button:disabled{opacity:.5;cursor:wait}
+a{color:var(--mint)}
+img{object-fit:cover}
+h1,h2,h3,p{margin-top:0}
+h2{
+  font-size:clamp(21px,3vw,27px);
+  letter-spacing:-.5px;margin-bottom:14px
+}
+h3{font-size:17px;margin-bottom:6px}
+small,.muted{color:var(--muted)}
 header{
-  background:linear-gradient(135deg,#1b1b2b,#101019);
-  border-bottom:2px solid var(--green);
-  padding:16px max(20px,calc((100vw - 1080px)/2));
-  display:flex;align-items:center;justify-content:space-between;
-  gap:15px;flex-wrap:wrap
+  height:78px;background:#0d171fd9;
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid #356257;
+  position:sticky;top:0;z-index:15;
+  display:flex;align-items:center;
+  justify-content:space-between;
+  padding:0 max(19px,calc((100vw - 1120px)/2));
+  gap:16px
 }
 .logo{
-  display:flex;align-items:center;gap:10px;
-  font-weight:900;font-size:21px;color:var(--green)
+  display:flex;gap:10px;align-items:center;
+  font-weight:900;color:var(--mint);
+  font-size:clamp(16px,2.5vw,22px);
+  letter-spacing:-.5px
+}
+.logo-mark{
+  background:linear-gradient(145deg,#6cf0aa,#078a78);
+  color:#082a22;width:41px;height:41px;
+  border-radius:12px;display:grid;place-items:center;
+  box-shadow:0 8px 30px #0bc78835;font-size:25px
 }
 .version{
-  background:var(--green);color:#082016;font-size:11px;
-  font-weight:900;border-radius:6px;padding:3px 9px
+  font-size:11px;background:#163e32;color:#8affc4;
+  border:1px solid #397f5d;border-radius:7px;
+  padding:3px 7px;letter-spacing:1px
 }
-input,textarea{
-  background:#0c0c16;color:white;border:1px solid var(--line);
-  outline:0;border-radius:11px;padding:13px;width:100%;min-width:0
+.header-actions{display:flex;gap:12px;align-items:center}
+.icon-btn{
+  background:#1a2a34;border:1px solid var(--line);
+  color:var(--text);border-radius:12px;
+  width:44px;height:44px;
+  display:grid;place-items:center;position:relative
 }
-input:focus,textarea:focus{border-color:var(--green)}
-textarea{resize:vertical}
-input[type=file]{font-size:13px}
-label{display:grid;gap:6px;font-weight:600}
-.search{max-width:290px}
-.wrap{max-width:1080px;margin:0 auto;padding:26px 20px 110px}
+.icon-btn:hover{border-color:var(--mint)}
+.ico{
+  width:23px;height:23px;fill:none;
+  stroke:currentColor;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round
+}
+.counter{
+  position:absolute;top:-7px;right:-7px;
+  background:var(--red);color:#190308;
+  border-radius:20px;min-width:19px;
+  padding:1px 5px;font-weight:900;font-size:11px
+}
+main{max-width:1120px;margin:auto;padding:27px 20px 110px}
 .page{display:none}
 .page.active{display:block}
+.eyebrow{
+  color:var(--mint);text-transform:uppercase;
+  letter-spacing:2.5px;font-weight:800;font-size:12px
+}
 .hero{
-  background:radial-gradient(ellipse at 90% 10%,#13402e,#181827 60%);
-  border:1px solid #345343;border-radius:21px;
-  padding:34px;margin-bottom:25px
+  position:relative;overflow:hidden;padding:40px;
+  border-radius:26px;border:1px solid #377c69;
+  background:linear-gradient(115deg,#172c33ee,#143f3add 60%,#146554a3);
+  margin-bottom:30px;box-shadow:0 15px 45px #0004
 }
-.hero small{color:var(--green);letter-spacing:2px;font-weight:800}
+.hero:after{
+  content:"◆";position:absolute;right:6%;top:-38px;
+  font-size:240px;line-height:1;color:#95ffcd0d;
+  transform:rotate(-16deg)
+}
 .hero h1{
-  font-size:clamp(29px,4vw,48px);
-  line-height:1.14;margin:12px 0
+  font-size:clamp(31px,5vw,54px);
+  line-height:1.12;letter-spacing:-1.5px;
+  margin:12px 0
 }
-.hero h1 em{color:var(--green);font-style:normal}
-.hero p{color:var(--muted);margin:0}
-h2{font-size:23px;margin:22px 0 15px}
-.muted{color:var(--muted)}
-.grid{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:17px
+.hero h1 b{color:#8fffb9}
+.hero p{max-width:460px;color:#c1d7d0}
+.row{display:flex;align-items:center;gap:11px}
+.between{justify-content:space-between}
+.stack{display:grid;gap:16px}
+.wrap{display:flex;flex-wrap:wrap;gap:10px}
+.section-title{
+  display:flex;align-items:center;
+  justify-content:space-between;margin:23px 0 15px
 }
-.card,.panel{
+.field{
+  width:100%;padding:13px 14px;
   border:1px solid var(--line);
-  background:var(--panel);border-radius:17px;overflow:hidden
+  border-radius:12px;background:#0a171f;
+  color:#f1fcf7;outline:none
 }
-.card{cursor:pointer;transition:.15s}
-.card:hover{border-color:var(--green);transform:translateY(-2px)}
+.field:focus{
+  border-color:var(--mint);
+  box-shadow:0 0 0 3px #48e7a61c
+}
+textarea{resize:vertical}
+label{display:grid;gap:7px;font-size:14px;font-weight:700}
+.hint{
+  font-size:12px;color:var(--muted);
+  display:block;min-height:17px
+}
+.hint.bad{color:var(--red)}
+.hint.good{color:var(--mint)}
+.search{max-width:370px;width:100%;margin-bottom:17px}
+.btn{
+  border:0;
+  background:linear-gradient(110deg,#77f9b4,#39d3b4);
+  color:#06251b;font-weight:900;
+  padding:12px 16px;border-radius:12px;
+  white-space:nowrap
+}
+.btn:hover{filter:brightness(1.08)}
+.btn.secondary{
+  background:#243941;color:#d1ece3;
+  border:1px solid #3c6262
+}
+.btn.danger{
+  background:#432b37;color:#ffb6bf;
+  border:1px solid #7b4550
+}
+.btn.sm{padding:8px 12px;font-size:12px}
+.panel{
+  border:1px solid var(--line);
+  background:linear-gradient(160deg,#192630ee,#111b24ec);
+  border-radius:19px;padding:20px;
+  box-shadow:0 12px 30px #0002
+}
+.form-panel{max-width:610px;margin:0 auto}
+.form-panel h2{margin-bottom:18px}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px
+}
+.card{
+  border-radius:19px;overflow:hidden;
+  background:var(--panel);
+  border:1px solid var(--line);
+  cursor:pointer;
+  transition:transform .16s,border-color .16s
+}
+.card:hover{
+  border-color:#59dcad;
+  transform:translateY(-3px)
+}
 .card img{
-  display:block;width:100%;height:177px;
-  object-fit:cover;background:#1b2b29
+  width:100%;height:172px;
+  display:block;background:#13232b
 }
-.card .inside{padding:14px}
-.card h3{
-  margin:0;font-size:17px;color:var(--green);
+.card-body{padding:14px}
+.card h3{overflow-wrap:anywhere}
+.sub{font-size:12px;color:var(--mint)}
+.stats{
+  display:flex;gap:11px;flex-wrap:wrap;
+  font-size:12px;color:#b7c7ca;padding-top:10px
+}
+.stats span{display:flex;gap:4px;align-items:center}
+.avatar{
+  width:70px;height:70px;border-radius:50%;
+  border:2px solid #58e7a8;background:#25463d
+}
+.avatar.sm{width:46px;height:46px}
+.user-card{
+  display:flex;align-items:center;
+  gap:13px;cursor:pointer
+}
+.user-card:hover{border-color:var(--mint)}
+.user-card .grow{min-width:0;flex:1}
+.user-card h3,.user-card small{
+  overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;display:block;margin:0
+}
+.dropzone{
+  display:flex;align-items:center;
+  justify-content:center;gap:12px;
+  flex-direction:column;text-align:center;
+  min-height:130px;border:2px dashed #48786d;
+  border-radius:18px;
+  background:linear-gradient(145deg,#132e2c,#10202a);
+  cursor:pointer;padding:22px;transition:.15s
+}
+.dropzone:hover,.dropzone.drag{
+  border-color:var(--mint);background:#1b4035
+}
+.dropzone .ico{
+  width:32px;height:32px;color:var(--mint)
+}
+.dropzone strong{font-size:15px}
+.dropzone small{font-weight:400}
+.dropzone input{
+  position:absolute;width:1px;
+  height:1px;opacity:0
+}
+.previews{
+  display:flex;flex-wrap:wrap;
+  gap:8px;margin-top:8px
+}
+.previews img{
+  width:100px;height:72px;border-radius:10px
+}
+.uploaded-name{
+  font-size:12px;color:var(--mint);
   overflow-wrap:anywhere
 }
-.card p{color:var(--muted);font-size:13px;margin:6px 0}
-.panel{padding:23px;max-width:620px;margin:12px auto}
-.form{display:grid;gap:15px}
-.btn{
-  border:0;border-radius:11px;padding:13px 17px;
-  background:var(--green);color:#08160f;font-weight:900
+.chat-layout{
+  display:grid;grid-template-columns:300px 1fr;
+  gap:15px;min-height:560px
 }
-.alt{background:#252539;color:#f0f0f5;border:1px solid var(--line)}
-.red{background:#ff5a70;color:#19070c}
-.tiny{font-size:12px;color:var(--muted)}
-.row{display:flex;align-items:center;gap:12px}
-.row.between{justify-content:space-between}
-.avatar{
-  width:75px;height:75px;border:2px solid var(--green);
-  border-radius:50%;background:#26392f;object-fit:cover
+.friend-list{
+  display:grid;gap:8px;max-height:540px;overflow:auto
 }
-.account{
-  display:flex;gap:13px;align-items:center;
-  padding:16px;cursor:pointer
+.friend-row{
+  border:1px solid var(--line);
+  background:#162833;color:#fff;
+  border-radius:13px;padding:10px;text-align:left;
+  display:flex;align-items:center;gap:10px;width:100%
 }
-.account h3{margin:0}
-.account:hover{border-color:var(--green)}
-nav{
-  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-  width:min(100%,480px);padding:10px;
-  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
-  background:#171722f2;border:1px solid #3d3d4f;
-  border-bottom:0;border-radius:20px 20px 0 0;
-  z-index:15;backdrop-filter:blur(12px)
+.friend-row.active{
+  border-color:var(--mint);background:#19473b
 }
-nav button{
-  border:0;background:#202030;color:#aaaac0;
-  height:55px;border-radius:13px
+.friend-row .grow{
+  flex:1;min-width:0;text-align:left
 }
-nav button.active{background:#075d39;color:#6affb8}
-nav svg{
-  display:block;fill:none;stroke:currentColor;
-  stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
-  width:25px;height:25px;margin:auto
+.friend-row small{display:block}
+.chat-box{
+  display:flex;flex-direction:column;min-height:500px
 }
-[hidden]{display:none!important}
-.modal{
-  position:fixed;inset:0;background:#000c;
-  display:grid;place-items:center;z-index:50;padding:15px
-}
-.modal-body{
-  width:min(100%,630px);max-height:90vh;overflow:auto;
-  position:relative;background:#171724;
-  border:1px solid #47475c;border-radius:18px;padding:22px
-}
-.x{
-  float:right;border:0;background:#333344;
-  color:white;border-radius:9px;padding:7px 11px
-}
-.gallery{display:flex;gap:7px;overflow:auto;margin:10px 0}
-.gallery img{
-  width:85px;height:64px;object-fit:cover;
-  border-radius:9px;cursor:pointer
-}
-.cover{
-  width:100%;height:240px;object-fit:cover;
-  border-radius:12px;background:#152821
-}
-.chat{
-  height:225px;overflow:auto;display:flex;flex-direction:column;
-  gap:8px;padding:12px;background:#0a0a13;
-  border:1px solid var(--line);border-radius:12px
+.messages{
+  background:#09171e;flex:1;min-height:350px;
+  max-height:470px;overflow:auto;border-radius:13px;
+  padding:12px;display:flex;
+  flex-direction:column;gap:10px;margin:12px 0
 }
 .bubble{
-  padding:8px 12px;background:#252536;
-  border-radius:10px;max-width:82%;overflow-wrap:anywhere
+  max-width:80%;align-self:flex-start;
+  background:#263a42;padding:10px 13px;
+  border-radius:13px;overflow-wrap:anywhere;
+  white-space:pre-wrap
 }
-.bubble.mine{align-self:flex-end;background:#075d39}
-.bubble small{display:block;opacity:.7;font-size:10px}
-.preview{display:flex;gap:8px;flex-wrap:wrap}
-.preview img{
-  width:83px;height:65px;object-fit:cover;border-radius:9px
+.bubble.mine{
+  align-self:flex-end;background:#195d46
 }
-#status{
-  position:fixed;bottom:92px;left:50%;transform:translateX(-50%);
-  background:#23513c;border:1px solid #478b69;
-  border-radius:13px;padding:12px 17px;z-index:100;
-  max-width:95%;display:none;box-shadow:0 10px 25px #0008
+.bubble small{
+  display:block;font-size:10px;
+  opacity:.65;text-align:right
 }
-@media(max-width:700px){
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .card img{height:130px}
-  .card .inside{padding:11px}
+.compose{display:flex;gap:8px}
+.bottom{
+  position:fixed;bottom:0;left:50%;
+  transform:translateX(-50%);
+  display:grid;grid-template-columns:repeat(5,1fr);
+  gap:7px;padding:10px;background:#14232bef;
+  border:1px solid #40645b;border-bottom:0;
+  border-radius:22px 22px 0 0;
+  backdrop-filter:blur(20px);
+  width:min(100%,520px);z-index:30;
+  box-shadow:0 -14px 35px #0006
+}
+.nav-btn{
+  border:0;background:transparent;
+  color:#a8bdbc;border-radius:14px;
+  height:54px;position:relative
+}
+.nav-btn.active{
+  background:#225641;color:#83ffba
+}
+.nav-btn .ico{width:26px;height:26px}
+.nav-dot{
+  position:absolute;top:5px;right:calc(50% - 20px);
+  width:9px;height:9px;border-radius:50%;
+  background:var(--red)
+}
+.modal{
+  position:fixed;inset:0;z-index:40;
+  background:#02070bc9;
+  display:grid;place-items:center;padding:15px
+}
+.modal-panel{
+  position:relative;width:min(100%,720px);
+  max-height:88vh;overflow:auto;
+  border:1px solid #477168;background:#13242cf5;
+  border-radius:22px;padding:23px;
+  box-shadow:0 25px 90px #000a
+}
+.close{position:absolute;right:14px;top:14px}
+.cover{
+  width:100%;height:260px;border-radius:15px;
+  background:#122521
+}
+.thumbs{
+  display:flex;gap:7px;
+  overflow-x:auto;margin:10px 0
+}
+.thumbs img{
+  width:86px;height:63px;
+  border-radius:9px;cursor:pointer
+}
+.notices{display:grid;gap:8px}
+.notice{
+  border:1px solid var(--line);
+  padding:12px;border-radius:12px;
+  background:#192f37
+}
+.notice.unread{
+  border-color:#4e977e;background:#1d4037
+}
+.comment{
+  padding:11px 0;
+  border-bottom:1px solid #ffffff16
+}
+.comment small{display:block}
+.comment p{
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;margin:4px 0 0
+}
+.pills{
+  font-size:12px;background:#20393b;color:#b2f7d6;
+  border:1px solid #386959;
+  padding:5px 10px;border-radius:50px
+}
+.toast{
+  position:fixed;bottom:95px;left:50%;
+  transform:translateX(-50%);
+  padding:13px 18px;background:#21493b;
+  border:1px solid #4a9471;border-radius:12px;
+  z-index:99;max-width:90%;
+  box-shadow:0 8px 30px #0008
+}
+@media(max-width:750px){
+  header{padding:0 15px}
+  .logo{font-size:16px}
+  .hero{padding:28px 20px}
+  .grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px
+  }
+  .card img{height:135px}
+  .card-body{padding:10px}
+  .chat-layout{grid-template-columns:1fr}
+  .friend-list{max-height:190px}
+  .chat-box{min-height:420px}
+  .messages{min-height:270px}
+  .panel{padding:15px}
+}
+@media(max-width:410px){
+  main{padding:18px 12px 110px}
+  .card img{height:112px}
   .card h3{font-size:14px}
-  .hero{padding:25px 18px}
-  .panel{padding:17px}
-  .search{max-width:100%}
-  .logo{font-size:17px}
+  .header-actions{gap:6px}
+  .logo-mark{width:34px;height:34px}
+  .version{font-size:10px}
 }
 </style>
 </head>
 <body>
 
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+<defs>
+<symbol id="i-home" viewBox="0 0 24 24">
+  <path d="m3 10 9-7 9 7v11H3zM9 21v-8h6v8"/>
+</symbol>
+<symbol id="i-users" viewBox="0 0 24 24">
+  <circle cx="9" cy="8" r="3"/>
+  <path d="M2 21v-2a7 7 0 0 1 14 0v2M17 5a3 3 0 0 1 0 6M18 14a6 6 0 0 1 4 6"/>
+</symbol>
+<symbol id="i-plus" viewBox="0 0 24 24">
+  <path d="M12 4v16M4 12h16"/>
+</symbol>
+<symbol id="i-chat" viewBox="0 0 24 24">
+  <path d="M21 11a8 8 0 0 1-8 8H5l-2 2V11a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8Z"/>
+  <path d="M8 11h8M8 14h5"/>
+</symbol>
+<symbol id="i-user" viewBox="0 0 24 24">
+  <circle cx="12" cy="8" r="4"/>
+  <path d="M4 21a8 8 0 0 1 16 0"/>
+</symbol>
+<symbol id="i-bell" viewBox="0 0 24 24">
+  <path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 10h18c0-2-3-3-3-10M10 21h4"/>
+</symbol>
+<symbol id="i-upload" viewBox="0 0 24 24">
+  <path d="M12 16V3m-5 5 5-5 5 5M4 16v4h16v-4"/>
+</symbol>
+<symbol id="i-image" viewBox="0 0 24 24">
+  <rect x="3" y="3" width="18" height="18" rx="3"/>
+  <circle cx="8" cy="9" r="2"/>
+  <path d="m4 18 6-6 4 4 3-3 4 4"/>
+</symbol>
+<symbol id="i-heart" viewBox="0 0 24 24">
+  <path d="M20.8 5.4a5 5 0 0 0-7 0L12 7l-1.8-1.6a5 5 0 0 0-7 7L12 21l8.8-8.6a5 5 0 0 0 0-7Z"/>
+</symbol>
+<symbol id="i-bookmark" viewBox="0 0 24 24">
+  <path d="M5 3h14v18l-7-5-7 5z"/>
+</symbol>
+</defs>
+</svg>
+
 <header>
   <div class="logo">
-    ⚡ Minecraft Facts UZ <span class="version">V0.4</span>
+    <span class="logo-mark">◆</span>
+    Minecraft Facts UZ
+    <span class="version">V0.5</span>
   </div>
-  <input id="search" class="search" type="search"
-    placeholder="🔎 Mod qidirish..." aria-label="Mod qidirish">
+  <div class="header-actions">
+    <button id="notifications-button" class="icon-btn"
+      title="Bildirishnomalar" aria-label="Bildirishnomalar">
+      <svg class="ico"><use href="#i-bell"/></svg>
+      <span id="notif-badge" class="counter" hidden>0</span>
+    </button>
+  </div>
 </header>
 
-<main class="wrap">
+<main>
+  <section id="home" class="page active">
+    <div class="hero">
+      <span class="eyebrow">Minecraft hamjamiyati</span>
+      <h1>Modlaringni ulash,<br><b>olamingni kengaytir.</b></h1>
+      <p>
+        Eng yangi modlar, do‘stlar va sevimli kolleksiyalaring —
+        barchasi bir joyda.
+      </p>
+    </div>
+    <div class="section-title">
+      <h2>🔥 Modlar</h2>
+      <span id="mod-count" class="pills">0 ta</span>
+    </div>
+    <input id="mod-search" class="field search" type="search"
+      placeholder="Mod qidirish...">
+    <div id="mod-list" class="grid"></div>
+  </section>
 
-<section id="home" class="page active">
-  <div class="hero">
-    <small>O‘ZBEK MINECRAFT JAMOASI</small>
-    <h1>Yangi modlarni <em>kashf et!</em></h1>
-    <p>O‘yinchilar yaratgan modlarni ko‘ring va yuklab oling.</p>
-  </div>
-  <div class="row between">
-    <h2>🔥 Eng so‘nggi modlar</h2>
-    <span id="mod-count" class="muted">0 ta</span>
-  </div>
-  <div id="mods" class="grid">
-    <p class="muted">Yuklanmoqda...</p>
-  </div>
-</section>
+  <section id="accounts" class="page">
+    <div class="section-title">
+      <h2>👥 Accountlar</h2>
+      <span id="account-count" class="pills">0 ta</span>
+    </div>
+    <input id="account-search" class="field search" type="search"
+      placeholder="Username, nik yoki ID bo‘yicha qidirish...">
+    <div id="account-list" class="grid"></div>
+  </section>
 
-<section id="accounts" class="page">
-  <h2>👥 Accountlar</h2>
-  <p class="muted">
-    O‘yinchilar profilini ko‘rish va akkauntga kirib
-    xabar yozish mumkin.
-  </p>
-  <div id="accounts-list" class="grid"></div>
-</section>
+  <section id="upload" class="page">
+    <h2>➕ Mod qo‘shish</h2>
+    <div id="upload-gate" class="panel form-panel">
+      Mod yuklash uchun avval Profil orqali akkauntga kir.
+    </div>
 
-<section id="upload" class="page">
-  <h2>➕ Mod yuklash</h2>
-  <div id="upload-gate" class="panel">
-    Mod qo‘shish uchun avval Profil bo‘limida akkauntingizga kiring.
-  </div>
-  <form id="upload-form" class="panel form" hidden>
-    <label>Mod nomi *
-      <input id="mod-title" minlength="3" maxlength="70" required>
-    </label>
-    <label>Mod haqida *
-      <textarea id="mod-description" minlength="10"
-        maxlength="2500" rows="4" required></textarea>
-    </label>
-    <label>1–5 ta rasm *
-      <input id="mod-images" type="file" multiple
-        accept="image/jpeg,image/png,image/webp" required>
-    </label>
-    <div class="preview" id="image-preview"></div>
-    <label>Mod fayli * (.mcpack / .mcaddon / .zip / .jar)
-      <input id="mod-file" type="file"
-        accept=".mcpack,.mcaddon,.zip,.jar" required>
-    </label>
-    <p class="tiny">
-      Rasm: 5 MB gacha. Mod: 50 MB gacha.
-      Faqat ishonchli va ulashishga ruxsat etilgan fayllar.
-    </p>
-    <button class="btn" id="upload-button" type="submit">
-      Modni e’lon qilish
-    </button>
-  </form>
-</section>
-
-<section id="profile" class="page">
-  <h2>👤 Profil</h2>
-
-  <div id="auth-box" class="panel">
-    <h3 id="auth-heading">Akkauntga kirish</h3>
-    <form id="auth-form" class="form">
-      <label>Username
-        <input id="username" required autocomplete="username"
-          minlength="3" maxlength="20"
-          placeholder="masalan: minecraft_uz">
+    <form id="upload-form" class="panel form-panel stack" hidden>
+      <label>Mod nomi *
+        <input id="mod-title" class="field" required
+          minlength="3" maxlength="70"
+          placeholder="Masalan, Better Blocks">
       </label>
-      <label>Parol
-        <input id="password" type="password"
-          minlength="8" required autocomplete="current-password">
+
+      <label>Mod tavsifi *
+        <textarea id="mod-description" class="field" required
+          rows="4" minlength="10" maxlength="2500"
+          placeholder="Mod nimalar qo‘shadi?"></textarea>
       </label>
-      <label id="repeat-box" hidden>Parolni takrorlash
-        <input id="password-repeat" type="password" minlength="8">
+
+      <label>Rasmlar * (1–5 ta)
+        <span class="dropzone" id="image-zone">
+          <svg class="ico"><use href="#i-image"/></svg>
+          <strong>Rasmlarni tanlash yoki shu yerga tashlash</strong>
+          <small>JPG, PNG, WEBP • Har biri 5 MB gacha</small>
+          <input id="mod-images" type="file"
+            accept="image/png,image/jpeg,image/webp"
+            multiple required>
+        </span>
       </label>
-      <button id="auth-button" class="btn" type="submit">
-        Kirish
+      <div class="previews" id="image-previews"></div>
+
+      <label>Mod fayli *
+        <span class="dropzone" id="file-zone">
+          <svg class="ico"><use href="#i-upload"/></svg>
+          <strong>Mod faylini tanlash yoki shu yerga tashlash</strong>
+          <small>.mcpack, .mcaddon, .zip, .jar • 50 MB gacha</small>
+          <input id="mod-file" type="file"
+            accept=".mcpack,.mcaddon,.zip,.jar" required>
+        </span>
+      </label>
+      <div class="uploaded-name" id="file-name"></div>
+      <button id="publish" class="btn" type="submit">
+        ✦ Modni joylash
       </button>
     </form>
-    <button id="switch-auth" class="btn alt"
-      style="margin-top:12px;width:100%">
-      Yangi akkaunt ochish
-    </button>
-    <p class="tiny">
-      Bu versiyada email kiritilmaydi;
-      unutilgan parolni tiklab bo‘lmaydi.
-    </p>
-  </div>
+  </section>
 
-  <div id="profile-box" hidden>
-    <div class="panel row">
-      <img id="my-avatar" class="avatar" alt="Avatar">
-      <div>
-        <h3 id="my-name"></h3>
-        <p class="muted" id="my-username"></p>
+  <section id="chats" class="page">
+    <h2>💬 Chat</h2>
+    <p class="muted">
+      Bu yerda do‘stlaring va ular bilan alohida suhbatlaring bo‘ladi.
+    </p>
+    <div id="chat-gate" class="panel">
+      Chat uchun akkauntga kir.
+    </div>
+
+    <div id="chat-layout" class="chat-layout" hidden>
+      <aside class="panel">
+        <h3>Do‘stlarim <span id="friend-count" class="pills">0</span></h3>
+        <div id="friend-list" class="friend-list"></div>
+      </aside>
+      <div class="panel chat-box">
+        <div id="chat-title" class="row between">
+          <h3>Suhbatni tanlang</h3>
+        </div>
+        <div id="messages" class="messages">
+          <span class="muted">Chapdan do‘stni tanlang.</span>
+        </div>
+        <form id="chat-form" class="compose">
+          <input id="chat-text" class="field"
+            maxlength="500" required disabled
+            placeholder="Xabar yozish...">
+          <button id="chat-send" class="btn" disabled>➤</button>
+        </form>
       </div>
     </div>
-    <form id="profile-form" class="panel form">
-      <label>Nik
-        <input id="nickname" maxlength="35" required>
-      </label>
-      <label>Bio
-        <textarea id="bio" maxlength="240" rows="3"></textarea>
-      </label>
-      <label>Avatar (JPG / PNG / WEBP)
-        <input type="file" id="avatar-file"
-          accept="image/jpeg,image/png,image/webp">
-      </label>
-      <button class="btn" type="submit">Saqlash</button>
-    </form>
-    <div class="panel">
-      <button id="logout" class="btn red">
-        Akkauntdan chiqish
-      </button>
-    </div>
-    <h2>📦 Mening modlarim</h2>
-    <div id="my-mods" class="grid"></div>
-  </div>
-</section>
+  </section>
 
+  <section id="profile" class="page">
+    <h2>👤 Profil</h2>
+
+    <div id="auth-box" class="panel form-panel">
+      <h3 id="auth-title">Akkauntga kirish</h3>
+      <form id="auth-form" class="stack">
+        <label>Username
+          <input id="username" class="field"
+            autocomplete="username" required
+            maxlength="20" minlength="3"
+            placeholder="username">
+          <span class="hint" id="user-hint"></span>
+        </label>
+
+        <label>Parol
+          <input id="password" class="field"
+            type="password" required minlength="8"
+            autocomplete="current-password"
+            placeholder="Kamida 8 belgi">
+          <span class="hint" id="pass-hint"></span>
+        </label>
+
+        <label id="confirm-wrap" hidden>Parolni takrorlash
+          <input id="confirm" class="field"
+            type="password" minlength="8"
+            placeholder="Qaytadan kiriting">
+          <span class="hint" id="confirm-hint"></span>
+        </label>
+
+        <button class="btn" id="auth-submit" type="submit">
+          Kirish
+        </button>
+      </form>
+
+      <button class="btn secondary" id="toggle-auth"
+        style="width:100%;margin-top:12px">
+        Yangi akkaunt ochish
+      </button>
+      <p class="muted" style="font-size:12px;margin:15px 0 0">
+        Email so‘ralmaydigan sinov tizimi:
+        parolni tiklash hozircha mavjud emas.
+      </p>
+    </div>
+
+    <div id="profile-box" hidden>
+      <div class="panel row" style="margin-bottom:15px">
+        <img id="my-avatar" class="avatar" alt="Avatar">
+        <div>
+          <h2 id="my-name" style="margin:0"></h2>
+          <span class="muted" id="my-handle"></span>
+        </div>
+      </div>
+
+      <form id="profile-form" class="panel stack"
+        style="max-width:650px">
+        <label>Nik
+          <input id="nickname" class="field"
+            maxlength="35" required>
+        </label>
+        <label>Bio
+          <textarea id="bio" class="field"
+            maxlength="240" rows="3"></textarea>
+        </label>
+        <label>Avatar
+          <span class="dropzone" id="avatar-zone">
+            <svg class="ico"><use href="#i-image"/></svg>
+            <strong>Profil rasmini tanlash</strong>
+            <small>JPG, PNG yoki WEBP — 5 MB gacha</small>
+            <input id="avatar-file" type="file"
+              accept="image/jpeg,image/png,image/webp">
+          </span>
+        </label>
+        <div id="avatar-name" class="uploaded-name"></div>
+        <button class="btn">Profilni saqlash</button>
+      </form>
+
+      <div class="panel" style="margin-top:15px">
+        <h3>🤝 Do‘stlik so‘rovlari</h3>
+        <div id="requests"></div>
+      </div>
+
+      <div class="panel" style="margin-top:15px">
+        <h3>🚫 Bloklanganlar</h3>
+        <div id="blocked-list"></div>
+      </div>
+
+      <div class="section-title">
+        <h2>🔖 Saqlangan modlar</h2>
+      </div>
+      <div id="saved-list" class="grid"></div>
+
+      <div class="section-title">
+        <h2>📦 Mening modlarim</h2>
+      </div>
+      <div id="my-mods" class="grid"></div>
+
+      <button id="logout" class="btn danger"
+        style="margin-top:22px">Chiqish</button>
+    </div>
+  </section>
 </main>
 
-<nav aria-label="Asosiy menyu">
-  <button data-page="home" class="active"
+<nav class="bottom" aria-label="Menyu">
+  <button data-page="home" class="nav-btn active"
     title="Home" aria-label="Home">
-    <svg viewBox="0 0 24 24">
-      <path d="M3 10 12 3l9 7v11H3zM9 21v-8h6v8"/>
-    </svg>
+    <svg class="ico"><use href="#i-home"/></svg>
   </button>
-  <button data-page="accounts"
+  <button data-page="accounts" class="nav-btn"
     title="Accountlar" aria-label="Accountlar">
-    <svg viewBox="0 0 24 24">
-      <circle cx="9" cy="8" r="3"/>
-      <path d="M2 21v-2a7 7 0 0 1 14 0v2M17 5a3 3 0 0 1 0 6M18 14a6 6 0 0 1 4 6"/>
-    </svg>
+    <svg class="ico"><use href="#i-users"/></svg>
   </button>
-  <button data-page="upload"
+  <button data-page="upload" class="nav-btn"
     title="Mod qo‘shish" aria-label="Mod qo‘shish">
-    <svg viewBox="0 0 24 24">
-      <path d="M12 4v16M4 12h16"/>
-    </svg>
+    <svg class="ico"><use href="#i-plus"/></svg>
   </button>
-  <button data-page="profile"
+  <button data-page="chats" class="nav-btn"
+    title="Chat" aria-label="Chat">
+    <svg class="ico"><use href="#i-chat"/></svg>
+    <span id="chat-dot" class="nav-dot" hidden></span>
+  </button>
+  <button data-page="profile" class="nav-btn"
     title="Profil" aria-label="Profil">
-    <svg viewBox="0 0 24 24">
-      <circle cx="12" cy="8" r="4"/>
-      <path d="M4 21a8 8 0 0 1 16 0"/>
-    </svg>
+    <svg class="ico"><use href="#i-user"/></svg>
   </button>
 </nav>
 
-<div class="modal" id="modal" hidden>
-  <div class="modal-body">
-    <button class="x" id="close-modal">✕</button>
-    <div id="modal-content"></div>
+<div id="modal" class="modal" hidden>
+  <div class="modal-panel">
+    <button id="close-modal" class="icon-btn close"
+      aria-label="Yopish">✕</button>
+    <div id="modal-body"></div>
   </div>
 </div>
-<div id="status" role="status" aria-live="polite"></div>
 
-<script>
-(() => {
-  'use strict';
-
-  const VERSION = 'V0.4';
-  document.querySelector('.version').textContent = VERSION;
-  document.title = 'Minecraft Facts UZ — ' + VERSION;
-
-  // Avval yuborilgan Supabase manzili va public kalit
-  const SUPABASE_URL = 'https://swbnidsmwnqwjzfrlorr.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_-yjtMQSDiq7_L1ZiNfBcSQ_GiXEDPka';
-
-  const $ = id => document.getElementById(id);
-  const esc = s => String(s ?? '').replace(/[&<>"']/g,
-    c => ({
-      '&':'&amp;', '<':'&lt;', '>':'&gt;',
-      '"':'&quot;', "'":'&#39;'
-    }[c])
-  );
-
-  const avatarDefault = 'data:image/svg+xml,' +
-    encodeURIComponent(
-      '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">' +
-      '<rect width="100" height="100" fill="#155334"/>' +
-      '<circle cx="50" cy="35" r="20" fill="#92f0b9"/>' +
-      '<path d="M12 95a38 38 0 0 1 76 0" fill="#92f0b9"/>' +
-      '</svg>'
-    );
-
-  let db;
-  let me = null;
-  let mods = [];
-  let members = [];
-  let selectedPerson = null;
-  let signup = false;
-  let alertTimer;
-
-  function message(s) {
-    const n = $('status');
-    n.textContent = s;
-    n.style.display = 'block';
-    clearTimeout(alertTimer);
-    alertTimer = setTimeout(() => n.style.display = 'none', 5000);
-  }
-
-  function error(e) {
-    console.error(e);
-    message('Xato: ' + (e?.message || String(e)));
-  }
-
-  function page(id) {
-    document.querySelectorAll('.page').forEach(x =>
-      x.classList.toggle('active', x.id === id)
-    );
-    document.querySelectorAll('nav button').forEach(x =>
-      x.classList.toggle('active', x.dataset.page === id)
-    );
-    scrollTo(0, 0);
-    if (id === 'accounts') loadMembers();
-  }
-
-  document.querySelectorAll('nav button').forEach(b =>
-    b.addEventListener('click', () => page(b.dataset.page))
-  );
-
-  function publicURL(bucket, path) {
-    return db && path
-      ? db.storage.from(bucket).getPublicUrl(path).data.publicUrl
-      : '';
-  }
-
-  function identity(username) {
-    return username.toLowerCase() + '@members.example.com';
-  }
-
-  function validUser(s) {
-    return /^[a-z0-9_]{3,20}$/.test(s);
-  }
-
-  function toggleSignup(value) {
-    signup = value;
-    $('auth-heading').textContent =
-      value ? 'Yangi akkaunt' : 'Akkauntga kirish';
-    $('repeat-box').hidden = !value;
-    $('password-repeat').required = value;
-    $('auth-button').textContent =
-      value ? 'Ro‘yxatdan o‘tish' : 'Kirish';
-    $('switch-auth').textContent =
-      value ? 'Kirishga qaytish' : 'Yangi akkaunt ochish';
-  }
-
-  $('switch-auth').onclick = () => toggleSignup(!signup);
-
-  async function apiReady() {
-    if (!window.supabase?.createClient) {
-      throw Error('Supabase kutubxonasi yuklanmadi. Internetni tekshiring.');
-    }
-    if (!db) {
-      db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    }
-  }
-
-  async function getProfile() {
-    const {data, error:e} = await db
-      .from('mc_profiles')
-      .select('*')
-      .eq('id', me.id)
-      .single();
-    if (e) throw e;
-    return data;
-  }
-
-  async function refreshAuth() {
-    $('auth-box').hidden = !!me;
-    $('profile-box').hidden = !me;
-    $('upload-gate').hidden = !!me;
-    $('upload-form').hidden = !me;
-
-    if (!me) return;
-
-    try {
-      const p = await getProfile();
-      $('my-name').textContent = p.nickname || p.username;
-      $('my-username').textContent = '@' + p.username;
-      $('my-avatar').src =
-        publicURL('mc-avatars', p.avatar_path) || avatarDefault;
-      $('nickname').value = p.nickname || p.username;
-      $('bio').value = p.bio || '';
-      showMine();
-    } catch(e) {
-      error(e);
-    }
-  }
-
-  $('auth-form').addEventListener('submit', async ev => {
-    ev.preventDefault();
-
-    const username = $('username').value.trim().toLowerCase();
-    const password = $('password').value;
-
-    if (!validUser(username)) {
-      return message('Username: 3–20 ta kichik lotin harfi, raqam yoki _.');
-    }
-    if (signup && password !== $('password-repeat').value) {
-      return message('Parollar bir xil emas.');
-    }
-
-    const btn = $('auth-button');
-    btn.disabled = true;
-
-    try {
-      await apiReady();
-
-      const result = signup
-        ? await db.auth.signUp({
-            email: identity(username),
-            password,
-            options: {data: {username}}
-          })
-        : await db.auth.signInWithPassword({
-            email: identity(username),
-            password
-          });
-
-      if (result.error) throw result.error;
-      if (!result.data.session) {
-        throw Error(
-          'Supabase → Authentication → Providers → Email: ' +
-          'Confirm email ni o‘chiring.'
-        );
-      }
-
-      me = result.data.user;
-      $('auth-form').reset();
-      await refreshAuth();
-      message(signup ? 'Akkaunt ochildi!' : 'Xush kelibsiz!');
-    } catch(e) {
-      error(e);
-    } finally {
-      btn.disabled = false;
-    }
-  });
-
-  $('logout').onclick = async () => {
-    try {
-      await db.auth.signOut();
-      me = null;
-      await refreshAuth();
-      page('home');
-      message('Akkauntdan chiqildi.');
-    } catch(e) {
-      error(e);
-    }
-  };
-
-  $('profile-form').addEventListener('submit', async ev => {
-    ev.preventDefault();
-    if (!me) return;
-
-    try {
-      const nickname = $('nickname').value.trim();
-      const bio = $('bio').value.trim();
-      const f = $('avatar-file').files[0];
-
-      if (!nickname) return message('Nikni kiriting.');
-      const changes = {nickname, bio};
-
-      if (f) {
-        if (
-          !['image/png','image/jpeg','image/webp'].includes(f.type) ||
-          f.size > 5*1024*1024
-        ) {
-          throw Error('Avatar 5 MB gacha JPG/PNG/WEBP bo‘lishi kerak.');
-        }
-
-        const ext = f.name.split('.').pop().toLowerCase();
-        const path = me.id + '/' + crypto.randomUUID() + '.' + ext;
-        const {error:e} = await db.storage
-          .from('mc-avatars').upload(path, f);
-
-        if (e) throw e;
-        changes.avatar_path = path;
-      }
-
-      const {error:e} = await db.from('mc_profiles')
-        .update(changes).eq('id', me.id);
-
-      if (e) throw e;
-
-      await refreshAuth();
-      await loadMembers();
-      message('Profil saqlandi.');
-    } catch(e) {
-      error(e);
-    }
-  });
-
-  function card(m) {
-    const img = publicURL('mcmod-images', m.images?.[0]);
-    const p = m.mc_profiles;
-
-    return `
-      <article class="card" data-mod="${esc(m.id)}"
-        tabindex="0" role="button">
-        <img loading="lazy" src="${esc(img)}" alt="${esc(m.title)}">
-        <div class="inside">
-          <h3>${esc(m.title)}</h3>
-          <p>✦ ${esc(p?.nickname || p?.username || 'O‘yinchi')}</p>
-          <p>${esc(m.description.slice(0,85))}</p>
-        </div>
-      </article>`;
-  }
-
-  function renderMods() {
-    const q = $('search').value.toLowerCase().trim();
-    const filtered = mods.filter(x =>
-      x.title.toLowerCase().includes(q) ||
-      x.description.toLowerCase().includes(q)
-    );
-    $('mod-count').textContent = filtered.length + ' ta';
-    $('mods').innerHTML = filtered.map(card).join('') ||
-      '<p class="muted">Mod topilmadi.</p>';
-  }
-
-  function showMine() {
-    $('my-mods').innerHTML = me
-      ? (
-          mods.filter(x => x.user_id === me.id).map(card).join('') ||
-          '<p class="muted">Hali mod joylamagansiz.</p>'
-        )
-      : '';
-  }
-
-  async function loadMods() {
-    try {
-      await apiReady();
-      const {data, error:e} = await db.from('mc_mods')
-        .select(
-          'id,user_id,title,description,images,file_path,created_at,' +
-          'mc_profiles(username,nickname)'
-        )
-        .order('created_at', {ascending:false})
-        .limit(100);
-
-      if (e) throw e;
-      mods = data || [];
-      renderMods();
-      showMine();
-    } catch(e) {
-      error(e);
-      $('mods').textContent = 'Modlarni yuklashda xato.';
-    }
-  }
-
-  $('search').oninput = () => {
-    renderMods();
-    page('home');
-  };
-
-  $('mod-images').onchange = () => {
-    const items = [...$('mod-images').files];
-    $('image-preview').replaceChildren();
-
-    items.slice(0,5).forEach(f => {
-      const img = document.createElement('img');
-      img.src = URL.createObjectURL(f);
-      img.onload = () => URL.revokeObjectURL(img.src);
-      $('image-preview').append(img);
-    });
-
-    if (items.length > 5) message('Eng ko‘pi 5 ta rasm!');
-  };
-
-  $('upload-form').addEventListener('submit', async ev => {
-    ev.preventDefault();
-    if (!me) return message('Avval akkauntga kiring.');
-
-    const title = $('mod-title').value.trim();
-    const description = $('mod-description').value.trim();
-    const files = [...$('mod-images').files];
-    const mod = $('mod-file').files[0];
-
-    if (title.length < 3 || description.length < 10) {
-      return message('Mod nomi va tavsifi yetarli emas.');
-    }
-    if (!files.length || files.length > 5 || !mod) {
-      return message('1–5 rasm va bitta mod fayli kerak.');
-    }
-    if (files.some(f =>
-      !['image/png','image/jpeg','image/webp'].includes(f.type) ||
-      f.size > 5*1024*1024
-    )) {
-      return message('Rasmlar 5 MB gacha JPG/PNG/WEBP bo‘lsin.');
-    }
-
-    const ext = mod.name.split('.').pop().toLowerCase();
-    if (
-      !['mcpack','mcaddon','zip','jar'].includes(ext) ||
-      mod.size > 50*1024*1024
-    ) {
-      return message('Mod fayli turi yoki hajmi noto‘g‘ri (max 50 MB).');
-    }
-
-    const b = $('upload-button');
-    b.disabled = true;
-    b.textContent = 'Yuklanmoqda...';
-
-    try {
-      const fp = me.id + '/' + crypto.randomUUID() + '.' + ext;
-      let result = await db.storage.from('mcmod-files').upload(fp, mod);
-      if (result.error) throw result.error;
-
-      const imagePaths = [];
-
-      for (const file of files) {
-        const ex = file.name.split('.').pop().toLowerCase();
-        const ip = me.id + '/' + crypto.randomUUID() + '.' + ex;
-
-        result = await db.storage.from('mcmod-images').upload(ip, file);
-        if (result.error) throw result.error;
-
-        imagePaths.push(ip);
-      }
-
-      const {error:e} = await db.from('mc_mods').insert({
-        user_id:me.id, title, description,
-        images:imagePaths, file_path:fp
-      });
-      if (e) throw e;
-
-      $('upload-form').reset();
-      $('image-preview').replaceChildren();
-      await loadMods();
-      page('home');
-      message('Mod joylandi!');
-    } catch(e) {
-      error(e);
-    } finally {
-      b.disabled = false;
-      b.textContent = 'Modni e’lon qilish';
-    }
-  });
-
-  async function loadMembers() {
-    try {
-      await apiReady();
-
-      const {data, error:e} = await db.from('mc_profiles')
-        .select('id,username,nickname,bio,avatar_path')
-        .order('created_at', {ascending:false})
-        .limit(100);
-
-      if (e) throw e;
-      members = data || [];
-
-      $('accounts-list').innerHTML = members.map(p => `
-        <article data-person="${esc(p.id)}"
-          class="panel account" style="margin:0"
-          role="button" tabindex="0">
-          <img class="avatar" style="width:54px;height:54px"
-            src="${esc(publicURL('mc-avatars',p.avatar_path)||avatarDefault)}"
-            alt="Avatar">
-          <div>
-            <h3>${esc(p.nickname||p.username)}</h3>
-            <span class="muted">@${esc(p.username)}</span>
-          </div>
-        </article>
-      `).join('') || '<p class="muted">Hozircha akkaunt yo‘q.</p>';
-    } catch(e) {
-      error(e);
-      $('accounts-list').textContent = 'Akkauntlar ochilmadi.';
-    }
-  }
-
-  function openModal(html) {
-    $('modal-content').innerHTML = html;
-    $('modal').hidden = false;
-  }
-
-  function closeModal() {
-    $('modal').hidden = true;
-    selectedPerson = null;
-  }
-
-  $('close-modal').onclick = closeModal;
-  $('modal').onclick = e => {
-    if (e.target === $('modal')) closeModal();
-  };
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeModal();
-    if (
-      e.key === 'Enter' &&
-      e.target.matches('[data-mod],[data-person]')
-    ) e.target.click();
-  });
-
-  document.addEventListener('click', e => {
-    const mod = e.target.closest('[data-mod]');
-    const person = e.target.closest('[data-person]');
-    if (mod) showMod(mod.dataset.mod);
-    if (person) showPerson(person.dataset.person);
-  });
-
-  function showMod(id) {
-    const m = mods.find(x => x.id === id);
-    if (!m) return;
-
-    const imgs = (m.images||[])
-      .map(p => publicURL('mcmod-images',p));
-    const dl = publicURL('mcmod-files',m.file_path) + '?download';
-
-    openModal(`
-      <img id="big-image" class="cover"
-        src="${esc(imgs[0]||'')}" alt="Mod rasmi">
-      <div class="gallery">
-        ${imgs.map(x => `
-          <img src="${esc(x)}" data-image="${esc(x)}" alt="Mod rasmi">
-        `).join('')}
-      </div>
-      <h2>${esc(m.title)}</h2>
-      <p class="muted">
-        ✦ ${esc(m.mc_profiles?.nickname||m.mc_profiles?.username||'O‘yinchi')}
-      </p>
-      <p style="white-space:pre-wrap">${esc(m.description)}</p>
-      <a href="${esc(dl)}" class="btn"
-        style="display:inline-block;text-decoration:none"
-        target="_blank" rel="noopener">
-        ⬇ Yuklab olish
-      </a>
-    `);
-
-    $('modal-content').querySelectorAll('[data-image]').forEach(img =>
-      img.onclick = () => $('big-image').src = img.dataset.image
-    );
-  }
-
-  async function showPerson(id) {
-    const p = members.find(x => x.id === id);
-    if (!p) return;
-    selectedPerson = id;
-
-    const otherMods = mods.filter(x => x.user_id === id);
-
-    openModal(`
-      <div class="row">
-        <img class="avatar"
-          src="${esc(publicURL('mc-avatars',p.avatar_path)||avatarDefault)}"
-          alt="Avatar">
-        <div>
-          <h2 style="margin:0">${esc(p.nickname||p.username)}</h2>
-          <span class="muted">@${esc(p.username)}</span>
-        </div>
-      </div>
-      <p>${esc(p.bio||'Bio hali yo‘q.')}</p>
-      <h3>Modlari</h3>
-      <div class="grid">
-        ${otherMods.map(card).join('') ||
-          '<p class="muted">Hali mod yo‘q.</p>'}
-      </div>
-      <h3>💬 Xabarlar</h3>
-      <div id="chat" class="chat"></div>
-      <div class="row" style="margin-top:10px">
-        <input id="chat-input" maxlength="500"
-          placeholder="Xabar yozish...">
-        <button id="send" class="btn">➤</button>
-      </div>
-      <button id="refresh-chat" class="btn alt"
-        style="margin-top:9px">
-        ↻ Yangilash
-      </button>
-    `);
-
-    if (!me) {
-      $('chat').textContent =
-        'Xabar yozish uchun akkauntga kiring.';
-      $('send').disabled = true;
-      $('chat-input').disabled = true;
-      return;
-    }
-
-    if (me.id === id) {
-      $('chat').textContent = 'Bu sizning profilingiz.';
-      $('send').disabled = true;
-      $('chat-input').disabled = true;
-      return;
-    }
-
-    $('send').onclick = sendMessage;
-    $('refresh-chat').onclick = loadChat;
-    $('chat-input').onkeydown = e => {
-      if (e.key === 'Enter') sendMessage();
-    };
-    await loadChat();
-  }
-
-  async function loadChat() {
-    if (!me || !selectedPerson) return;
-
-    try {
-      const id = selectedPerson;
-
-      const {data, error:e} = await db.from('mc_messages')
-        .select('sender_id,recipient_id,body,created_at')
-        .or(
-          `and(sender_id.eq.${me.id},recipient_id.eq.${id}),` +
-          `and(sender_id.eq.${id},recipient_id.eq.${me.id})`
-        )
-        .order('created_at', {ascending:true})
-        .limit(100);
-
-      if (e) throw e;
-      if (selectedPerson !== id || !$('chat')) return;
-
-      $('chat').innerHTML = (data||[]).map(x => `
-        <div class="bubble ${x.sender_id===me.id?'mine':''}">
-          ${esc(x.body)}
-          <small>${esc(new Date(x.created_at).toLocaleString('uz-UZ'))}</small>
-        </div>
-      `).join('') || '<p class="muted">Hozircha xabar yo‘q.</p>';
-
-      $('chat').scrollTop = $('chat').scrollHeight;
-    } catch(e) {
-      error(e);
-    }
-  }
-
-  async function sendMessage() {
-    if (!me || !selectedPerson) return;
-    const text = $('chat-input')?.value.trim();
-    if (!text) return;
-
-    try {
-      const {error:e} = await db.from('mc_messages').insert({
-        sender_id:me.id,
-        recipient_id:selectedPerson,
-        body:text
-      });
-      if (e) throw e;
-
-      $('chat-input').value = '';
-      await loadChat();
-    } catch(e) {
-      error(e);
-    }
-  }
-
-  async function boot() {
-    try {
-      await apiReady();
-      const {data,error:e} = await db.auth.getSession();
-      if (e) throw e;
-      me = data.session?.user || null;
-      await Promise.all([loadMods(),loadMembers()]);
-      await refreshAuth();
-    } catch(e) {
-      error(e);
-    }
-  }
-
-  window.addEventListener('load',boot);
-})();
-</script>
-
-<!-- Pages deployment retry -->
-
+<div id="toast" class="toast"
+  role="status" aria-live="polite" hidden></div>
 </body>
 </html>
