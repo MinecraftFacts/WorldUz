@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft Facts UZ - Mods Platform</title>
+    <!-- Supabase Kutubxonasi -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f0f13; color: #fff; margin: 0; padding: 0; box-sizing: border-box; }
         *, *:before, *:after { box-sizing: inherit; }
@@ -148,9 +150,10 @@
     </div>
 
     <script>
-        function getUsers() {
-            return JSON.parse(localStorage.getItem('mc_all_users')) || [];
-        }
+        // Supabase sozlamalari ulandi:
+        const SUPABASE_URL = 'https://swbnidsmwnqwjztrlorr.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_-yjtMQSDiq7_L1Z1NFcSQ_GiXFD';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         window.onload = function() {
             const activeUser = localStorage.getItem('mc_active_user');
@@ -194,16 +197,18 @@
             document.getElementById('reg-password-confirm').value = '';
         }
 
-        function checkUsername(val) {
+        async function checkUsername(val) {
             const status = document.getElementById('username-status');
             if(!val.trim()) {
                 status.innerText = '';
                 return;
             }
-            const users = getUsers();
-            const found = users.find(u => u.username.toLowerCase() === val.trim().toLowerCase());
+            const { data } = await supabase
+                .from('users')
+                .select('username')
+                .ilike('username', val.trim());
             
-            if(found) {
+            if(data && data.length > 0) {
                 status.style.color = '#ff4757';
                 status.innerText = '❌ Band';
             } else {
@@ -224,7 +229,7 @@
             }
         }
 
-        function registerUser() {
+        async function registerUser() {
             const username = document.getElementById('reg-username').value.trim();
             const password = document.getElementById('reg-password').value;
             const confirmPassword = document.getElementById('reg-password-confirm').value;
@@ -234,8 +239,12 @@
                 return;
             }
 
-            const users = getUsers();
-            if(users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+            const { data: existing } = await supabase
+                .from('users')
+                .select('*')
+                .ilike('username', username);
+
+            if(existing && existing.length > 0) {
                 alert('Bu username band! Boshqa nom tanlang.');
                 return;
             }
@@ -246,16 +255,22 @@
             }
 
             const uniqueId = 'ID-' + Math.floor(100000 + Math.random() * 900000);
-            const newUser = { username, password, id: uniqueId };
+            
+            const { error } = await supabase
+                .from('users')
+                .insert([{ username, password, unique_id: uniqueId }]);
 
-            users.push(newUser);
-            localStorage.setItem('mc_all_users', JSON.stringify(users));
+            if(error) {
+                alert('Xatolik yuz berdi: ' + error.message);
+                return;
+            }
+
+            const newUser = { username, id: uniqueId };
             localStorage.setItem('mc_active_user', JSON.stringify(newUser));
-
             showProfileView(newUser);
         }
 
-        function loginUser() {
+        async function loginUser() {
             const username = document.getElementById('login-username').value.trim();
             const password = document.getElementById('login-password').value;
 
@@ -265,29 +280,29 @@
             userError.innerText = '';
             passError.innerText = '';
 
-            if(!username) {
-                userError.innerText = 'Username kiriting!';
-            }
-            if(!password) {
-                passError.innerText = 'Parol kiriting!';
-            }
+            if(!username) userError.innerText = 'Username kiriting!';
+            if(!password) passError.innerText = 'Parol kiriting!';
             if(!username || !password) return;
 
-            const users = getUsers();
-            const foundUser = users.find(u => u.username === username);
+            const { data } = await supabase
+                .from('users')
+                .select('*')
+                .eq('username', username);
 
-            if(!foundUser) {
+            if(!data || data.length === 0) {
                 userError.innerText = 'Bunday username topilmadi!';
-            }
-            
-            if(foundUser && foundUser.password !== password) {
-                passError.innerText = 'Parol xato!';
+                return;
             }
 
-            if(foundUser && foundUser.password === password) {
-                localStorage.setItem('mc_active_user', JSON.stringify(foundUser));
-                showProfileView(foundUser);
+            const foundUser = data[0];
+            if(foundUser.password !== password) {
+                passError.innerText = 'Parol xato!';
+                return;
             }
+
+            const userObj = { username: foundUser.username, id: foundUser.unique_id };
+            localStorage.setItem('mc_active_user', JSON.stringify(userObj));
+            showProfileView(userObj);
         }
 
         function showProfileView(userObj) {
