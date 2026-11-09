@@ -25,9 +25,13 @@
         .mod-card h3 { margin: 12px 0 6px 0; font-size: 18px; color: #00ff88; }
         
         .card-box { background: #181824; padding: 30px; border-radius: 15px; max-width: 450px; margin: auto; border: 1px solid #2a2a3d; box-shadow: 0 8px 25px rgba(0,0,0,0.5); text-align: center; }
-        .card-box input { width: 100%; padding: 12px; margin: 12px 0; background: #111118; border: 2px solid #333; color: white; border-radius: 8px; box-sizing: border-box; outline: none; }
+        .card-box input { width: 100%; padding: 12px; margin: 10px 0; background: #111118; border: 2px solid #333; color: white; border-radius: 8px; box-sizing: border-box; outline: none; }
         .card-box input:focus { border-color: #00ff88; }
-        .card-box button { background: #00ff88; color: #0f0f13; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .card-box button { background: #00ff88; color: #0f0f13; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .card-box button:hover { background: #00cc6a; }
+
+        .avatar-preview { width: 90px; height: 90px; border-radius: 50%; background: #222; margin: 0 auto 15px auto; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 3px solid #00ff88; }
+        .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -52,16 +56,19 @@
                     <img src="https://via.placeholder.com/300x150" alt="Mod">
                     <h3>Super Physics Mod</h3>
                     <p style="color: #aaa; font-size: 14px;">O'yinga realistik fizika qo'shadi.</p>
+                    <button style="background:#222; color:#00ff88; border:1px solid #00ff88; padding:8px; border-radius:6px; cursor:pointer; width:100%; font-weight:bold; margin-top:10px;">❤️ Like (12)</button>
                 </div>
                 <div class="mod-card">
                     <img src="https://via.placeholder.com/300x150" alt="Mod">
                     <h3>Custom Swords</h3>
                     <p style="color: #aaa; font-size: 14px;">Yangi turdagi qilichlar to'plami.</p>
+                    <button style="background:#222; color:#00ff88; border:1px solid #00ff88; padding:8px; border-radius:6px; cursor:pointer; width:100%; font-weight:bold; margin-top:10px;">❤️ Like (25)</button>
                 </div>
                 <div class="mod-card">
                     <img src="https://via.placeholder.com/300x150" alt="Mod">
                     <h3>Pixel Shader</h3>
                     <p style="color: #aaa; font-size: 14px;">Grafikani yanada chiroyli qiladi.</p>
+                    <button style="background:#222; color:#00ff88; border:1px solid #00ff88; padding:8px; border-radius:6px; cursor:pointer; width:100%; font-weight:bold; margin-top:10px;">❤️ Like (40)</button>
                 </div>
             </div>
         </div>
@@ -72,28 +79,40 @@
                 <h2 style="text-align: center; color: #ff9800;">📦 Mod Joylash</h2>
                 <label>Mod nomi:</label>
                 <input type="text" placeholder="Mod nomi...">
-                <label>Sharh:</label>
-                <input type="text" placeholder="Tavsif...">
-                <label>Mod rasmi va fayli:</label>
+                <label>Sharh va tavsif:</label>
+                <input type="text" placeholder="Mod haqida qisqacha...">
+                <label>Mod rasmi:</label>
+                <input type="file" accept="image/*">
+                <label>Mod fayli (.zip / .mcpack):</label>
                 <input type="file">
-                <button style="background: #ff9800; color: white; margin-top: 15px;">Joylash</button>
+                <button style="background: #ff9800; color: white;" onclick="alert('Mod tekshiruvga yuborildi!')">Joylash</button>
             </div>
         </div>
 
         <!-- 3. PROFIL -->
         <div id="profile" class="section">
-            <div class="card-box">
-                <h2>Foydalanuvchi Profili</h2>
-                <div id="login-step">
-                    <p style="color: #aaa; font-size: 14px; margin-bottom: 20px;">Google akkauntingiz orqali tizimga kiring:</p>
-                    <button style="background: #db4437; color: white;" onclick="loginWithGoogle()">🌐 Google bilan kirish</button>
-                </div>
+            <!-- Ro'yxatdan o'tish oynasi -->
+            <div id="register-card" class="card-box">
+                <h2 style="color: #00ff88;">Ro'yxatdan o'tish</h2>
+                <p style="color: #aaa; font-size: 13px; margin-bottom: 15px;">Platformaga kirish uchun ma'lumotlaringizni kiriting:</p>
+                <input type="text" id="reg-username" placeholder="Username (Noyob nikneym)...">
+                <input type="password" id="reg-password" placeholder="Parol...">
+                <input type="password" id="reg-password-confirm" placeholder="Parolni tasdiqlang...">
+                <button onclick="registerUser()">Ro'yxatdan o'tish</button>
+            </div>
 
-                <div id="profile-step" style="display: none;">
-                    <input type="text" id="username-input" placeholder="Nikneym yozing (Masalan: Jorik)...">
-                    <button onclick="saveUsername()">Nikni Tasdiqlash</button>
-                    <div id="user-info" style="margin-top: 15px; font-size: 14px; color: #00ff88;"></div>
+            <!-- Muvaffaqiyatli kirilgandagi Profil oynasi -->
+            <div id="profile-card" class="card-box" style="display: none;">
+                <h2>Foydalanuvchi Profili</h2>
+                <div class="avatar-preview">
+                    <span style="font-size: 35px;">👤</span>
                 </div>
+                <p><b>Username:</b> <span id="display-username" style="color: #00ff88;"></span></p>
+                <p><b>O'zgarmas ID:</b> <span id="display-id" style="color: #ff9800;"></span></p>
+                <hr style="border-color: #2a2a3d; margin: 15px 0;">
+                <h4 style="text-align: left; color: #aaa; margin-bottom: 5px;">Sizning modlaringiz:</h4>
+                <p style="color: #666; font-size: 13px; text-align: left;">Hozircha modlar yuklamagansiz.</p>
+                <button style="background: #ff4757; color: white; margin-top: 20px;" onclick="logout()">Chiqish</button>
             </div>
         </div>
     </div>
@@ -106,19 +125,42 @@
             btn.classList.add('active');
         }
 
-        function loginWithGoogle() {
-            document.getElementById('login-step').style.display = 'none';
-            document.getElementById('profile-step').style.display = 'block';
-        }
+        function registerUser() {
+            const username = document.getElementById('reg-username').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-password-confirm').value;
 
-        function saveUsername() {
-            const nik = document.getElementById('username-input').value;
-            if(!nik) {
-                alert('Nikneym yozing!');
+            if(!username || !password || !confirmPassword) {
+                alert('Iltimos, barcha maydonlarni to‘ldiring!');
                 return;
             }
-            const fixedId = 'ID-' + Math.floor(100000 + Math.random() * 900000);
-            document.getElementById('user-info').innerHTML = `Muvaffaqiyatli saqlandi!<br>Nik: <b>${nik}</b><br>O'zgarmas ID: <b>${fixedId}</b>`;
+
+            if(password !== confirmPassword) {
+                alert('Xatolik: Parollar bir xil emas! Iltimos, tekshirib qaytadan kiriting.');
+                return;
+            }
+
+            // Tasodifiy o'zgarmas ID generatsiya qilish
+            const uniqueId = 'ID-' + Math.floor(100000 + Math.random() * 900000);
+
+            // Ma'lumotlarni profil oynasiga chiqarish
+            document.getElementById('display-username').innerText = username;
+            document.getElementById('display-id').innerText = uniqueId;
+
+            // Oynalarni almashtirish
+            document.getElementById('register-card').style.display = 'none';
+            document.getElementById('profile-card').style.display = 'block';
+
+            alert('Muvaffaqiyatli ro‘yxatdan o‘tdingiz!');
+        }
+
+        function logout() {
+            document.getElementById('reg-username').value = '';
+            document.getElementById('reg-password').value = '';
+            document.getElementById('reg-password-confirm').value = '';
+            
+            document.getElementById('profile-card').style.display = 'none';
+            document.getElementById('register-card').style.display = 'block';
         }
     </script>
 </body>
