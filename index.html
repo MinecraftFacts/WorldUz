@@ -150,7 +150,7 @@
     </div>
 
     <script>
-        // Supabase sozlamalari ulandi:
+        // Supabase ulang
         const SUPABASE_URL = 'https://swbnidsmwnqwjztrlorr.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_-yjtMQSDiq7_L1Z1NFcSQ_GiXFD';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -254,8 +254,14 @@
                 return;
             }
 
-            const uniqueId = 'ID-' + Math.floor(100000 + Math.random() * 900000);
-            
+            // Bazadagi jami foydalanuvchilar sonini aniqlab, ID ni ketma-ket (1, 2, 3...) qilamiz
+            const { count, error: countError } = await supabase
+                .from('users')
+                .select('*', { count: 'exact', head: true });
+
+            const nextId = (count || 0) + 1;
+            const uniqueId = String(nextId);
+
             const { error } = await supabase
                 .from('users')
                 .insert([{ username, password, unique_id: uniqueId }]);
