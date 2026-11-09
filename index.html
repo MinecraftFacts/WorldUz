@@ -2,57 +2,106 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <title>Minecraft Facts UZ - Modlar va Profil</title>
+    <title>Minecraft Facts UZ - Mods Platform</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: #fff; margin: 0; padding: 0; text-align: center; }
-        header { background: #2b2b2b; padding: 20px; border-bottom: 3px solid #4CAF50; }
-        h1 { color: #4CAF50; margin: 0; }
-        .container { padding: 30px; max-width: 800px; margin: auto; }
-        .card { background: #2b2b2b; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
-        input, button { padding: 10px; margin: 10px 0; border-radius: 5px; border: none; font-size: 16px; }
-        input { width: 80%; max-width: 400px; background: #3b3b3b; color: #fff; }
-        button { background: #4CAF50; color: white; cursor: pointer; font-weight: bold; }
-        button:hover { background: #45a049; }
+        body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; margin: 0; padding: 0; }
+        header { background: #1f1f1f; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #4CAF50; }
+        .logo { font-size: 20px; font-weight: bold; color: #4CAF50; }
+        .search-box { width: 40%; padding: 8px; border-radius: 5px; border: none; background: #2b2b2b; color: white; }
+        
+        /* Pastki menyu yoki asosiy navigatsiya */
+        nav { display: flex; justify-content: center; background: #1a1a1a; padding: 10px; gap: 20px; border-bottom: 1px solid #333; }
+        nav button { background: none; border: none; color: #bbb; font-size: 16px; cursor: pointer; font-weight: bold; padding: 8px 15px; border-radius: 5px; }
+        nav button.active, nav button:hover { background: #4CAF50; color: white; }
+        .btn-add { background: #ff9800 !important; color: white !important; }
+
+        .container { max-width: 1000px; margin: 20px auto; padding: 20px; }
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* Modlar panjarasi (3 qatorli ko'rinish uchun) */
+        .mods-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .mod-card { background: #1f1f1f; border-radius: 8px; overflow: hidden; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .mod-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 5px; }
+        .mod-card h3 { margin: 10px 0 5px 0; font-size: 18px; color: #4CAF50; }
+        
+        .form-card { background: #1f1f1f; padding: 20px; border-radius: 8px; max-width: 500px; margin: auto; }
+        .form-card input, .form-card textarea { width: 100%; padding: 10px; margin: 10px 0; background: #2b2b2b; border: none; color: white; border-radius: 5px; box-sizing: border-box; }
+        .form-card button { background: #4CAF50; color: white; border: none; padding: 10px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
+
     <header>
-        <h1>Minecraft Facts UZ</h1>
-        <p>Rasmiy modlar va foydalanuvchilar platformasi</p>
+        <div class="logo">Minecraft Facts UZ</div>
+        <input type="text" class="search-box" placeholder="Modlarni qidirish...">
     </header>
 
+    <nav>
+        <button onclick="switchTab('home', this)" class="active">🏠 Home</button>
+        <button onclick="switchTab('upload', this)" class="btn-add">➕ Mod Yuklash</button>
+        <button onclick="switchTab('profile', this)">👤 Profil</button>
+    </nav>
+
     <div class="container">
-        <!-- Profil Bo'limi -->
-        <div class="card">
-            <h2>👤 Foydalanuvchi Profili</h2>
-            <p>O'z profilingizni yarating va ID oling:</p>
-            <input type="text" id="username" placeholder="Minecraft Nickname (Username)...">
-            <br>
-            <button onclick="saveProfile()">Profilni Saqlash</button>
-            <p id="profile-info" style="color: #4CAF50; font-weight: bold;"></p>
+        <!-- 1. HOME BO'LIMI (Modlar 3 qatorda) -->
+        <div id="home" class="section active">
+            <h2>Eng so'nggi Modlar</h2>
+            <div class="mods-grid">
+                <div class="mod-card">
+                    <img src="https://via.placeholder.com/300x150" alt="Mod">
+                    <h3>Super Physics Mod</h3>
+                    <p>O'yinga realistik fizika qo'shadi.</p>
+                    <button style="background:#333; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer;">❤️ Like (12)</button>
+                </div>
+                <div class="mod-card">
+                    <img src="https://via.placeholder.com/300x150" alt="Mod">
+                    <h3>Custom Swords</h3>
+                    <p>Yangi turdagi qilichlar to'plami.</p>
+                    <button style="background:#333; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer;">❤️ Like (25)</button>
+                </div>
+                <div class="mod-card">
+                    <img src="https://via.placeholder.com/300x150" alt="Mod">
+                    <h3>Pixel Shader</h3>
+                    <p>Grafikani yanada chiroyli qiladi.</p>
+                    <button style="background:#333; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer;">❤️ Like (40)</button>
+                </div>
+            </div>
         </div>
 
-        <!-- Mod Yuklash Bo'limi -->
-        <div class="card">
-            <h2>📦 Mod Yuklash</h2>
-            <p>O'zingiz yasagan modlarni bu yerga joylang:</p>
-            <input type="text" placeholder="Mod nomi...">
-            <br>
-            <input type="file">
-            <br>
-            <button onclick="alert('Mod muvaffaqiyatli qabul qilindi!')">Modni Yuklash</button>
+        <!-- 2. MOD YUKLASH BO'LIMI (+) -->
+        <div id="upload" class="section">
+            <div class="form-card">
+                <h2>Mod Yuklash Bo'limi</h2>
+                <input type="text" placeholder="Mod nomi...">
+                <textarea placeholder="Mod haqida sharh va tavsif..." rows="4"></textarea>
+                <label>Mod rasmini tanlang:</label>
+                <input type="file" accept="image/*">
+                <label>Mod faylini (.zip / .mcpack) tanlang:</label>
+                <input type="file">
+                <button onclick="alert('Mod tekshiruvga yuborildi!')">Joylash</button>
+            </div>
+        </div>
+
+        <!-- 3. PROFIL BO'LIMI -->
+        <div id="profile" class="section">
+            <div class="form-card" style="text-align: center;">
+                <h2>Foydalanuvchi Profili</h2>
+                <p>Google orqali kiring va o'znikingizni yarating:</p>
+                <button style="background: #db4437; margin-bottom: 15px;" onclick="alert('Google orqali kirish Supabase ulangandan so\'ng ishlaydi!')">Google bilan kirish</button>
+                <hr style="border-color: #333; margin: 20px 0;">
+                <input type="text" placeholder="Noyob Nikneym (Username)..." id="nik-input">
+                <button onclick="alert('Nik saqlandi!')">Nerni Tasdiqlash</button>
+            </div>
         </div>
     </div>
 
     <script>
-        function saveProfile() {
-            const name = document.getElementById('username').value;
-            if(name) {
-                const randomId = Math.floor(10000 + Math.random() * 90000);
-                document.getElementById('profile-info').innerText = `Xush kelibsiz, ${name}! Sizning ID raqamingiz: #${randomId}`;
-            } else {
-                alert('Iltimos, ismingizni kiriting!');
-            }
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
         }
     </script>
 </body>
