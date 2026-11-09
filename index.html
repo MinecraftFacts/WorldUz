@@ -11,7 +11,6 @@
             --bg-color: #0b0b10;
             --panel-bg: #14141f;
             --accent-green: #00ff88;
-            --accent-orange: #ff9800;
             --text-main: #ffffff;
             --text-muted: #a0a0b2;
             --border-color: #262638;
@@ -28,16 +27,10 @@
         nav { display: flex; justify-content: center; background: #101018; padding: 12px; gap: 12px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; }
         nav button { background: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-muted); font-size: 14px; cursor: pointer; font-weight: 700; padding: 10px 18px; border-radius: 10px; transition: 0.3s; }
         nav button.active, nav button:hover { background: var(--accent-green); color: #0b0b10; border-color: var(--accent-green); box-shadow: 0 0 15px rgba(0,255,136,0.4); transform: translateY(-2px); }
-        .btn-add { background: linear-gradient(135deg, #ff9800, #ff5722) !important; color: white !important; border: none !important; }
 
         .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
-        .section { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .section { display: none; }
         .section.active { display: block; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
 
         .mods-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         @media (max-width: 768px) {
@@ -64,8 +57,8 @@
         /* Accounts & Chat Styles */
         .accounts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
         .account-card { background: var(--panel-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 14px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px; }
-        .account-card:hover { border-color: var(--accent-orange); transform: translateY(-3px); box-shadow: 0 5px 20px rgba(255,152,0,0.2); }
-        .acc-avatar { width: 50px; height: 50px; border-radius: 50%; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 2px solid var(--accent-orange); }
+        .account-card:hover { border-color: var(--accent-green); transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,255,136,0.2); }
+        .acc-avatar { width: 50px; height: 50px; border-radius: 50%; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 2px solid var(--accent-green); }
         
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
         .modal-content { background: var(--panel-bg); border: 2px solid var(--border-color); width: 100%; max-width: 550px; border-radius: 18px; padding: 25px; position: relative; max-height: 85vh; overflow-y: auto; box-shadow: 0 15px 40px rgba(0,0,0,0.7); }
@@ -86,8 +79,8 @@
 
     <nav>
         <button onclick="switchTab('home', this)" class="active">🏠 Home</button>
-        <button onclick="switchTab('accounts', this)" id="nav-acc-btn">👥 Accountlar</button>
-        <button onclick="switchTab('upload', this)" class="btn-add">➕ Mod Yuklash</button>
+        <button onclick="switchTab('accounts', this)">👥 Accountlar</button>
+        <button onclick="switchTab('upload', this)">➕ Mod Yuklash</button>
         <button onclick="switchTab('profile', this)">👤 Profil</button>
     </nav>
 
@@ -116,7 +109,7 @@
 
         <!-- 2. ACCOUNTS / ACCOUNTLAR BO'LIMI -->
         <div id="accounts" class="section">
-            <h2 style="color: var(--accent-orange);">🌐 Ro'yxatdan o'tgan Accountlar</h2>
+            <h2 style="color: var(--accent-green);">🌐 Ro'yxatdan o'tgan Accountlar</h2>
             <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Istalgan foydalanuvchi ustiga bosing, uning profilini ko'ring va chat orqali yozishingiz mumkin:</p>
             <div id="accounts-list" class="accounts-grid">
                 <!-- Dinamik to'ldiriladi -->
@@ -126,7 +119,7 @@
         <!-- 3. MOD YUKLASH -->
         <div id="upload" class="section">
             <div class="card-box" style="max-width: 600px; text-align: left;">
-                <h2 style="text-align: center; color: var(--accent-orange);">📦 Mod Joylash</h2>
+                <h2 style="text-align: center; color: var(--accent-green);">📦 Mod Joylash</h2>
                 <label>Mod nomi:</label>
                 <input type="text" placeholder="Mod nomi...">
                 <label>Sharh va tavsif:</label>
@@ -135,7 +128,7 @@
                 <input type="file" accept="image/*">
                 <label>Mod fayli (.zip / .mcpack):</label>
                 <input type="file">
-                <button style="background: var(--accent-orange); color: white;">Joylash</button>
+                <button>Joylash</button>
             </div>
         </div>
 
@@ -159,7 +152,7 @@
 
             <!-- B) YANGI AKKAUNT OCHISH OYNASI (Register) -->
             <div id="register-card" class="card-box" style="display: none;">
-                <h2 style="color: var(--accent-orange);">Yangi akkaunt ochish</h2>
+                <h2 style="color: var(--accent-green);">Yangi akkaunt ochish</h2>
                 <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 15px;">Ma'lumotlaringizni kiriting:</p>
                 
                 <input type="text" id="reg-username" placeholder="Username..." oninput="checkUsername(this.value)">
@@ -170,9 +163,9 @@
                 <input type="password" id="reg-password-confirm" placeholder="Parolni tasdiqlang..." oninput="checkPasswordsMatch()">
                 <span id="password-error" class="error-text"></span>
 
-                <button style="background: var(--accent-orange); color: #fff;" onclick="registerUser()">Ro'yxatdan o'tish</button>
+                <button onclick="registerUser()">Ro'yxatdan o'tish</button>
                 <br>
-                <span class="switch-link" onclick="showLogin()" style="color: var(--accent-orange);">Akauntingiz bormi? Kirish</span>
+                <span class="switch-link" onclick="showLogin()">Akauntingiz bormi? Kirish</span>
             </div>
 
             <!-- C) PROFIL KO'RINISHI -->
@@ -182,7 +175,7 @@
                     <span style="font-size: 35px;">👤</span>
                 </div>
                 <p><b>Username:</b> <span id="display-username" style="color: var(--accent-green);"></span></p>
-                <p><b>ID (Tartib raqami):</b> <span id="display-id" style="color: var(--accent-orange);"></span></p>
+                <p><b>ID (Tartib raqami):</b> <span id="display-id" style="color: var(--accent-green);"></span></p>
                 <hr style="border-color: var(--border-color); margin: 15px 0;">
                 <h4 style="text-align: left; color: var(--text-muted); margin-bottom: 5px;">Sizning modlaringiz:</h4>
                 <p style="color: #666; font-size: 13px; text-align: left;">Hozircha modlar yuklamagansiz.</p>
@@ -191,7 +184,7 @@
         </div>
     </div>
 
-    <!-- FOYDALANUVCHI PROFili VA CHAT MODALI -->
+    <!-- FOYDALANUVCHI PROFILI VA CHAT MODALI -->
     <div id="user-modal" class="modal-overlay">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -200,7 +193,7 @@
                     <span style="font-size: 28px;">👤</span>
                 </div>
                 <h2 id="modal-username" style="color: var(--accent-green); margin: 5px 0;"></h2>
-                <p style="color: var(--accent-orange); font-weight: bold; margin: 0;">ID: <span id="modal-id"></span></p>
+                <p style="color: var(--accent-green); font-weight: bold; margin: 0;">ID: <span id="modal-id"></span></p>
             </div>
             <hr style="border-color: var(--border-color); margin: 20px 0;">
             <h4 style="color: var(--text-muted); margin-bottom: 8px;">📦 Foydalanuvchi tashlagan modlar:</h4>
@@ -238,7 +231,7 @@
             document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            btn.classList.add('active');
+            if(btn) btn.classList.add('active');
             if(tabId === 'accounts') {
                 loadAccounts();
             }
@@ -421,7 +414,7 @@
                     <div class="acc-avatar">👤</div>
                     <div>
                         <h4 style="margin: 0 0 4px 0; color: var(--text-main);">${acc.username}</h4>
-                        <span style="font-size: 12px; color: var(--accent-orange); font-weight: bold;">ID: ${acc.unique_id}</span>
+                        <span style="font-size: 12px; color: var(--accent-green); font-weight: bold;">ID: ${acc.unique_id}</span>
                     </div>
                 `;
                 listContainer.appendChild(card);
