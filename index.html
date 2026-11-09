@@ -78,16 +78,16 @@
     <header>
         <div class="logo-area">
             <div class="logo">⚡ Minecraft Facts UZ</div>
-            <span class="version-badge">V0.1</span>
+            <span class="version-badge">V0.2</span>
         </div>
         <input type="text" class="search-box" placeholder="🔍 Modlarni qidirish...">
     </header>
 
     <nav>
-        <button type="button" onclick="switchTab('home', this)" class="active">🏠 Home</button>
-        <button type="button" onclick="switchTab('accounts', this)">👥 Accountlar</button>
-        <button type="button" onclick="switchTab('upload', this)">➕ Mod Yuklash</button>
-        <button type="button" onclick="switchTab('profile', this)">👤 Profil</button>
+        <button type="button" onclick="window.switchTab('home', this)" class="active">🏠 Home</button>
+        <button type="button" onclick="window.switchTab('accounts', this)">👥 Accountlar</button>
+        <button type="button" onclick="window.switchTab('upload', this)">➕ Mod Yuklash</button>
+        <button type="button" onclick="window.switchTab('profile', this)">👤 Profil</button>
     </nav>
 
     <div class="container">
@@ -151,9 +151,9 @@
                 <input type="password" id="login-password" placeholder="Parol...">
                 <span id="login-pass-error" class="error-text"></span>
 
-                <button type="button" onclick="loginUser()">Kirish</button>
+                <button type="button" onclick="window.loginUser()">Kirish</button>
                 <br>
-                <span class="switch-link" onclick="showRegister()">Yangi akkaunt ochish</span>
+                <span class="switch-link" onclick="window.showRegister()">Yangi akkaunt ochish</span>
             </div>
 
             <!-- B) REGISTER -->
@@ -161,17 +161,17 @@
                 <h2 style="color: var(--accent-green);">Yangi akkaunt ochish</h2>
                 <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 15px;">Ma'lumotlaringizni kiriting:</p>
                 
-                <input type="text" id="reg-username" placeholder="Username..." oninput="checkUsername(this.value)">
+                <input type="text" id="reg-username" placeholder="Username..." oninput="window.checkUsername(this.value)">
                 <span id="username-status" class="status-text"></span>
 
                 <input type="password" id="reg-password" placeholder="Parol...">
                 
-                <input type="password" id="reg-password-confirm" placeholder="Parolni tasdiqlang..." oninput="checkPasswordsMatch()">
+                <input type="password" id="reg-password-confirm" placeholder="Parolni tasdiqlang..." oninput="window.checkPasswordsMatch()">
                 <span id="password-error" class="error-text"></span>
 
-                <button type="button" onclick="registerUser()">Ro'yxatdan o'tish</button>
+                <button type="button" onclick="window.registerUser()">Ro'yxatdan o'tish</button>
                 <br>
-                <span class="switch-link" onclick="showLogin()">Akauntingiz bormi? Kirish</span>
+                <span class="switch-link" onclick="window.showLogin()">Akauntingiz bormi? Kirish</span>
             </div>
 
             <!-- C) PROFILE VIEW -->
@@ -185,7 +185,7 @@
                 <hr style="border-color: var(--border-color); margin: 15px 0;">
                 <h4 style="text-align: left; color: var(--text-muted); margin-bottom: 5px;">Sizning modlaringiz:</h4>
                 <p style="color: #666; font-size: 13px; text-align: left;">Hozircha modlar yuklamagansiz.</p>
-                <button type="button" style="background: #ff4757; color: white;" onclick="logout()">Chiqish</button>
+                <button type="button" style="background: #ff4757; color: white;" onclick="window.logout()">Chiqish</button>
             </div>
         </div>
     </div>
@@ -193,7 +193,7 @@
     <!-- MODAL -->
     <div id="user-modal" class="modal-overlay">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <span class="close-btn" onclick="window.closeModal()">&times;</span>
             <div style="text-align: center;">
                 <div class="avatar-preview" style="width: 70px; height: 70px;">
                     <span style="font-size: 28px;">👤</span>
@@ -213,13 +213,13 @@
             </div>
             <div style="display: flex; gap: 10px; margin-top: 10px;">
                 <input type="text" id="chat-input" placeholder="Xabar yozish..." style="margin:0; flex: 1; padding: 10px; background: #0b0b10; border: 1px solid var(--border-color); color: white; border-radius: 8px; outline: none;">
-                <button type="button" onclick="sendChatMessage()" style="margin:0; width: 100px; padding: 10px; background: var(--accent-green); color: #0b0b10; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Yuborish</button>
+                <button type="button" onclick="window.sendChatMessage()" style="margin:0; width: 100px; padding: 10px; background: var(--accent-green); color: #0b0b10; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Yuborish</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Xavfsiz Supabase ulanishi
+        // Supabase ulanishi
         let supabase = null;
         try {
             if (window.supabase) {
@@ -243,7 +243,6 @@
         }
 
         function switchTab(tabId, btn) {
-            // Bo'limlarni yangilash
             document.querySelectorAll('.section').forEach(sec => {
                 sec.classList.remove('active');
             });
@@ -496,7 +495,7 @@
                 data.forEach(acc => {
                     const card = document.createElement('div');
                     card.className = 'account-card';
-                    card.onclick = () => openUserProfile(acc.username, acc.unique_id);
+                    card.onclick = () => window.openUserProfile(acc.username, acc.unique_id);
                     card.innerHTML = `
                         <div class="acc-avatar">👤</div>
                         <div>
@@ -529,3 +528,44 @@
         function sendChatMessage() {
             const input = document.getElementById('chat-input');
             if(!input) return;
+            const val = input.value.trim();
+            if(!val) return;
+
+            const chatBox = document.getElementById('chat-messages');
+            if(!chatBox) return;
+
+            const msg = document.createElement('div');
+            msg.className = 'chat-msg mine';
+            msg.innerText = val;
+            chatBox.appendChild(msg);
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function logout() {
+            localStorage.removeItem('mc_active_user');
+            clearLoginErrors();
+            clearRegisterErrors();
+            
+            const pCard = document.getElementById('profile-card');
+            const lCard = document.getElementById('login-card');
+            if(pCard) pCard.style.display = 'none';
+            if(lCard) lCard.style.display = 'block';
+        }
+
+        // Barcha funksiyalarni global window obyektiga ulaymiz (tugmalar ishlamay qolmasligi uchun):
+        window.switchTab = switchTab;
+        window.showRegister = showRegister;
+        window.showLogin = showLogin;
+        window.checkUsername = checkUsername;
+        window.checkPasswordsMatch = checkPasswordsMatch;
+        window.registerUser = registerUser;
+        window.loginUser = loginUser;
+        window.loadAccounts = loadAccounts;
+        window.openUserProfile = openUserProfile;
+        window.closeModal = closeModal;
+        window.sendChatMessage = sendChatMessage;
+        window.logout = logout;
+    </script>
+</body>
+</html>
