@@ -78,7 +78,7 @@
     <header>
         <div class="logo-area">
             <div class="logo">⚡ Minecraft Facts UZ</div>
-            <span class="version-badge">V0.2</span>
+            <span class="version-badge">V0.21</span>
         </div>
         <input type="text" class="search-box" placeholder="🔍 Modlarni qidirish...">
     </header>
@@ -219,6 +219,7 @@
     </div>
 
     <script>
+        (function () {
         // Supabase ulanishi
         let supabase = null;
         try {
@@ -566,6 +567,8 @@
         window.closeModal = closeModal;
         window.sendChatMessage = sendChatMessage;
         window.logout = logout;
-    </script>
+
+    })();
+</script>
 </body>
 </html>
