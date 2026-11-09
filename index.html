@@ -1,574 +1,953 @@
+
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft Facts UZ - Mods Platform</title>
-    <!-- Supabase Kutubxonasi -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        :root {
-            --bg-color: #0b0b10;
-            --panel-bg: #14141f;
-            --accent-green: #00ff88;
-            --text-main: #ffffff;
-            --text-muted: #a0a0b2;
-            --border-color: #262638;
-        }
-
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; box-sizing: border-box; }
-        *, *:before, *:after { box-sizing: inherit; }
-
-        header { background: linear-gradient(135deg, #181829, #0d0d14); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--accent-green); box-shadow: 0 4px 20px rgba(0,255,136,0.15); flex-wrap: wrap; gap: 15px; }
-        .logo-area { display: flex; align-items: center; gap: 10px; }
-        .logo { font-size: 22px; font-weight: 800; color: var(--accent-green); text-shadow: 0 0 12px rgba(0,255,136,0.6); letter-spacing: 0.5px; }
-        .version-badge { background: var(--accent-green); color: #0b0b10; font-size: 11px; font-weight: 900; padding: 3px 8px; border-radius: 6px; box-shadow: 0 0 8px rgba(0,255,136,0.4); }
-        
-        .search-box { width: 100%; max-width: 320px; padding: 10px 18px; border-radius: 25px; border: 2px solid var(--border-color); background: #1a1a26; color: white; outline: none; transition: 0.3s; }
-        .search-box:focus { border-color: var(--accent-green); box-shadow: 0 0 10px rgba(0,255,136,0.3); }
-        
-        nav { display: flex; justify-content: center; background: #101018; padding: 12px; gap: 12px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; z-index: 10; position: relative; }
-        nav button { background: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-muted); font-size: 14px; cursor: pointer; font-weight: 700; padding: 10px 18px; border-radius: 10px; transition: 0.3s; }
-        nav button.active, nav button:hover { background: var(--accent-green); color: #0b0b10; border-color: var(--accent-green); box-shadow: 0 0 15px rgba(0,255,136,0.4); transform: translateY(-2px); }
-
-        .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
-        .section { display: none; }
-        .section.active { display: block; }
-
-        .mods-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        @media (max-width: 768px) {
-            .mods-grid { grid-template-columns: 1fr; }
-        }
-
-        .mod-card { background: var(--panel-bg); border-radius: 14px; overflow: hidden; padding: 18px; border: 1px solid var(--border-color); transition: 0.3s; }
-        .mod-card:hover { border-color: var(--accent-green); box-shadow: 0 6px 20px rgba(0,255,136,0.15); }
-        .mod-card img { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; }
-        .mod-card h3 { margin: 14px 0 6px 0; font-size: 18px; color: var(--accent-green); }
-        
-        .card-box { background: var(--panel-bg); padding: 30px; border-radius: 18px; max-width: 480px; width: 100%; margin: auto; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: center; }
-        .card-box input, .card-box textarea { width: 100%; padding: 12px 15px; margin: 8px 0; background: #0b0b10; border: 2px solid var(--border-color); color: white; border-radius: 10px; box-sizing: border-box; outline: none; transition: 0.3s; }
-        .card-box input:focus, .card-box textarea:focus { border-color: var(--accent-green); }
-        .card-box button { background: var(--accent-green); color: #0b0b10; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: 800; cursor: pointer; margin-top: 15px; transition: 0.3s; }
-        .card-box button:hover { background: #00cc6a; box-shadow: 0 0 15px rgba(0,255,136,0.5); }
-
-        .error-text { color: #ff4757; font-size: 12px; text-align: left; margin-bottom: 6px; display: block; font-weight: 600; }
-        .status-text { font-size: 13px; text-align: left; margin-bottom: 6px; display: block; font-weight: bold; }
-        .switch-link { color: var(--accent-green); cursor: pointer; margin-top: 15px; display: inline-block; font-size: 14px; text-decoration: underline; font-weight: 600; }
-
-        .avatar-preview { width: 90px; height: 90px; border-radius: 50%; background: #1a1a26; margin: 0 auto 15px auto; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 3px solid var(--accent-green); box-shadow: 0 0 15px rgba(0,255,136,0.3); }
-
-        /* Accounts & Chat Styles */
-        .accounts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
-        .account-card { background: var(--panel-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 14px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px; }
-        .account-card:hover { border-color: var(--accent-green); transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,255,136,0.2); }
-        .acc-avatar { width: 50px; height: 50px; border-radius: 50%; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 2px solid var(--accent-green); }
-        
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
-        .modal-content { background: var(--panel-bg); border: 2px solid var(--border-color); width: 100%; max-width: 550px; border-radius: 18px; padding: 25px; position: relative; max-height: 85vh; overflow-y: auto; box-shadow: 0 15px 40px rgba(0,0,0,0.7); }
-        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: var(--text-muted); transition: 0.2s; }
-        .close-btn:hover { color: #ff4757; }
-
-        .chat-box { margin-top: 15px; background: #0b0b10; border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .chat-msg { background: #1a1a26; padding: 8px 12px; border-radius: 8px; font-size: 13px; max-width: 80%; }
-        .chat-msg.mine { background: #005533; align-self: flex-end; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Minecraft Facts UZ — V0.3</title>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg:#0b0b10;--panel:#14141f;--line:#303044;
+  --green:#00ef8b;--text:#f8f8ff;--muted:#aaaac0
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font:15px/1.5 system-ui,"Segoe UI",sans-serif
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}
+header{
+  background:linear-gradient(135deg,#1b1b2b,#101019);
+  border-bottom:2px solid var(--green);
+  padding:16px max(20px,calc((100vw - 1080px)/2));
+  display:flex;align-items:center;justify-content:space-between;
+  gap:15px;flex-wrap:wrap
+}
+.logo{
+  display:flex;align-items:center;gap:10px;
+  font-weight:900;font-size:21px;color:var(--green)
+}
+.version{
+  background:var(--green);color:#082016;font-size:11px;
+  font-weight:900;border-radius:6px;padding:3px 9px
+}
+input,textarea{
+  background:#0c0c16;color:white;border:1px solid var(--line);
+  outline:0;border-radius:11px;padding:13px;width:100%;min-width:0
+}
+input:focus,textarea:focus{border-color:var(--green)}
+textarea{resize:vertical}
+input[type=file]{font-size:13px}
+label{display:grid;gap:6px;font-weight:600}
+.search{max-width:290px}
+.wrap{max-width:1080px;margin:0 auto;padding:26px 20px 110px}
+.page{display:none}
+.page.active{display:block}
+.hero{
+  background:radial-gradient(ellipse at 90% 10%,#13402e,#181827 60%);
+  border:1px solid #345343;border-radius:21px;
+  padding:34px;margin-bottom:25px
+}
+.hero small{color:var(--green);letter-spacing:2px;font-weight:800}
+.hero h1{
+  font-size:clamp(29px,4vw,48px);
+  line-height:1.14;margin:12px 0
+}
+.hero h1 em{color:var(--green);font-style:normal}
+.hero p{color:var(--muted);margin:0}
+h2{font-size:23px;margin:22px 0 15px}
+.muted{color:var(--muted)}
+.grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:17px
+}
+.card,.panel{
+  border:1px solid var(--line);
+  background:var(--panel);border-radius:17px;overflow:hidden
+}
+.card{cursor:pointer;transition:.15s}
+.card:hover{border-color:var(--green);transform:translateY(-2px)}
+.card img{
+  display:block;width:100%;height:177px;
+  object-fit:cover;background:#1b2b29
+}
+.card .inside{padding:14px}
+.card h3{
+  margin:0;font-size:17px;color:var(--green);
+  overflow-wrap:anywhere
+}
+.card p{color:var(--muted);font-size:13px;margin:6px 0}
+.panel{padding:23px;max-width:620px;margin:12px auto}
+.form{display:grid;gap:15px}
+.btn{
+  border:0;border-radius:11px;padding:13px 17px;
+  background:var(--green);color:#08160f;font-weight:900
+}
+.alt{background:#252539;color:#f0f0f5;border:1px solid var(--line)}
+.red{background:#ff5a70;color:#19070c}
+.tiny{font-size:12px;color:var(--muted)}
+.row{display:flex;align-items:center;gap:12px}
+.row.between{justify-content:space-between}
+.avatar{
+  width:75px;height:75px;border:2px solid var(--green);
+  border-radius:50%;background:#26392f;object-fit:cover
+}
+.account{
+  display:flex;gap:13px;align-items:center;
+  padding:16px;cursor:pointer
+}
+.account h3{margin:0}
+.account:hover{border-color:var(--green)}
+nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:min(100%,480px);padding:10px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  background:#171722f2;border:1px solid #3d3d4f;
+  border-bottom:0;border-radius:20px 20px 0 0;
+  z-index:15;backdrop-filter:blur(12px)
+}
+nav button{
+  border:0;background:#202030;color:#aaaac0;
+  height:55px;border-radius:13px
+}
+nav button.active{background:#075d39;color:#6affb8}
+nav svg{
+  display:block;fill:none;stroke:currentColor;
+  stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+  width:25px;height:25px;margin:auto
+}
+[hidden]{display:none!important}
+.modal{
+  position:fixed;inset:0;background:#000c;
+  display:grid;place-items:center;z-index:50;padding:15px
+}
+.modal-body{
+  width:min(100%,630px);max-height:90vh;overflow:auto;
+  position:relative;background:#171724;
+  border:1px solid #47475c;border-radius:18px;padding:22px
+}
+.x{
+  float:right;border:0;background:#333344;
+  color:white;border-radius:9px;padding:7px 11px
+}
+.gallery{display:flex;gap:7px;overflow:auto;margin:10px 0}
+.gallery img{
+  width:85px;height:64px;object-fit:cover;
+  border-radius:9px;cursor:pointer
+}
+.cover{
+  width:100%;height:240px;object-fit:cover;
+  border-radius:12px;background:#152821
+}
+.chat{
+  height:225px;overflow:auto;display:flex;flex-direction:column;
+  gap:8px;padding:12px;background:#0a0a13;
+  border:1px solid var(--line);border-radius:12px
+}
+.bubble{
+  padding:8px 12px;background:#252536;
+  border-radius:10px;max-width:82%;overflow-wrap:anywhere
+}
+.bubble.mine{align-self:flex-end;background:#075d39}
+.bubble small{display:block;opacity:.7;font-size:10px}
+.preview{display:flex;gap:8px;flex-wrap:wrap}
+.preview img{
+  width:83px;height:65px;object-fit:cover;border-radius:9px
+}
+#status{
+  position:fixed;bottom:92px;left:50%;transform:translateX(-50%);
+  background:#23513c;border:1px solid #478b69;
+  border-radius:13px;padding:12px 17px;z-index:100;
+  max-width:95%;display:none;box-shadow:0 10px 25px #0008
+}
+@media(max-width:700px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .card img{height:130px}
+  .card .inside{padding:11px}
+  .card h3{font-size:14px}
+  .hero{padding:25px 18px}
+  .panel{padding:17px}
+  .search{max-width:100%}
+  .logo{font-size:17px}
+}
+</style>
 </head>
 <body>
 
-    <header>
-        <div class="logo-area">
-            <div class="logo">⚡ Minecraft Facts UZ</div>
-            <span class="version-badge">V0.21</span>
-        </div>
-        <input type="text" class="search-box" placeholder="🔍 Modlarni qidirish...">
-    </header>
+<header>
+  <div class="logo">
+    ⚡ Minecraft Facts UZ <span class="version">V0.3</span>
+  </div>
+  <input id="search" class="search" type="search"
+    placeholder="🔎 Mod qidirish..." aria-label="Mod qidirish">
+</header>
 
-    <nav>
-        <button type="button" onclick="window.switchTab('home', this)" class="active">🏠 Home</button>
-        <button type="button" onclick="window.switchTab('accounts', this)">👥 Accountlar</button>
-        <button type="button" onclick="window.switchTab('upload', this)">➕ Mod Yuklash</button>
-        <button type="button" onclick="window.switchTab('profile', this)">👤 Profil</button>
-    </nav>
+<main class="wrap">
 
-    <div class="container">
-        <!-- 1. HOME -->
-        <div id="home" class="section active">
-            <h2>🔥 Eng so'nggi Modlar</h2>
-            <div class="mods-grid">
-                <div class="mod-card">
-                    <img src="https://via.placeholder.com/300x150" alt="Mod">
-                    <h3>Super Physics Mod</h3>
-                    <p style="color: var(--text-muted); font-size: 14px;">O'yinga realistik fizika qo'shadi.</p>
-                </div>
-                <div class="mod-card">
-                    <img src="https://via.placeholder.com/300x150" alt="Mod">
-                    <h3>Custom Swords</h3>
-                    <p style="color: var(--text-muted); font-size: 14px;">Yangi turdagi qilichlar to'plami.</p>
-                </div>
-                <div class="mod-card">
-                    <img src="https://via.placeholder.com/300x150" alt="Mod">
-                    <h3>Pixel Shader</h3>
-                    <p style="color: var(--text-muted); font-size: 14px;">Grafikani yanada chiroyli qiladi.</p>
-                </div>
-            </div>
-        </div>
+<section id="home" class="page active">
+  <div class="hero">
+    <small>O‘ZBEK MINECRAFT JAMOASI</small>
+    <h1>Yangi modlarni <em>kashf et!</em></h1>
+    <p>O‘yinchilar yaratgan modlarni ko‘ring va yuklab oling.</p>
+  </div>
+  <div class="row between">
+    <h2>🔥 Eng so‘nggi modlar</h2>
+    <span id="mod-count" class="muted">0 ta</span>
+  </div>
+  <div id="mods" class="grid">
+    <p class="muted">Yuklanmoqda...</p>
+  </div>
+</section>
 
-        <!-- 2. ACCOUNTS -->
-        <div id="accounts" class="section">
-            <h2 style="color: var(--accent-green);">🌐 Ro'yxatdan o'tgan Accountlar</h2>
-            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Istalgan foydalanuvchi ustiga bosing, uning profilini ko'ring va chat orqali yozishingiz mumkin:</p>
-            <div id="accounts-list" class="accounts-grid">
-                <p style="color: var(--text-muted);">Yuklanmoqda...</p>
-            </div>
-        </div>
+<section id="accounts" class="page">
+  <h2>👥 Accountlar</h2>
+  <p class="muted">
+    O‘yinchilar profilini ko‘rish va akkauntga kirib
+    xabar yozish mumkin.
+  </p>
+  <div id="accounts-list" class="grid"></div>
+</section>
 
-        <!-- 3. MOD YUKLASH -->
-        <div id="upload" class="section">
-            <div class="card-box" style="max-width: 600px; text-align: left;">
-                <h2 style="text-align: center; color: var(--accent-green);">📦 Mod Joylash</h2>
-                <label>Mod nomi:</label>
-                <input type="text" placeholder="Mod nomi...">
-                <label>Sharh va tavsif:</label>
-                <textarea rows="3" placeholder="Mod haqida qisqacha..."></textarea>
-                <label>Mod rasmi:</label>
-                <input type="file" accept="image/*">
-                <label>Mod fayli (.zip / .mcpack):</label>
-                <input type="file">
-                <button type="button" onclick="alert('Mod tez orada qo‘shiladi!')">Joylash</button>
-            </div>
-        </div>
+<section id="upload" class="page">
+  <h2>➕ Mod yuklash</h2>
+  <div id="upload-gate" class="panel">
+    Mod qo‘shish uchun avval Profil bo‘limida akkauntingizga kiring.
+  </div>
+  <form id="upload-form" class="panel form" hidden>
+    <label>Mod nomi *
+      <input id="mod-title" minlength="3" maxlength="70" required>
+    </label>
+    <label>Mod haqida *
+      <textarea id="mod-description" minlength="10"
+        maxlength="2500" rows="4" required></textarea>
+    </label>
+    <label>1–5 ta rasm *
+      <input id="mod-images" type="file" multiple
+        accept="image/jpeg,image/png,image/webp" required>
+    </label>
+    <div class="preview" id="image-preview"></div>
+    <label>Mod fayli * (.mcpack / .mcaddon / .zip / .jar)
+      <input id="mod-file" type="file"
+        accept=".mcpack,.mcaddon,.zip,.jar" required>
+    </label>
+    <p class="tiny">
+      Rasm: 5 MB gacha. Mod: 50 MB gacha.
+      Faqat ishonchli va ulashishga ruxsat etilgan fayllar.
+    </p>
+    <button class="btn" id="upload-button" type="submit">
+      Modni e’lon qilish
+    </button>
+  </form>
+</section>
 
-        <!-- 4. PROFIL -->
-        <div id="profile" class="section">
-            <!-- A) LOGIN -->
-            <div id="login-card" class="card-box">
-                <h2 style="color: var(--accent-green);">Akkauntga kirish</h2>
-                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 15px;">Mavjud profilingizga kiring:</p>
-                
-                <input type="text" id="login-username" placeholder="Username...">
-                <span id="login-user-error" class="error-text"></span>
+<section id="profile" class="page">
+  <h2>👤 Profil</h2>
 
-                <input type="password" id="login-password" placeholder="Parol...">
-                <span id="login-pass-error" class="error-text"></span>
+  <div id="auth-box" class="panel">
+    <h3 id="auth-heading">Akkauntga kirish</h3>
+    <form id="auth-form" class="form">
+      <label>Username
+        <input id="username" required autocomplete="username"
+          minlength="3" maxlength="20"
+          placeholder="masalan: minecraft_uz">
+      </label>
+      <label>Parol
+        <input id="password" type="password"
+          minlength="8" required autocomplete="current-password">
+      </label>
+      <label id="repeat-box" hidden>Parolni takrorlash
+        <input id="password-repeat" type="password" minlength="8">
+      </label>
+      <button id="auth-button" class="btn" type="submit">
+        Kirish
+      </button>
+    </form>
+    <button id="switch-auth" class="btn alt"
+      style="margin-top:12px;width:100%">
+      Yangi akkaunt ochish
+    </button>
+    <p class="tiny">
+      Bu versiyada email kiritilmaydi;
+      unutilgan parolni tiklab bo‘lmaydi.
+    </p>
+  </div>
 
-                <button type="button" onclick="window.loginUser()">Kirish</button>
-                <br>
-                <span class="switch-link" onclick="window.showRegister()">Yangi akkaunt ochish</span>
-            </div>
-
-            <!-- B) REGISTER -->
-            <div id="register-card" class="card-box" style="display: none;">
-                <h2 style="color: var(--accent-green);">Yangi akkaunt ochish</h2>
-                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 15px;">Ma'lumotlaringizni kiriting:</p>
-                
-                <input type="text" id="reg-username" placeholder="Username..." oninput="window.checkUsername(this.value)">
-                <span id="username-status" class="status-text"></span>
-
-                <input type="password" id="reg-password" placeholder="Parol...">
-                
-                <input type="password" id="reg-password-confirm" placeholder="Parolni tasdiqlang..." oninput="window.checkPasswordsMatch()">
-                <span id="password-error" class="error-text"></span>
-
-                <button type="button" onclick="window.registerUser()">Ro'yxatdan o'tish</button>
-                <br>
-                <span class="switch-link" onclick="window.showLogin()">Akauntingiz bormi? Kirish</span>
-            </div>
-
-            <!-- C) PROFILE VIEW -->
-            <div id="profile-card" class="card-box" style="display: none;">
-                <h2>Foydalanuvchi Profili</h2>
-                <div class="avatar-preview">
-                    <span style="font-size: 35px;">👤</span>
-                </div>
-                <p><b>Username:</b> <span id="display-username" style="color: var(--accent-green);"></span></p>
-                <p><b>ID (Tartib raqami):</b> <span id="display-id" style="color: var(--accent-green);"></span></p>
-                <hr style="border-color: var(--border-color); margin: 15px 0;">
-                <h4 style="text-align: left; color: var(--text-muted); margin-bottom: 5px;">Sizning modlaringiz:</h4>
-                <p style="color: #666; font-size: 13px; text-align: left;">Hozircha modlar yuklamagansiz.</p>
-                <button type="button" style="background: #ff4757; color: white;" onclick="window.logout()">Chiqish</button>
-            </div>
-        </div>
+  <div id="profile-box" hidden>
+    <div class="panel row">
+      <img id="my-avatar" class="avatar" alt="Avatar">
+      <div>
+        <h3 id="my-name"></h3>
+        <p class="muted" id="my-username"></p>
+      </div>
     </div>
-
-    <!-- MODAL -->
-    <div id="user-modal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="close-btn" onclick="window.closeModal()">&times;</span>
-            <div style="text-align: center;">
-                <div class="avatar-preview" style="width: 70px; height: 70px;">
-                    <span style="font-size: 28px;">👤</span>
-                </div>
-                <h2 id="modal-username" style="color: var(--accent-green); margin: 5px 0;"></h2>
-                <p style="color: var(--accent-green); font-weight: bold; margin: 0;">ID: <span id="modal-id"></span></p>
-            </div>
-            <hr style="border-color: var(--border-color); margin: 20px 0;">
-            <h4 style="color: var(--text-muted); margin-bottom: 8px;">📦 Foydalanuvchi tashlagan modlar:</h4>
-            <div id="modal-user-mods" style="background: #0b0b10; border: 1px solid var(--border-color); padding: 12px; border-radius: 10px; font-size: 13px; color: var(--text-muted);">
-                Hozircha modlar yuklamagan.
-            </div>
-
-            <h4 style="color: var(--text-muted); margin: 15px 0 8px 0;">💬 Shaxsiy Chat:</h4>
-            <div id="chat-messages" class="chat-box">
-                <div class="chat-msg">Salom! Xush kelibsiz.</div>
-            </div>
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <input type="text" id="chat-input" placeholder="Xabar yozish..." style="margin:0; flex: 1; padding: 10px; background: #0b0b10; border: 1px solid var(--border-color); color: white; border-radius: 8px; outline: none;">
-                <button type="button" onclick="window.sendChatMessage()" style="margin:0; width: 100px; padding: 10px; background: var(--accent-green); color: #0b0b10; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Yuborish</button>
-            </div>
-        </div>
+    <form id="profile-form" class="panel form">
+      <label>Nik
+        <input id="nickname" maxlength="35" required>
+      </label>
+      <label>Bio
+        <textarea id="bio" maxlength="240" rows="3"></textarea>
+      </label>
+      <label>Avatar (JPG / PNG / WEBP)
+        <input type="file" id="avatar-file"
+          accept="image/jpeg,image/png,image/webp">
+      </label>
+      <button class="btn" type="submit">Saqlash</button>
+    </form>
+    <div class="panel">
+      <button id="logout" class="btn red">
+        Akkauntdan chiqish
+      </button>
     </div>
+    <h2>📦 Mening modlarim</h2>
+    <div id="my-mods" class="grid"></div>
+  </div>
+</section>
 
-    <script>
-        (function () {
-        // Supabase ulanishi
-        let supabase = null;
-        try {
-            if (window.supabase) {
-                const SUPABASE_URL = 'https://swbnidsmwnqwjztrlorr.supabase.co';
-                const SUPABASE_KEY = 'sb_publishable_-yjtMQSDiq7_L1Z1NFcSQ_GiXFD';
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            }
-        } catch (e) {
-            console.error('Supabase xatosi:', e);
+</main>
+
+<nav aria-label="Asosiy menyu">
+  <button data-page="home" class="active"
+    title="Home" aria-label="Home">
+    <svg viewBox="0 0 24 24">
+      <path d="M3 10 12 3l9 7v11H3zM9 21v-8h6v8"/>
+    </svg>
+  </button>
+  <button data-page="accounts"
+    title="Accountlar" aria-label="Accountlar">
+    <svg viewBox="0 0 24 24">
+      <circle cx="9" cy="8" r="3"/>
+      <path d="M2 21v-2a7 7 0 0 1 14 0v2M17 5a3 3 0 0 1 0 6M18 14a6 6 0 0 1 4 6"/>
+    </svg>
+  </button>
+  <button data-page="upload"
+    title="Mod qo‘shish" aria-label="Mod qo‘shish">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 4v16M4 12h16"/>
+    </svg>
+  </button>
+  <button data-page="profile"
+    title="Profil" aria-label="Profil">
+    <svg viewBox="0 0 24 24">
+      <circle cx="12" cy="8" r="4"/>
+      <path d="M4 21a8 8 0 0 1 16 0"/>
+    </svg>
+  </button>
+</nav>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-body">
+    <button class="x" id="close-modal">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+<div id="status" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  const VERSION = 'V0.3';
+  document.querySelector('.version').textContent = VERSION;
+  document.title = 'Minecraft Facts UZ — ' + VERSION;
+
+  // Avval yuborilgan Supabase manzili va public kalit
+  const SUPABASE_URL = 'https://swbnidsmwnqwjztrlorr.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_-yjtMQSDiq7_L1Z1NFcSQ_GiXFD';
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g,
+    c => ({
+      '&':'&amp;', '<':'&lt;', '>':'&gt;',
+      '"':'&quot;', "'":'&#39;'
+    }[c])
+  );
+
+  const avatarDefault = 'data:image/svg+xml,' +
+    encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">' +
+      '<rect width="100" height="100" fill="#155334"/>' +
+      '<circle cx="50" cy="35" r="20" fill="#92f0b9"/>' +
+      '<path d="M12 95a38 38 0 0 1 76 0" fill="#92f0b9"/>' +
+      '</svg>'
+    );
+
+  let db;
+  let me = null;
+  let mods = [];
+  let members = [];
+  let selectedPerson = null;
+  let signup = false;
+  let alertTimer;
+
+  function message(s) {
+    const n = $('status');
+    n.textContent = s;
+    n.style.display = 'block';
+    clearTimeout(alertTimer);
+    alertTimer = setTimeout(() => n.style.display = 'none', 5000);
+  }
+
+  function error(e) {
+    console.error(e);
+    message('Xato: ' + (e?.message || String(e)));
+  }
+
+  function page(id) {
+    document.querySelectorAll('.page').forEach(x =>
+      x.classList.toggle('active', x.id === id)
+    );
+    document.querySelectorAll('nav button').forEach(x =>
+      x.classList.toggle('active', x.dataset.page === id)
+    );
+    scrollTo(0, 0);
+    if (id === 'accounts') loadMembers();
+  }
+
+  document.querySelectorAll('nav button').forEach(b =>
+    b.addEventListener('click', () => page(b.dataset.page))
+  );
+
+  function publicURL(bucket, path) {
+    return db && path
+      ? db.storage.from(bucket).getPublicUrl(path).data.publicUrl
+      : '';
+  }
+
+  function identity(username) {
+    return username.toLowerCase() + '@members.example.com';
+  }
+
+  function validUser(s) {
+    return /^[a-z0-9_]{3,20}$/.test(s);
+  }
+
+  function toggleSignup(value) {
+    signup = value;
+    $('auth-heading').textContent =
+      value ? 'Yangi akkaunt' : 'Akkauntga kirish';
+    $('repeat-box').hidden = !value;
+    $('password-repeat').required = value;
+    $('auth-button').textContent =
+      value ? 'Ro‘yxatdan o‘tish' : 'Kirish';
+    $('switch-auth').textContent =
+      value ? 'Kirishga qaytish' : 'Yangi akkaunt ochish';
+  }
+
+  $('switch-auth').onclick = () => toggleSignup(!signup);
+
+  async function apiReady() {
+    if (!window.supabase?.createClient) {
+      throw Error('Supabase kutubxonasi yuklanmadi. Internetni tekshiring.');
+    }
+    if (!db) {
+      db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+  }
+
+  async function getProfile() {
+    const {data, error:e} = await db
+      .from('mc_profiles')
+      .select('*')
+      .eq('id', me.id)
+      .single();
+    if (e) throw e;
+    return data;
+  }
+
+  async function refreshAuth() {
+    $('auth-box').hidden = !!me;
+    $('profile-box').hidden = !me;
+    $('upload-gate').hidden = !!me;
+    $('upload-form').hidden = !me;
+
+    if (!me) return;
+
+    try {
+      const p = await getProfile();
+      $('my-name').textContent = p.nickname || p.username;
+      $('my-username').textContent = '@' + p.username;
+      $('my-avatar').src =
+        publicURL('mc-avatars', p.avatar_path) || avatarDefault;
+      $('nickname').value = p.nickname || p.username;
+      $('bio').value = p.bio || '';
+      showMine();
+    } catch(e) {
+      error(e);
+    }
+  }
+
+  $('auth-form').addEventListener('submit', async ev => {
+    ev.preventDefault();
+
+    const username = $('username').value.trim().toLowerCase();
+    const password = $('password').value;
+
+    if (!validUser(username)) {
+      return message('Username: 3–20 ta kichik lotin harfi, raqam yoki _.');
+    }
+    if (signup && password !== $('password-repeat').value) {
+      return message('Parollar bir xil emas.');
+    }
+
+    const btn = $('auth-button');
+    btn.disabled = true;
+
+    try {
+      await apiReady();
+
+      const result = signup
+        ? await db.auth.signUp({
+            email: identity(username),
+            password,
+            options: {data: {username}}
+          })
+        : await db.auth.signInWithPassword({
+            email: identity(username),
+            password
+          });
+
+      if (result.error) throw result.error;
+      if (!result.data.session) {
+        throw Error(
+          'Supabase → Authentication → Providers → Email: ' +
+          'Confirm email ni o‘chiring.'
+        );
+      }
+
+      me = result.data.user;
+      $('auth-form').reset();
+      await refreshAuth();
+      message(signup ? 'Akkaunt ochildi!' : 'Xush kelibsiz!');
+    } catch(e) {
+      error(e);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  $('logout').onclick = async () => {
+    try {
+      await db.auth.signOut();
+      me = null;
+      await refreshAuth();
+      page('home');
+      message('Akkauntdan chiqildi.');
+    } catch(e) {
+      error(e);
+    }
+  };
+
+  $('profile-form').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    if (!me) return;
+
+    try {
+      const nickname = $('nickname').value.trim();
+      const bio = $('bio').value.trim();
+      const f = $('avatar-file').files[0];
+
+      if (!nickname) return message('Nikni kiriting.');
+      const changes = {nickname, bio};
+
+      if (f) {
+        if (
+          !['image/png','image/jpeg','image/webp'].includes(f.type) ||
+          f.size > 5*1024*1024
+        ) {
+          throw Error('Avatar 5 MB gacha JPG/PNG/WEBP bo‘lishi kerak.');
         }
 
-        window.onload = function() {
-            const activeUser = localStorage.getItem('mc_active_user');
-            if(activeUser) {
-                try {
-                    const userObj = JSON.parse(activeUser);
-                    showProfileView(userObj);
-                } catch(e) {}
-            }
-            loadAccounts();
-        }
+        const ext = f.name.split('.').pop().toLowerCase();
+        const path = me.id + '/' + crypto.randomUUID() + '.' + ext;
+        const {error:e} = await db.storage
+          .from('mc-avatars').upload(path, f);
 
-        function switchTab(tabId, btn) {
-            document.querySelectorAll('.section').forEach(sec => {
-                sec.classList.remove('active');
-            });
-            document.querySelectorAll('nav button').forEach(b => {
-                b.classList.remove('active');
-            });
-            
-            const targetSec = document.getElementById(tabId);
-            if(targetSec) {
-                targetSec.classList.add('active');
-            }
-            if(btn) {
-                btn.classList.add('active');
-            }
-            if(tabId === 'accounts') {
-                loadAccounts();
-            }
-        }
+        if (e) throw e;
+        changes.avatar_path = path;
+      }
 
-        function showRegister() {
-            const loginCard = document.getElementById('login-card');
-            const regCard = document.getElementById('register-card');
-            if(loginCard) loginCard.style.display = 'none';
-            if(regCard) regCard.style.display = 'block';
-            clearLoginErrors();
-        }
+      const {error:e} = await db.from('mc_profiles')
+        .update(changes).eq('id', me.id);
 
-        function showLogin() {
-            const loginCard = document.getElementById('login-card');
-            const regCard = document.getElementById('register-card');
-            if(regCard) regCard.style.display = 'none';
-            if(loginCard) loginCard.style.display = 'block';
-            clearRegisterErrors();
-        }
+      if (e) throw e;
 
-        function clearLoginErrors() {
-            const uErr = document.getElementById('login-user-error');
-            const pErr = document.getElementById('login-pass-error');
-            const uInput = document.getElementById('login-username');
-            const pInput = document.getElementById('login-password');
-            if(uErr) uErr.innerText = '';
-            if(pErr) pErr.innerText = '';
-            if(uInput) uInput.value = '';
-            if(pInput) pInput.value = '';
-        }
+      await refreshAuth();
+      await loadMembers();
+      message('Profil saqlandi.');
+    } catch(e) {
+      error(e);
+    }
+  });
 
-        function clearRegisterErrors() {
-            const uStatus = document.getElementById('username-status');
-            const pErr = document.getElementById('password-error');
-            const rUser = document.getElementById('reg-username');
-            const rPass = document.getElementById('reg-password');
-            const rConf = document.getElementById('reg-password-confirm');
-            if(uStatus) uStatus.innerText = '';
-            if(pErr) pErr.innerText = '';
-            if(rUser) rUser.value = '';
-            if(rPass) rPass.value = '';
-            if(rConf) rConf.value = '';
-        }
+  function card(m) {
+    const img = publicURL('mcmod-images', m.images?.[0]);
+    const p = m.mc_profiles;
 
-        async function checkUsername(val) {
-            const status = document.getElementById('username-status');
-            if(!status) return;
-            if(!val.trim()) {
-                status.innerText = '';
-                return;
-            }
-            if (!supabase) return;
-            try {
-                const { data } = await supabase
-                    .from('users')
-                    .select('username')
-                    .ilike('username', val.trim());
-                
-                if(data && data.length > 0) {
-                    status.style.color = '#ff4757';
-                    status.innerText = '❌ Band';
-                } else {
-                    status.style.color = '#00ff88';
-                    status.innerText = '✔ Band emas';
-                }
-            } catch(err) {
-                console.error(err);
-            }
-        }
+    return `
+      <article class="card" data-mod="${esc(m.id)}"
+        tabindex="0" role="button">
+        <img loading="lazy" src="${esc(img)}" alt="${esc(m.title)}">
+        <div class="inside">
+          <h3>${esc(m.title)}</h3>
+          <p>✦ ${esc(p?.nickname || p?.username || 'O‘yinchi')}</p>
+          <p>${esc(m.description.slice(0,85))}</p>
+        </div>
+      </article>`;
+  }
 
-        function checkPasswordsMatch() {
-            const pass = document.getElementById('reg-password').value;
-            const confirmPass = document.getElementById('reg-password-confirm').value;
-            const errorSpan = document.getElementById('password-error');
-            if(!errorSpan) return;
+  function renderMods() {
+    const q = $('search').value.toLowerCase().trim();
+    const filtered = mods.filter(x =>
+      x.title.toLowerCase().includes(q) ||
+      x.description.toLowerCase().includes(q)
+    );
+    $('mod-count').textContent = filtered.length + ' ta';
+    $('mods').innerHTML = filtered.map(card).join('') ||
+      '<p class="muted">Mod topilmadi.</p>';
+  }
 
-            if(confirmPass && pass !== confirmPass) {
-                errorSpan.innerText = 'Parollar bir xil emas!';
-            } else {
-                errorSpan.innerText = '';
-            }
-        }
+  function showMine() {
+    $('my-mods').innerHTML = me
+      ? (
+          mods.filter(x => x.user_id === me.id).map(card).join('') ||
+          '<p class="muted">Hali mod joylamagansiz.</p>'
+        )
+      : '';
+  }
 
-        async function registerUser() {
-            const usernameInput = document.getElementById('reg-username');
-            const passwordInput = document.getElementById('reg-password');
-            const confirmInput = document.getElementById('reg-password-confirm');
-            
-            if(!usernameInput || !passwordInput || !confirmInput) return;
+  async function loadMods() {
+    try {
+      await apiReady();
+      const {data, error:e} = await db.from('mc_mods')
+        .select(
+          'id,user_id,title,description,images,file_path,created_at,' +
+          'mc_profiles(username,nickname)'
+        )
+        .order('created_at', {ascending:false})
+        .limit(100);
 
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value;
-            const confirmPassword = confirmInput.value;
+      if (e) throw e;
+      mods = data || [];
+      renderMods();
+      showMine();
+    } catch(e) {
+      error(e);
+      $('mods').textContent = 'Modlarni yuklashda xato.';
+    }
+  }
 
-            if(!username || !password || !confirmPassword) {
-                alert('Barcha maydonlarni to‘ldiring!');
-                return;
-            }
+  $('search').oninput = () => {
+    renderMods();
+    page('home');
+  };
 
-            if(password !== confirmPassword) {
-                const errSpan = document.getElementById('password-error');
-                if(errSpan) errSpan.innerText = 'Parollar bir xil emas!';
-                return;
-            }
+  $('mod-images').onchange = () => {
+    const items = [...$('mod-images').files];
+    $('image-preview').replaceChildren();
 
-            if (!supabase) {
-                alert('Baza ulanmagan!');
-                return;
-            }
+    items.slice(0,5).forEach(f => {
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(f);
+      img.onload = () => URL.revokeObjectURL(img.src);
+      $('image-preview').append(img);
+    });
 
-            try {
-                const { data: existing } = await supabase
-                    .from('users')
-                    .select('*')
-                    .ilike('username', username);
+    if (items.length > 5) message('Eng ko‘pi 5 ta rasm!');
+  };
 
-                if(existing && existing.length > 0) {
-                    alert('Bu username band! Boshqa nom tanlang.');
-                    return;
-                }
+  $('upload-form').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    if (!me) return message('Avval akkauntga kiring.');
 
-                const { count } = await supabase
-                    .from('users')
-                    .select('*', { count: 'exact', head: true });
+    const title = $('mod-title').value.trim();
+    const description = $('mod-description').value.trim();
+    const files = [...$('mod-images').files];
+    const mod = $('mod-file').files[0];
 
-                const nextId = (count || 0) + 1;
-                const uniqueId = String(nextId);
+    if (title.length < 3 || description.length < 10) {
+      return message('Mod nomi va tavsifi yetarli emas.');
+    }
+    if (!files.length || files.length > 5 || !mod) {
+      return message('1–5 rasm va bitta mod fayli kerak.');
+    }
+    if (files.some(f =>
+      !['image/png','image/jpeg','image/webp'].includes(f.type) ||
+      f.size > 5*1024*1024
+    )) {
+      return message('Rasmlar 5 MB gacha JPG/PNG/WEBP bo‘lsin.');
+    }
 
-                const { error } = await supabase
-                    .from('users')
-                    .insert([{ username, password, unique_id: uniqueId }]);
+    const ext = mod.name.split('.').pop().toLowerCase();
+    if (
+      !['mcpack','mcaddon','zip','jar'].includes(ext) ||
+      mod.size > 50*1024*1024
+    ) {
+      return message('Mod fayli turi yoki hajmi noto‘g‘ri (max 50 MB).');
+    }
 
-                if(error) {
-                    alert('Xatolik yuz berdi: ' + error.message);
-                    return;
-                }
+    const b = $('upload-button');
+    b.disabled = true;
+    b.textContent = 'Yuklanmoqda...';
 
-                const newUser = { username, id: uniqueId };
-                localStorage.setItem('mc_active_user', JSON.stringify(newUser));
-                showProfileView(newUser);
-                loadAccounts();
-            } catch(err) {
-                alert('Xatolik: ' + err.message);
-            }
-        }
+    try {
+      const fp = me.id + '/' + crypto.randomUUID() + '.' + ext;
+      let result = await db.storage.from('mcmod-files').upload(fp, mod);
+      if (result.error) throw result.error;
 
-        async function loginUser() {
-            const userInput = document.getElementById('login-username');
-            const passInput = document.getElementById('login-password');
-            if(!userInput || !passInput) return;
+      const imagePaths = [];
 
-            const username = userInput.value.trim();
-            const password = passInput.value;
+      for (const file of files) {
+        const ex = file.name.split('.').pop().toLowerCase();
+        const ip = me.id + '/' + crypto.randomUUID() + '.' + ex;
 
-            const userError = document.getElementById('login-user-error');
-            const passError = document.getElementById('login-pass-error');
+        result = await db.storage.from('mcmod-images').upload(ip, file);
+        if (result.error) throw result.error;
 
-            if(userError) userError.innerText = '';
-            if(passError) passError.innerText = '';
+        imagePaths.push(ip);
+      }
 
-            if(!username) { if(userError) userError.innerText = 'Username kiriting!'; }
-            if(!password) { if(passError) passError.innerText = 'Parol kiriting!'; }
-            if(!username || !password) return;
+      const {error:e} = await db.from('mc_mods').insert({
+        user_id:me.id, title, description,
+        images:imagePaths, file_path:fp
+      });
+      if (e) throw e;
 
-            if (!supabase) {
-                if(userError) userError.innerText = 'Baza ulanmagan!';
-                return;
-            }
+      $('upload-form').reset();
+      $('image-preview').replaceChildren();
+      await loadMods();
+      page('home');
+      message('Mod joylandi!');
+    } catch(e) {
+      error(e);
+    } finally {
+      b.disabled = false;
+      b.textContent = 'Modni e’lon qilish';
+    }
+  });
 
-            try {
-                const { data } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('username', username);
+  async function loadMembers() {
+    try {
+      await apiReady();
 
-                if(!data || data.length === 0) {
-                    if(userError) userError.innerText = 'Bunday username topilmadi!';
-                    return;
-                }
+      const {data, error:e} = await db.from('mc_profiles')
+        .select('id,username,nickname,bio,avatar_path')
+        .order('created_at', {ascending:false})
+        .limit(100);
 
-                const foundUser = data[0];
-                if(foundUser.password !== password) {
-                    if(passError) passError.innerText = 'Parol xato!';
-                    return;
-                }
+      if (e) throw e;
+      members = data || [];
 
-                const userObj = { username: foundUser.username, id: foundUser.unique_id };
-                localStorage.setItem('mc_active_user', JSON.stringify(userObj));
-                showProfileView(userObj);
-            } catch(err) {
-                if(userError) userError.innerText = 'Xatolik yuz berdi!';
-            }
-        }
+      $('accounts-list').innerHTML = members.map(p => `
+        <article data-person="${esc(p.id)}"
+          class="panel account" style="margin:0"
+          role="button" tabindex="0">
+          <img class="avatar" style="width:54px;height:54px"
+            src="${esc(publicURL('mc-avatars',p.avatar_path)||avatarDefault)}"
+            alt="Avatar">
+          <div>
+            <h3>${esc(p.nickname||p.username)}</h3>
+            <span class="muted">@${esc(p.username)}</span>
+          </div>
+        </article>
+      `).join('') || '<p class="muted">Hozircha akkaunt yo‘q.</p>';
+    } catch(e) {
+      error(e);
+      $('accounts-list').textContent = 'Akkauntlar ochilmadi.';
+    }
+  }
 
-        function showProfileView(userObj) {
-            const dUser = document.getElementById('display-username');
-            const dId = document.getElementById('display-id');
-            const lCard = document.getElementById('login-card');
-            const rCard = document.getElementById('register-card');
-            const pCard = document.getElementById('profile-card');
+  function openModal(html) {
+    $('modal-content').innerHTML = html;
+    $('modal').hidden = false;
+  }
 
-            if(dUser) dUser.innerText = userObj.username;
-            if(dId) dId.innerText = userObj.id;
+  function closeModal() {
+    $('modal').hidden = true;
+    selectedPerson = null;
+  }
 
-            if(lCard) lCard.style.display = 'none';
-            if(rCard) rCard.style.display = 'none';
-            if(pCard) pCard.style.display = 'block';
-        }
+  $('close-modal').onclick = closeModal;
+  $('modal').onclick = e => {
+    if (e.target === $('modal')) closeModal();
+  };
 
-        async function loadAccounts() {
-            const listContainer = document.getElementById('accounts-list');
-            if(!listContainer) return;
-            
-            if(!supabase) {
-                listContainer.innerHTML = '<p style="color: #ff4757;">Baza ulanmagan.</p>';
-                return;
-            }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+    if (
+      e.key === 'Enter' &&
+      e.target.matches('[data-mod],[data-person]')
+    ) e.target.click();
+  });
 
-            try {
-                const { data, error } = await supabase
-                    .from('users')
-                    .select('username, unique_id');
+  document.addEventListener('click', e => {
+    const mod = e.target.closest('[data-mod]');
+    const person = e.target.closest('[data-person]');
+    if (mod) showMod(mod.dataset.mod);
+    if (person) showPerson(person.dataset.person);
+  });
 
-                if(error || !data) {
-                    listContainer.innerHTML = '<p style="color: #ff4757;">Accountlarni yuklashda xatolik.</p>';
-                    return;
-                }
+  function showMod(id) {
+    const m = mods.find(x => x.id === id);
+    if (!m) return;
 
-                if(data.length === 0) {
-                    listContainer.innerHTML = '<p style="color: var(--text-muted);">Hozircha hech qanday account ochilmagan.</p>';
-                    return;
-                }
+    const imgs = (m.images||[])
+      .map(p => publicURL('mcmod-images',p));
+    const dl = publicURL('mcmod-files',m.file_path) + '?download';
 
-                listContainer.innerHTML = '';
-                data.forEach(acc => {
-                    const card = document.createElement('div');
-                    card.className = 'account-card';
-                    card.onclick = () => window.openUserProfile(acc.username, acc.unique_id);
-                    card.innerHTML = `
-                        <div class="acc-avatar">👤</div>
-                        <div>
-                            <h4 style="margin: 0 0 4px 0; color: var(--text-main);">${acc.username}</h4>
-                            <span style="font-size: 12px; color: var(--accent-green); font-weight: bold;">ID: ${acc.unique_id}</span>
-                        </div>
-                    `;
-                    listContainer.appendChild(card);
-                });
-            } catch(err) {
-                listContainer.innerHTML = '<p style="color: #ff4757;">Xatolik yuz berdi.</p>';
-            }
-        }
+    openModal(`
+      <img id="big-image" class="cover"
+        src="${esc(imgs[0]||'')}" alt="Mod rasmi">
+      <div class="gallery">
+        ${imgs.map(x => `
+          <img src="${esc(x)}" data-image="${esc(x)}" alt="Mod rasmi">
+        `).join('')}
+      </div>
+      <h2>${esc(m.title)}</h2>
+      <p class="muted">
+        ✦ ${esc(m.mc_profiles?.nickname||m.mc_profiles?.username||'O‘yinchi')}
+      </p>
+      <p style="white-space:pre-wrap">${esc(m.description)}</p>
+      <a href="${esc(dl)}" class="btn"
+        style="display:inline-block;text-decoration:none"
+        target="_blank" rel="noopener">
+        ⬇ Yuklab olish
+      </a>
+    `);
 
-        function openUserProfile(username, id) {
-            const mUser = document.getElementById('modal-username');
-            const mId = document.getElementById('modal-id');
-            const mModal = document.getElementById('user-modal');
+    $('modal-content').querySelectorAll('[data-image]').forEach(img =>
+      img.onclick = () => $('big-image').src = img.dataset.image
+    );
+  }
 
-            if(mUser) mUser.innerText = username;
-            if(mId) mId.innerText = id;
-            if(mModal) mModal.style.display = 'flex';
-        }
+  async function showPerson(id) {
+    const p = members.find(x => x.id === id);
+    if (!p) return;
+    selectedPerson = id;
 
-        function closeModal() {
-            const mModal = document.getElementById('user-modal');
-            if(mModal) mModal.style.display = 'none';
-        }
+    const otherMods = mods.filter(x => x.user_id === id);
 
-        function sendChatMessage() {
-            const input = document.getElementById('chat-input');
-            if(!input) return;
-            const val = input.value.trim();
-            if(!val) return;
+    openModal(`
+      <div class="row">
+        <img class="avatar"
+          src="${esc(publicURL('mc-avatars',p.avatar_path)||avatarDefault)}"
+          alt="Avatar">
+        <div>
+          <h2 style="margin:0">${esc(p.nickname||p.username)}</h2>
+          <span class="muted">@${esc(p.username)}</span>
+        </div>
+      </div>
+      <p>${esc(p.bio||'Bio hali yo‘q.')}</p>
+      <h3>Modlari</h3>
+      <div class="grid">
+        ${otherMods.map(card).join('') ||
+          '<p class="muted">Hali mod yo‘q.</p>'}
+      </div>
+      <h3>💬 Xabarlar</h3>
+      <div id="chat" class="chat"></div>
+      <div class="row" style="margin-top:10px">
+        <input id="chat-input" maxlength="500"
+          placeholder="Xabar yozish...">
+        <button id="send" class="btn">➤</button>
+      </div>
+      <button id="refresh-chat" class="btn alt"
+        style="margin-top:9px">
+        ↻ Yangilash
+      </button>
+    `);
 
-            const chatBox = document.getElementById('chat-messages');
-            if(!chatBox) return;
+    if (!me) {
+      $('chat').textContent =
+        'Xabar yozish uchun akkauntga kiring.';
+      $('send').disabled = true;
+      $('chat-input').disabled = true;
+      return;
+    }
 
-            const msg = document.createElement('div');
-            msg.className = 'chat-msg mine';
-            msg.innerText = val;
-            chatBox.appendChild(msg);
-            input.value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
+    if (me.id === id) {
+      $('chat').textContent = 'Bu sizning profilingiz.';
+      $('send').disabled = true;
+      $('chat-input').disabled = true;
+      return;
+    }
 
-        function logout() {
-            localStorage.removeItem('mc_active_user');
-            clearLoginErrors();
-            clearRegisterErrors();
-            
-            const pCard = document.getElementById('profile-card');
-            const lCard = document.getElementById('login-card');
-            if(pCard) pCard.style.display = 'none';
-            if(lCard) lCard.style.display = 'block';
-        }
+    $('send').onclick = sendMessage;
+    $('refresh-chat').onclick = loadChat;
+    $('chat-input').onkeydown = e => {
+      if (e.key === 'Enter') sendMessage();
+    };
+    await loadChat();
+  }
 
-        // Barcha funksiyalarni global window obyektiga ulaymiz (tugmalar ishlamay qolmasligi uchun):
-        window.switchTab = switchTab;
-        window.showRegister = showRegister;
-        window.showLogin = showLogin;
-        window.checkUsername = checkUsername;
-        window.checkPasswordsMatch = checkPasswordsMatch;
-        window.registerUser = registerUser;
-        window.loginUser = loginUser;
-        window.loadAccounts = loadAccounts;
-        window.openUserProfile = openUserProfile;
-        window.closeModal = closeModal;
-        window.sendChatMessage = sendChatMessage;
-        window.logout = logout;
+  async function loadChat() {
+    if (!me || !selectedPerson) return;
 
-    })();
+    try {
+      const id = selectedPerson;
+
+      const {data, error:e} = await db.from('mc_messages')
+        .select('sender_id,recipient_id,body,created_at')
+        .or(
+          `and(sender_id.eq.${me.id},recipient_id.eq.${id}),` +
+          `and(sender_id.eq.${id},recipient_id.eq.${me.id})`
+        )
+        .order('created_at', {ascending:true})
+        .limit(100);
+
+      if (e) throw e;
+      if (selectedPerson !== id || !$('chat')) return;
+
+      $('chat').innerHTML = (data||[]).map(x => `
+        <div class="bubble ${x.sender_id===me.id?'mine':''}">
+          ${esc(x.body)}
+          <small>${esc(new Date(x.created_at).toLocaleString('uz-UZ'))}</small>
+        </div>
+      `).join('') || '<p class="muted">Hozircha xabar yo‘q.</p>';
+
+      $('chat').scrollTop = $('chat').scrollHeight;
+    } catch(e) {
+      error(e);
+    }
+  }
+
+  async function sendMessage() {
+    if (!me || !selectedPerson) return;
+    const text = $('chat-input')?.value.trim();
+    if (!text) return;
+
+    try {
+      const {error:e} = await db.from('mc_messages').insert({
+        sender_id:me.id,
+        recipient_id:selectedPerson,
+        body:text
+      });
+      if (e) throw e;
+
+      $('chat-input').value = '';
+      await loadChat();
+    } catch(e) {
+      error(e);
+    }
+  }
+
+  async function boot() {
+    try {
+      await apiReady();
+      const {data,error:e} = await db.auth.getSession();
+      if (e) throw e;
+      me = data.session?.user || null;
+      await Promise.all([loadMods(),loadMembers()]);
+      await refreshAuth();
+    } catch(e) {
+      error(e);
+    }
+  }
+
+  window.addEventListener('load',boot);
+})();
 </script>
+
 </body>
 </html>
