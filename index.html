@@ -20,11 +20,14 @@
         *, *:before, *:after { box-sizing: inherit; }
 
         header { background: linear-gradient(135deg, #181829, #0d0d14); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--accent-green); box-shadow: 0 4px 20px rgba(0,255,136,0.15); flex-wrap: wrap; gap: 15px; }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
         .logo { font-size: 22px; font-weight: 800; color: var(--accent-green); text-shadow: 0 0 12px rgba(0,255,136,0.6); letter-spacing: 0.5px; }
+        .version-badge { background: var(--accent-green); color: #0b0b10; font-size: 11px; font-weight: 900; padding: 3px 8px; border-radius: 6px; box-shadow: 0 0 8px rgba(0,255,136,0.4); }
+        
         .search-box { width: 100%; max-width: 320px; padding: 10px 18px; border-radius: 25px; border: 2px solid var(--border-color); background: #1a1a26; color: white; outline: none; transition: 0.3s; }
         .search-box:focus { border-color: var(--accent-green); box-shadow: 0 0 10px rgba(0,255,136,0.3); }
         
-        nav { display: flex; justify-content: center; background: #101018; padding: 12px; gap: 12px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; }
+        nav { display: flex; justify-content: center; background: #101018; padding: 12px; gap: 12px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; z-index: 10; position: relative; }
         nav button { background: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-muted); font-size: 14px; cursor: pointer; font-weight: 700; padding: 10px 18px; border-radius: 10px; transition: 0.3s; }
         nav button.active, nav button:hover { background: var(--accent-green); color: #0b0b10; border-color: var(--accent-green); box-shadow: 0 0 15px rgba(0,255,136,0.4); transform: translateY(-2px); }
 
@@ -73,15 +76,18 @@
 <body>
 
     <header>
-        <div class="logo">⚡ Minecraft Facts UZ</div>
+        <div class="logo-area">
+            <div class="logo">⚡ Minecraft Facts UZ</div>
+            <span class="version-badge">V0.1</span>
+        </div>
         <input type="text" class="search-box" placeholder="🔍 Modlarni qidirish...">
     </header>
 
     <nav>
-        <button onclick="switchTab('home', this)" class="active">🏠 Home</button>
-        <button onclick="switchTab('accounts', this)">👥 Accountlar</button>
-        <button onclick="switchTab('upload', this)">➕ Mod Yuklash</button>
-        <button onclick="switchTab('profile', this)">👤 Profil</button>
+        <button type="button" onclick="switchTab('home', this)" class="active">🏠 Home</button>
+        <button type="button" onclick="switchTab('accounts', this)">👥 Accountlar</button>
+        <button type="button" onclick="switchTab('upload', this)">➕ Mod Yuklash</button>
+        <button type="button" onclick="switchTab('profile', this)">👤 Profil</button>
     </nav>
 
     <div class="container">
@@ -107,12 +113,12 @@
             </div>
         </div>
 
-        <!-- 2. ACCOUNTS / ACCOUNTLAR BO'LIMI -->
+        <!-- 2. ACCOUNTS -->
         <div id="accounts" class="section">
             <h2 style="color: var(--accent-green);">🌐 Ro'yxatdan o'tgan Accountlar</h2>
             <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Istalgan foydalanuvchi ustiga bosing, uning profilini ko'ring va chat orqali yozishingiz mumkin:</p>
             <div id="accounts-list" class="accounts-grid">
-                <!-- Dinamik to'ldiriladi -->
+                <p style="color: var(--text-muted);">Yuklanmoqda...</p>
             </div>
         </div>
 
@@ -128,13 +134,13 @@
                 <input type="file" accept="image/*">
                 <label>Mod fayli (.zip / .mcpack):</label>
                 <input type="file">
-                <button>Joylash</button>
+                <button type="button" onclick="alert('Mod tez orada qo‘shiladi!')">Joylash</button>
             </div>
         </div>
 
         <!-- 4. PROFIL -->
         <div id="profile" class="section">
-            <!-- A) KIRISH OYNASI (Login) -->
+            <!-- A) LOGIN -->
             <div id="login-card" class="card-box">
                 <h2 style="color: var(--accent-green);">Akkauntga kirish</h2>
                 <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 15px;">Mavjud profilingizga kiring:</p>
@@ -145,12 +151,12 @@
                 <input type="password" id="login-password" placeholder="Parol...">
                 <span id="login-pass-error" class="error-text"></span>
 
-                <button onclick="loginUser()">Kirish</button>
+                <button type="button" onclick="loginUser()">Kirish</button>
                 <br>
                 <span class="switch-link" onclick="showRegister()">Yangi akkaunt ochish</span>
             </div>
 
-            <!-- B) YANGI AKKAUNT OCHISH OYNASI (Register) -->
+            <!-- B) REGISTER -->
             <div id="register-card" class="card-box" style="display: none;">
                 <h2 style="color: var(--accent-green);">Yangi akkaunt ochish</h2>
                 <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 15px;">Ma'lumotlaringizni kiriting:</p>
@@ -163,12 +169,12 @@
                 <input type="password" id="reg-password-confirm" placeholder="Parolni tasdiqlang..." oninput="checkPasswordsMatch()">
                 <span id="password-error" class="error-text"></span>
 
-                <button onclick="registerUser()">Ro'yxatdan o'tish</button>
+                <button type="button" onclick="registerUser()">Ro'yxatdan o'tish</button>
                 <br>
                 <span class="switch-link" onclick="showLogin()">Akauntingiz bormi? Kirish</span>
             </div>
 
-            <!-- C) PROFIL KO'RINISHI -->
+            <!-- C) PROFILE VIEW -->
             <div id="profile-card" class="card-box" style="display: none;">
                 <h2>Foydalanuvchi Profili</h2>
                 <div class="avatar-preview">
@@ -179,12 +185,12 @@
                 <hr style="border-color: var(--border-color); margin: 15px 0;">
                 <h4 style="text-align: left; color: var(--text-muted); margin-bottom: 5px;">Sizning modlaringiz:</h4>
                 <p style="color: #666; font-size: 13px; text-align: left;">Hozircha modlar yuklamagansiz.</p>
-                <button style="background: #ff4757; color: white;" onclick="logout()">Chiqish</button>
+                <button type="button" style="background: #ff4757; color: white;" onclick="logout()">Chiqish</button>
             </div>
         </div>
     </div>
 
-    <!-- FOYDALANUVCHI PROFILI VA CHAT MODALI -->
+    <!-- MODAL -->
     <div id="user-modal" class="modal-overlay">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -207,80 +213,119 @@
             </div>
             <div style="display: flex; gap: 10px; margin-top: 10px;">
                 <input type="text" id="chat-input" placeholder="Xabar yozish..." style="margin:0; flex: 1; padding: 10px; background: #0b0b10; border: 1px solid var(--border-color); color: white; border-radius: 8px; outline: none;">
-                <button onclick="sendChatMessage()" style="margin:0; width: 100px; padding: 10px; background: var(--accent-green); color: #0b0b10; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Yuborish</button>
+                <button type="button" onclick="sendChatMessage()" style="margin:0; width: 100px; padding: 10px; background: var(--accent-green); color: #0b0b10; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Yuborish</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Supabase ulanishi
-        const SUPABASE_URL = 'https://swbnidsmwnqwjztrlorr.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_-yjtMQSDiq7_L1Z1NFcSQ_GiXFD';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Xavfsiz Supabase ulanishi
+        let supabase = null;
+        try {
+            if (window.supabase) {
+                const SUPABASE_URL = 'https://swbnidsmwnqwjztrlorr.supabase.co';
+                const SUPABASE_KEY = 'sb_publishable_-yjtMQSDiq7_L1Z1NFcSQ_GiXFD';
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            }
+        } catch (e) {
+            console.error('Supabase xatosi:', e);
+        }
 
         window.onload = function() {
             const activeUser = localStorage.getItem('mc_active_user');
             if(activeUser) {
-                const userObj = JSON.parse(activeUser);
-                showProfileView(userObj);
+                try {
+                    const userObj = JSON.parse(activeUser);
+                    showProfileView(userObj);
+                } catch(e) {}
             }
             loadAccounts();
         }
 
         function switchTab(tabId, btn) {
-            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            if(btn) btn.classList.add('active');
+            // Bo'limlarni yangilash
+            document.querySelectorAll('.section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            document.querySelectorAll('nav button').forEach(b => {
+                b.classList.remove('active');
+            });
+            
+            const targetSec = document.getElementById(tabId);
+            if(targetSec) {
+                targetSec.classList.add('active');
+            }
+            if(btn) {
+                btn.classList.add('active');
+            }
             if(tabId === 'accounts') {
                 loadAccounts();
             }
         }
 
         function showRegister() {
-            document.getElementById('login-card').style.display = 'none';
-            document.getElementById('register-card').style.display = 'block';
+            const loginCard = document.getElementById('login-card');
+            const regCard = document.getElementById('register-card');
+            if(loginCard) loginCard.style.display = 'none';
+            if(regCard) regCard.style.display = 'block';
             clearLoginErrors();
         }
 
         function showLogin() {
-            document.getElementById('register-card').style.display = 'none';
-            document.getElementById('login-card').style.display = 'block';
+            const loginCard = document.getElementById('login-card');
+            const regCard = document.getElementById('register-card');
+            if(regCard) regCard.style.display = 'none';
+            if(loginCard) loginCard.style.display = 'block';
             clearRegisterErrors();
         }
 
         function clearLoginErrors() {
-            document.getElementById('login-user-error').innerText = '';
-            document.getElementById('login-pass-error').innerText = '';
-            document.getElementById('login-username').value = '';
-            document.getElementById('login-password').value = '';
+            const uErr = document.getElementById('login-user-error');
+            const pErr = document.getElementById('login-pass-error');
+            const uInput = document.getElementById('login-username');
+            const pInput = document.getElementById('login-password');
+            if(uErr) uErr.innerText = '';
+            if(pErr) pErr.innerText = '';
+            if(uInput) uInput.value = '';
+            if(pInput) pInput.value = '';
         }
 
         function clearRegisterErrors() {
-            document.getElementById('username-status').innerText = '';
-            document.getElementById('password-error').innerText = '';
-            document.getElementById('reg-username').value = '';
-            document.getElementById('reg-password').value = '';
-            document.getElementById('reg-password-confirm').value = '';
+            const uStatus = document.getElementById('username-status');
+            const pErr = document.getElementById('password-error');
+            const rUser = document.getElementById('reg-username');
+            const rPass = document.getElementById('reg-password');
+            const rConf = document.getElementById('reg-password-confirm');
+            if(uStatus) uStatus.innerText = '';
+            if(pErr) pErr.innerText = '';
+            if(rUser) rUser.value = '';
+            if(rPass) rPass.value = '';
+            if(rConf) rConf.value = '';
         }
 
         async function checkUsername(val) {
             const status = document.getElementById('username-status');
+            if(!status) return;
             if(!val.trim()) {
                 status.innerText = '';
                 return;
             }
-            const { data } = await supabase
-                .from('users')
-                .select('username')
-                .ilike('username', val.trim());
-            
-            if(data && data.length > 0) {
-                status.style.color = '#ff4757';
-                status.innerText = '❌ Band';
-            } else {
-                status.style.color = '#00ff88';
-                status.innerText = '✔ Band emas';
+            if (!supabase) return;
+            try {
+                const { data } = await supabase
+                    .from('users')
+                    .select('username')
+                    .ilike('username', val.trim());
+                
+                if(data && data.length > 0) {
+                    status.style.color = '#ff4757';
+                    status.innerText = '❌ Band';
+                } else {
+                    status.style.color = '#00ff88';
+                    status.innerText = '✔ Band emas';
+                }
+            } catch(err) {
+                console.error(err);
             }
         }
 
@@ -288,6 +333,7 @@
             const pass = document.getElementById('reg-password').value;
             const confirmPass = document.getElementById('reg-password-confirm').value;
             const errorSpan = document.getElementById('password-error');
+            if(!errorSpan) return;
 
             if(confirmPass && pass !== confirmPass) {
                 errorSpan.innerText = 'Parollar bir xil emas!';
@@ -297,162 +343,189 @@
         }
 
         async function registerUser() {
-            const username = document.getElementById('reg-username').value.trim();
-            const password = document.getElementById('reg-password').value;
-            const confirmPassword = document.getElementById('reg-password-confirm').value;
+            const usernameInput = document.getElementById('reg-username');
+            const passwordInput = document.getElementById('reg-password');
+            const confirmInput = document.getElementById('reg-password-confirm');
+            
+            if(!usernameInput || !passwordInput || !confirmInput) return;
+
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            const confirmPassword = confirmInput.value;
 
             if(!username || !password || !confirmPassword) {
                 alert('Barcha maydonlarni to‘ldiring!');
                 return;
             }
 
-            const { data: existing } = await supabase
-                .from('users')
-                .select('*')
-                .ilike('username', username);
-
-            if(existing && existing.length > 0) {
-                alert('Bu username band! Boshqa nom tanlang.');
-                return;
-            }
-
             if(password !== confirmPassword) {
-                document.getElementById('password-error').innerText = 'Parollar bir xil emas!';
+                const errSpan = document.getElementById('password-error');
+                if(errSpan) errSpan.innerText = 'Parollar bir xil emas!';
                 return;
             }
 
-            const { count } = await supabase
-                .from('users')
-                .select('*', { count: 'exact', head: true });
-
-            const nextId = (count || 0) + 1;
-            const uniqueId = String(nextId);
-
-            const { error } = await supabase
-                .from('users')
-                .insert([{ username, password, unique_id: uniqueId }]);
-
-            if(error) {
-                alert('Xatolik yuz berdi: ' + error.message);
+            if (!supabase) {
+                alert('Baza ulanmagan!');
                 return;
             }
 
-            const newUser = { username, id: uniqueId };
-            localStorage.setItem('mc_active_user', JSON.stringify(newUser));
-            showProfileView(newUser);
-            loadAccounts();
+            try {
+                const { data: existing } = await supabase
+                    .from('users')
+                    .select('*')
+                    .ilike('username', username);
+
+                if(existing && existing.length > 0) {
+                    alert('Bu username band! Boshqa nom tanlang.');
+                    return;
+                }
+
+                const { count } = await supabase
+                    .from('users')
+                    .select('*', { count: 'exact', head: true });
+
+                const nextId = (count || 0) + 1;
+                const uniqueId = String(nextId);
+
+                const { error } = await supabase
+                    .from('users')
+                    .insert([{ username, password, unique_id: uniqueId }]);
+
+                if(error) {
+                    alert('Xatolik yuz berdi: ' + error.message);
+                    return;
+                }
+
+                const newUser = { username, id: uniqueId };
+                localStorage.setItem('mc_active_user', JSON.stringify(newUser));
+                showProfileView(newUser);
+                loadAccounts();
+            } catch(err) {
+                alert('Xatolik: ' + err.message);
+            }
         }
 
         async function loginUser() {
-            const username = document.getElementById('login-username').value.trim();
-            const password = document.getElementById('login-password').value;
+            const userInput = document.getElementById('login-username');
+            const passInput = document.getElementById('login-password');
+            if(!userInput || !passInput) return;
+
+            const username = userInput.value.trim();
+            const password = passInput.value;
 
             const userError = document.getElementById('login-user-error');
             const passError = document.getElementById('login-pass-error');
 
-            userError.innerText = '';
-            passError.innerText = '';
+            if(userError) userError.innerText = '';
+            if(passError) passError.innerText = '';
 
-            if(!username) userError.innerText = 'Username kiriting!';
-            if(!password) passError.innerText = 'Parol kiriting!';
+            if(!username) { if(userError) userError.innerText = 'Username kiriting!'; }
+            if(!password) { if(passError) passError.innerText = 'Parol kiriting!'; }
             if(!username || !password) return;
 
-            const { data } = await supabase
-                .from('users')
-                .select('*')
-                .eq('username', username);
-
-            if(!data || data.length === 0) {
-                userError.innerText = 'Bunday username topilmadi!';
+            if (!supabase) {
+                if(userError) userError.innerText = 'Baza ulanmagan!';
                 return;
             }
 
-            const foundUser = data[0];
-            if(foundUser.password !== password) {
-                passError.innerText = 'Parol xato!';
-                return;
-            }
+            try {
+                const { data } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('username', username);
 
-            const userObj = { username: foundUser.username, id: foundUser.unique_id };
-            localStorage.setItem('mc_active_user', JSON.stringify(userObj));
-            showProfileView(userObj);
+                if(!data || data.length === 0) {
+                    if(userError) userError.innerText = 'Bunday username topilmadi!';
+                    return;
+                }
+
+                const foundUser = data[0];
+                if(foundUser.password !== password) {
+                    if(passError) passError.innerText = 'Parol xato!';
+                    return;
+                }
+
+                const userObj = { username: foundUser.username, id: foundUser.unique_id };
+                localStorage.setItem('mc_active_user', JSON.stringify(userObj));
+                showProfileView(userObj);
+            } catch(err) {
+                if(userError) userError.innerText = 'Xatolik yuz berdi!';
+            }
         }
 
         function showProfileView(userObj) {
-            document.getElementById('display-username').innerText = userObj.username;
-            document.getElementById('display-id').innerText = userObj.id;
+            const dUser = document.getElementById('display-username');
+            const dId = document.getElementById('display-id');
+            const lCard = document.getElementById('login-card');
+            const rCard = document.getElementById('register-card');
+            const pCard = document.getElementById('profile-card');
 
-            document.getElementById('login-card').style.display = 'none';
-            document.getElementById('register-card').style.display = 'none';
-            document.getElementById('profile-card').style.display = 'block';
+            if(dUser) dUser.innerText = userObj.username;
+            if(dId) dId.innerText = userObj.id;
+
+            if(lCard) lCard.style.display = 'none';
+            if(rCard) rCard.style.display = 'none';
+            if(pCard) pCard.style.display = 'block';
         }
 
         async function loadAccounts() {
             const listContainer = document.getElementById('accounts-list');
-            listContainer.innerHTML = '<p style="color: var(--text-muted);">Yuklanmoqda...</p>';
-
-            const { data, error } = await supabase
-                .from('users')
-                .select('username, unique_id');
-
-            if(error || !data) {
-                listContainer.innerHTML = '<p style="color: #ff4757;">Accountlarni yuklashda xatolik yuz berdi.</p>';
+            if(!listContainer) return;
+            
+            if(!supabase) {
+                listContainer.innerHTML = '<p style="color: #ff4757;">Baza ulanmagan.</p>';
                 return;
             }
 
-            if(data.length === 0) {
-                listContainer.innerHTML = '<p style="color: var(--text-muted);">Hozircha hech qanday account ochilmagan.</p>';
-                return;
-            }
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('username, unique_id');
 
-            listContainer.innerHTML = '';
-            data.forEach(acc => {
-                const card = document.createElement('div');
-                card.className = 'account-card';
-                card.onclick = () => openUserProfile(acc.username, acc.unique_id);
-                card.innerHTML = `
-                    <div class="acc-avatar">👤</div>
-                    <div>
-                        <h4 style="margin: 0 0 4px 0; color: var(--text-main);">${acc.username}</h4>
-                        <span style="font-size: 12px; color: var(--accent-green); font-weight: bold;">ID: ${acc.unique_id}</span>
-                    </div>
-                `;
-                listContainer.appendChild(card);
-            });
+                if(error || !data) {
+                    listContainer.innerHTML = '<p style="color: #ff4757;">Accountlarni yuklashda xatolik.</p>';
+                    return;
+                }
+
+                if(data.length === 0) {
+                    listContainer.innerHTML = '<p style="color: var(--text-muted);">Hozircha hech qanday account ochilmagan.</p>';
+                    return;
+                }
+
+                listContainer.innerHTML = '';
+                data.forEach(acc => {
+                    const card = document.createElement('div');
+                    card.className = 'account-card';
+                    card.onclick = () => openUserProfile(acc.username, acc.unique_id);
+                    card.innerHTML = `
+                        <div class="acc-avatar">👤</div>
+                        <div>
+                            <h4 style="margin: 0 0 4px 0; color: var(--text-main);">${acc.username}</h4>
+                            <span style="font-size: 12px; color: var(--accent-green); font-weight: bold;">ID: ${acc.unique_id}</span>
+                        </div>
+                    `;
+                    listContainer.appendChild(card);
+                });
+            } catch(err) {
+                listContainer.innerHTML = '<p style="color: #ff4757;">Xatolik yuz berdi.</p>';
+            }
         }
 
         function openUserProfile(username, id) {
-            document.getElementById('modal-username').innerText = username;
-            document.getElementById('modal-id').innerText = id;
-            document.getElementById('user-modal').style.display = 'flex';
+            const mUser = document.getElementById('modal-username');
+            const mId = document.getElementById('modal-id');
+            const mModal = document.getElementById('user-modal');
+
+            if(mUser) mUser.innerText = username;
+            if(mId) mId.innerText = id;
+            if(mModal) mModal.style.display = 'flex';
         }
 
         function closeModal() {
-            document.getElementById('user-modal').style.display = 'none';
+            const mModal = document.getElementById('user-modal');
+            if(mModal) mModal.style.display = 'none';
         }
 
         function sendChatMessage() {
             const input = document.getElementById('chat-input');
-            const val = input.value.trim();
-            if(!val) return;
-
-            const chatBox = document.getElementById('chat-messages');
-            const msg = document.createElement('div');
-            msg.className = 'chat-msg mine';
-            msg.innerText = val;
-            chatBox.appendChild(msg);
-            input.value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        function logout() {
-            localStorage.removeItem('mc_active_user');
-            clearLoginErrors();
-            clearRegisterErrors();
-            
-            document.getElementById('profile-card').style.display = 'none';
-            document.getElementById('login-card').style.display = 'block';
-        }
-    </script>
-</body>
-</html>
+            if(!input) return;
