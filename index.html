@@ -7,42 +7,74 @@
     <!-- Supabase Kutubxonasi -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f0f13; color: #fff; margin: 0; padding: 0; box-sizing: border-box; }
-        *, *:before, *:after { box-sizing: inherit; }
-        header { background: linear-gradient(135deg, #1f1f2e, #12121a); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #00ff88; box-shadow: 0 4px 15px rgba(0,255,136,0.2); flex-wrap: wrap; gap: 10px; }
-        .logo { font-size: 20px; font-weight: bold; color: #00ff88; text-shadow: 0 0 10px rgba(0,255,136,0.5); }
-        .search-box { width: 100%; max-width: 300px; padding: 10px 15px; border-radius: 20px; border: 2px solid #333; background: #1a1a24; color: white; outline: none; }
-        .search-box:focus { border-color: #00ff88; }
-        
-        nav { display: flex; justify-content: center; background: #15151f; padding: 10px; gap: 10px; border-bottom: 1px solid #222; flex-wrap: wrap; }
-        nav button { background: #1f1f2e; border: none; color: #aaa; font-size: 14px; cursor: pointer; font-weight: bold; padding: 8px 15px; border-radius: 8px; transition: 0.3s; }
-        nav button.active, nav button:hover { background: #00ff88; color: #0f0f13; box-shadow: 0 0 10px rgba(0,255,136,0.5); }
-        .btn-add { background: linear-gradient(135deg, #ff9800, #ff5722) !important; color: white !important; }
+        :root {
+            --bg-color: #0b0b10;
+            --panel-bg: #14141f;
+            --accent-green: #00ff88;
+            --accent-orange: #ff9800;
+            --text-main: #ffffff;
+            --text-muted: #a0a0b2;
+            --border-color: #262638;
+        }
 
-        .container { max-width: 1100px; margin: 20px auto; padding: 15px; }
-        .section { display: none; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; box-sizing: border-box; }
+        *, *:before, *:after { box-sizing: inherit; }
+
+        header { background: linear-gradient(135deg, #181829, #0d0d14); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--accent-green); box-shadow: 0 4px 20px rgba(0,255,136,0.15); flex-wrap: wrap; gap: 15px; }
+        .logo { font-size: 22px; font-weight: 800; color: var(--accent-green); text-shadow: 0 0 12px rgba(0,255,136,0.6); letter-spacing: 0.5px; }
+        .search-box { width: 100%; max-width: 320px; padding: 10px 18px; border-radius: 25px; border: 2px solid var(--border-color); background: #1a1a26; color: white; outline: none; transition: 0.3s; }
+        .search-box:focus { border-color: var(--accent-green); box-shadow: 0 0 10px rgba(0,255,136,0.3); }
+        
+        nav { display: flex; justify-content: center; background: #101018; padding: 12px; gap: 12px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; }
+        nav button { background: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-muted); font-size: 14px; cursor: pointer; font-weight: 700; padding: 10px 18px; border-radius: 10px; transition: 0.3s; }
+        nav button.active, nav button:hover { background: var(--accent-green); color: #0b0b10; border-color: var(--accent-green); box-shadow: 0 0 15px rgba(0,255,136,0.4); transform: translateY(-2px); }
+        .btn-add { background: linear-gradient(135deg, #ff9800, #ff5722) !important; color: white !important; border: none !important; }
+
+        .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+        .section { display: none; animation: fadeIn 0.4s ease-in-out; }
         .section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         .mods-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         @media (max-width: 768px) {
             .mods-grid { grid-template-columns: 1fr; }
         }
 
-        .mod-card { background: #181824; border-radius: 12px; overflow: hidden; padding: 15px; border: 1px solid #2a2a3d; }
-        .mod-card img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; }
-        .mod-card h3 { margin: 12px 0 6px 0; font-size: 18px; color: #00ff88; }
+        .mod-card { background: var(--panel-bg); border-radius: 14px; overflow: hidden; padding: 18px; border: 1px solid var(--border-color); transition: 0.3s; }
+        .mod-card:hover { border-color: var(--accent-green); box-shadow: 0 6px 20px rgba(0,255,136,0.15); }
+        .mod-card img { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; }
+        .mod-card h3 { margin: 14px 0 6px 0; font-size: 18px; color: var(--accent-green); }
         
-        .card-box { background: #181824; padding: 25px; border-radius: 15px; max-width: 450px; width: 100%; margin: auto; border: 1px solid #2a2a3d; box-shadow: 0 8px 25px rgba(0,0,0,0.5); text-align: center; }
-        .card-box input { width: 100%; padding: 12px; margin: 6px 0; background: #111118; border: 2px solid #333; color: white; border-radius: 8px; box-sizing: border-box; outline: none; }
-        .card-box input:focus { border-color: #00ff88; }
-        .card-box button { background: #00ff88; color: #0f0f13; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; }
-        .card-box button:hover { background: #00cc6a; }
+        .card-box { background: var(--panel-bg); padding: 30px; border-radius: 18px; max-width: 480px; width: 100%; margin: auto; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: center; }
+        .card-box input, .card-box textarea { width: 100%; padding: 12px 15px; margin: 8px 0; background: #0b0b10; border: 2px solid var(--border-color); color: white; border-radius: 10px; box-sizing: border-box; outline: none; transition: 0.3s; }
+        .card-box input:focus, .card-box textarea:focus { border-color: var(--accent-green); }
+        .card-box button { background: var(--accent-green); color: #0b0b10; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: 800; cursor: pointer; margin-top: 15px; transition: 0.3s; }
+        .card-box button:hover { background: #00cc6a; box-shadow: 0 0 15px rgba(0,255,136,0.5); }
 
-        .error-text { color: #ff4757; font-size: 12px; text-align: left; margin-bottom: 8px; display: block; }
-        .status-text { font-size: 13px; text-align: left; margin-bottom: 8px; display: block; font-weight: bold; }
-        .switch-link { color: #00ff88; cursor: pointer; margin-top: 15px; display: inline-block; font-size: 14px; text-decoration: underline; }
+        .error-text { color: #ff4757; font-size: 12px; text-align: left; margin-bottom: 6px; display: block; font-weight: 600; }
+        .status-text { font-size: 13px; text-align: left; margin-bottom: 6px; display: block; font-weight: bold; }
+        .switch-link { color: var(--accent-green); cursor: pointer; margin-top: 15px; display: inline-block; font-size: 14px; text-decoration: underline; font-weight: 600; }
 
-        .avatar-preview { width: 90px; height: 90px; border-radius: 50%; background: #222; margin: 0 auto 15px auto; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 3px solid #00ff88; }
+        .avatar-preview { width: 90px; height: 90px; border-radius: 50%; background: #1a1a26; margin: 0 auto 15px auto; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 3px solid var(--accent-green); box-shadow: 0 0 15px rgba(0,255,136,0.3); }
+
+        /* Accounts & Chat Styles */
+        .accounts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+        .account-card { background: var(--panel-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 14px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px; }
+        .account-card:hover { border-color: var(--accent-orange); transform: translateY(-3px); box-shadow: 0 5px 20px rgba(255,152,0,0.2); }
+        .acc-avatar { width: 50px; height: 50px; border-radius: 50%; background: #1a1a26; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 2px solid var(--accent-orange); }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
+        .modal-content { background: var(--panel-bg); border: 2px solid var(--border-color); width: 100%; max-width: 550px; border-radius: 18px; padding: 25px; position: relative; max-height: 85vh; overflow-y: auto; box-shadow: 0 15px 40px rgba(0,0,0,0.7); }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: var(--text-muted); transition: 0.2s; }
+        .close-btn:hover { color: #ff4757; }
+
+        .chat-box { margin-top: 15px; background: #0b0b10; border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .chat-msg { background: #1a1a26; padding: 8px 12px; border-radius: 8px; font-size: 13px; max-width: 80%; }
+        .chat-msg.mine { background: #005533; align-self: flex-end; }
     </style>
 </head>
 <body>
@@ -54,6 +86,7 @@
 
     <nav>
         <button onclick="switchTab('home', this)" class="active">🏠 Home</button>
+        <button onclick="switchTab('accounts', this)" id="nav-acc-btn">👥 Accountlar</button>
         <button onclick="switchTab('upload', this)" class="btn-add">➕ Mod Yuklash</button>
         <button onclick="switchTab('profile', this)">👤 Profil</button>
     </nav>
@@ -66,43 +99,52 @@
                 <div class="mod-card">
                     <img src="https://via.placeholder.com/300x150" alt="Mod">
                     <h3>Super Physics Mod</h3>
-                    <p style="color: #aaa; font-size: 14px;">O'yinga realistik fizika qo'shadi.</p>
+                    <p style="color: var(--text-muted); font-size: 14px;">O'yinga realistik fizika qo'shadi.</p>
                 </div>
                 <div class="mod-card">
                     <img src="https://via.placeholder.com/300x150" alt="Mod">
                     <h3>Custom Swords</h3>
-                    <p style="color: #aaa; font-size: 14px;">Yangi turdagi qilichlar to'plami.</p>
+                    <p style="color: var(--text-muted); font-size: 14px;">Yangi turdagi qilichlar to'plami.</p>
                 </div>
                 <div class="mod-card">
                     <img src="https://via.placeholder.com/300x150" alt="Mod">
                     <h3>Pixel Shader</h3>
-                    <p style="color: #aaa; font-size: 14px;">Grafikani yanada chiroyli qiladi.</p>
+                    <p style="color: var(--text-muted); font-size: 14px;">Grafikani yanada chiroyli qiladi.</p>
                 </div>
             </div>
         </div>
 
-        <!-- 2. MOD YUKLASH -->
+        <!-- 2. ACCOUNTS / ACCOUNTLAR BO'LIMI -->
+        <div id="accounts" class="section">
+            <h2 style="color: var(--accent-orange);">🌐 Ro'yxatdan o'tgan Accountlar</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Istalgan foydalanuvchi ustiga bosing, uning profilini ko'ring va chat orqali yozishingiz mumkin:</p>
+            <div id="accounts-list" class="accounts-grid">
+                <!-- Dinamik to'ldiriladi -->
+            </div>
+        </div>
+
+        <!-- 3. MOD YUKLASH -->
         <div id="upload" class="section">
             <div class="card-box" style="max-width: 600px; text-align: left;">
-                <h2 style="text-align: center; color: #ff9800;">📦 Mod Joylash</h2>
+                <h2 style="text-align: center; color: var(--accent-orange);">📦 Mod Joylash</h2>
                 <label>Mod nomi:</label>
                 <input type="text" placeholder="Mod nomi...">
                 <label>Sharh va tavsif:</label>
-                <input type="text" placeholder="Mod haqida qisqacha...">
+                <textarea rows="3" placeholder="Mod haqida qisqacha..."></textarea>
                 <label>Mod rasmi:</label>
                 <input type="file" accept="image/*">
                 <label>Mod fayli (.zip / .mcpack):</label>
                 <input type="file">
-                <button style="background: #ff9800; color: white;">Joylash</button>
+                <button style="background: var(--accent-orange); color: white;">Joylash</button>
             </div>
         </div>
 
-        <!-- 3. PROFIL -->
+        <!-- 4. PROFIL -->
         <div id="profile" class="section">
             <!-- A) KIRISH OYNASI (Login) -->
             <div id="login-card" class="card-box">
-                <h2 style="color: #00ff88;">Akkauntga kirish</h2>
-                <p style="color: #aaa; font-size: 13px; margin-bottom: 15px;">Mavjud profilingizga kiring:</p>
+                <h2 style="color: var(--accent-green);">Akkauntga kirish</h2>
+                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 15px;">Mavjud profilingizga kiring:</p>
                 
                 <input type="text" id="login-username" placeholder="Username...">
                 <span id="login-user-error" class="error-text"></span>
@@ -117,8 +159,8 @@
 
             <!-- B) YANGI AKKAUNT OCHISH OYNASI (Register) -->
             <div id="register-card" class="card-box" style="display: none;">
-                <h2 style="color: #ff9800;">Yangi akkaunt ochish</h2>
-                <p style="color: #aaa; font-size: 13px; margin-bottom: 15px;">Ma'lumotlaringizni kiriting:</p>
+                <h2 style="color: var(--accent-orange);">Yangi akkaunt ochish</h2>
+                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 15px;">Ma'lumotlaringizni kiriting:</p>
                 
                 <input type="text" id="reg-username" placeholder="Username..." oninput="checkUsername(this.value)">
                 <span id="username-status" class="status-text"></span>
@@ -128,9 +170,9 @@
                 <input type="password" id="reg-password-confirm" placeholder="Parolni tasdiqlang..." oninput="checkPasswordsMatch()">
                 <span id="password-error" class="error-text"></span>
 
-                <button style="background: #ff9800; color: #fff;" onclick="registerUser()">Ro'yxatdan o'tish</button>
+                <button style="background: var(--accent-orange); color: #fff;" onclick="registerUser()">Ro'yxatdan o'tish</button>
                 <br>
-                <span class="switch-link" onclick="showLogin()" style="color: #ff9800;">Akauntingiz bormi? Kirish</span>
+                <span class="switch-link" onclick="showLogin()" style="color: var(--accent-orange);">Akauntingiz bormi? Kirish</span>
             </div>
 
             <!-- C) PROFIL KO'RINISHI -->
@@ -139,18 +181,46 @@
                 <div class="avatar-preview">
                     <span style="font-size: 35px;">👤</span>
                 </div>
-                <p><b>Username:</b> <span id="display-username" style="color: #00ff88;"></span></p>
-                <p><b>ID (O'zgarmas):</b> <span id="display-id" style="color: #ff9800;"></span></p>
-                <hr style="border-color: #2a2a3d; margin: 15px 0;">
-                <h4 style="text-align: left; color: #aaa; margin-bottom: 5px;">Sizning modlaringiz:</h4>
+                <p><b>Username:</b> <span id="display-username" style="color: var(--accent-green);"></span></p>
+                <p><b>ID (Tartib raqami):</b> <span id="display-id" style="color: var(--accent-orange);"></span></p>
+                <hr style="border-color: var(--border-color); margin: 15px 0;">
+                <h4 style="text-align: left; color: var(--text-muted); margin-bottom: 5px;">Sizning modlaringiz:</h4>
                 <p style="color: #666; font-size: 13px; text-align: left;">Hozircha modlar yuklamagansiz.</p>
                 <button style="background: #ff4757; color: white;" onclick="logout()">Chiqish</button>
             </div>
         </div>
     </div>
 
+    <!-- FOYDALANUVCHI PROFili VA CHAT MODALI -->
+    <div id="user-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div style="text-align: center;">
+                <div class="avatar-preview" style="width: 70px; height: 70px;">
+                    <span style="font-size: 28px;">👤</span>
+                </div>
+                <h2 id="modal-username" style="color: var(--accent-green); margin: 5px 0;"></h2>
+                <p style="color: var(--accent-orange); font-weight: bold; margin: 0;">ID: <span id="modal-id"></span></p>
+            </div>
+            <hr style="border-color: var(--border-color); margin: 20px 0;">
+            <h4 style="color: var(--text-muted); margin-bottom: 8px;">📦 Foydalanuvchi tashlagan modlar:</h4>
+            <div id="modal-user-mods" style="background: #0b0b10; border: 1px solid var(--border-color); padding: 12px; border-radius: 10px; font-size: 13px; color: var(--text-muted);">
+                Hozircha modlar yuklamagan.
+            </div>
+
+            <h4 style="color: var(--text-muted); margin: 15px 0 8px 0;">💬 Shaxsiy Chat:</h4>
+            <div id="chat-messages" class="chat-box">
+                <div class="chat-msg">Salom! Xush kelibsiz.</div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <input type="text" id="chat-input" placeholder="Xabar yozish..." style="margin:0; flex: 1; padding: 10px; background: #0b0b10; border: 1px solid var(--border-color); color: white; border-radius: 8px; outline: none;">
+                <button onclick="sendChatMessage()" style="margin:0; width: 100px; padding: 10px; background: var(--accent-green); color: #0b0b10; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Yuborish</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Supabase ulang
+        // Supabase ulanishi
         const SUPABASE_URL = 'https://swbnidsmwnqwjztrlorr.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_-yjtMQSDiq7_L1Z1NFcSQ_GiXFD';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -161,6 +231,7 @@
                 const userObj = JSON.parse(activeUser);
                 showProfileView(userObj);
             }
+            loadAccounts();
         }
 
         function switchTab(tabId, btn) {
@@ -168,6 +239,9 @@
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             btn.classList.add('active');
+            if(tabId === 'accounts') {
+                loadAccounts();
+            }
         }
 
         function showRegister() {
@@ -254,8 +328,7 @@
                 return;
             }
 
-            // Bazadagi jami foydalanuvchilar sonini aniqlab, ID ni ketma-ket (1, 2, 3...) qilamiz
-            const { count, error: countError } = await supabase
+            const { count } = await supabase
                 .from('users')
                 .select('*', { count: 'exact', head: true });
 
@@ -274,6 +347,7 @@
             const newUser = { username, id: uniqueId };
             localStorage.setItem('mc_active_user', JSON.stringify(newUser));
             showProfileView(newUser);
+            loadAccounts();
         }
 
         async function loginUser() {
@@ -318,6 +392,64 @@
             document.getElementById('login-card').style.display = 'none';
             document.getElementById('register-card').style.display = 'none';
             document.getElementById('profile-card').style.display = 'block';
+        }
+
+        async function loadAccounts() {
+            const listContainer = document.getElementById('accounts-list');
+            listContainer.innerHTML = '<p style="color: var(--text-muted);">Yuklanmoqda...</p>';
+
+            const { data, error } = await supabase
+                .from('users')
+                .select('username, unique_id');
+
+            if(error || !data) {
+                listContainer.innerHTML = '<p style="color: #ff4757;">Accountlarni yuklashda xatolik yuz berdi.</p>';
+                return;
+            }
+
+            if(data.length === 0) {
+                listContainer.innerHTML = '<p style="color: var(--text-muted);">Hozircha hech qanday account ochilmagan.</p>';
+                return;
+            }
+
+            listContainer.innerHTML = '';
+            data.forEach(acc => {
+                const card = document.createElement('div');
+                card.className = 'account-card';
+                card.onclick = () => openUserProfile(acc.username, acc.unique_id);
+                card.innerHTML = `
+                    <div class="acc-avatar">👤</div>
+                    <div>
+                        <h4 style="margin: 0 0 4px 0; color: var(--text-main);">${acc.username}</h4>
+                        <span style="font-size: 12px; color: var(--accent-orange); font-weight: bold;">ID: ${acc.unique_id}</span>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        function openUserProfile(username, id) {
+            document.getElementById('modal-username').innerText = username;
+            document.getElementById('modal-id').innerText = id;
+            document.getElementById('user-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('user-modal').style.display = 'none';
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const val = input.value.trim();
+            if(!val) return;
+
+            const chatBox = document.getElementById('chat-messages');
+            const msg = document.createElement('div');
+            msg.className = 'chat-msg mine';
+            msg.innerText = val;
+            chatBox.appendChild(msg);
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
         function logout() {
