@@ -25,13 +25,15 @@
         .mod-card h3 { margin: 12px 0 6px 0; font-size: 18px; color: #00ff88; }
         
         .card-box { background: #181824; padding: 30px; border-radius: 15px; max-width: 450px; margin: auto; border: 1px solid #2a2a3d; box-shadow: 0 8px 25px rgba(0,0,0,0.5); text-align: center; }
-        .card-box input { width: 100%; padding: 12px; margin: 10px 0; background: #111118; border: 2px solid #333; color: white; border-radius: 8px; box-sizing: border-box; outline: none; }
+        .card-box input { width: 100%; padding: 12px; margin: 8px 0; background: #111118; border: 2px solid #333; color: white; border-radius: 8px; box-sizing: border-box; outline: none; }
         .card-box input:focus { border-color: #00ff88; }
-        .card-box button { background: #00ff88; color: #0f0f13; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .card-box button { background: #00ff88; color: #0f0f13; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; }
         .card-box button:hover { background: #00cc6a; }
 
+        .error-text { color: #ff4757; font-size: 12px; text-align: left; margin-bottom: 8px; display: block; }
+        .status-text { font-size: 13px; text-align: left; margin-bottom: 5px; display: block; font-weight: bold; }
+
         .avatar-preview { width: 90px; height: 90px; border-radius: 50%; background: #222; margin: 0 auto 15px auto; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 3px solid #00ff88; }
-        .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -56,19 +58,16 @@
                     <img src="https://via.placeholder.com/300x150" alt="Mod">
                     <h3>Super Physics Mod</h3>
                     <p style="color: #aaa; font-size: 14px;">O'yinga realistik fizika qo'shadi.</p>
-                    <button style="background:#222; color:#00ff88; border:1px solid #00ff88; padding:8px; border-radius:6px; cursor:pointer; width:100%; font-weight:bold; margin-top:10px;">❤️ Like (12)</button>
                 </div>
                 <div class="mod-card">
                     <img src="https://via.placeholder.com/300x150" alt="Mod">
                     <h3>Custom Swords</h3>
                     <p style="color: #aaa; font-size: 14px;">Yangi turdagi qilichlar to'plami.</p>
-                    <button style="background:#222; color:#00ff88; border:1px solid #00ff88; padding:8px; border-radius:6px; cursor:pointer; width:100%; font-weight:bold; margin-top:10px;">❤️ Like (25)</button>
                 </div>
                 <div class="mod-card">
                     <img src="https://via.placeholder.com/300x150" alt="Mod">
                     <h3>Pixel Shader</h3>
                     <p style="color: #aaa; font-size: 14px;">Grafikani yanada chiroyli qiladi.</p>
-                    <button style="background:#222; color:#00ff88; border:1px solid #00ff88; padding:8px; border-radius:6px; cursor:pointer; width:100%; font-weight:bold; margin-top:10px;">❤️ Like (40)</button>
                 </div>
             </div>
         </div>
@@ -85,7 +84,7 @@
                 <input type="file" accept="image/*">
                 <label>Mod fayli (.zip / .mcpack):</label>
                 <input type="file">
-                <button style="background: #ff9800; color: white;" onclick="alert('Mod tekshiruvga yuborildi!')">Joylash</button>
+                <button style="background: #ff9800; color: white;">Joylash</button>
             </div>
         </div>
 
@@ -94,10 +93,16 @@
             <!-- Ro'yxatdan o'tish oynasi -->
             <div id="register-card" class="card-box">
                 <h2 style="color: #00ff88;">Ro'yxatdan o'tish</h2>
-                <p style="color: #aaa; font-size: 13px; margin-bottom: 15px;">Platformaga kirish uchun ma'lumotlaringizni kiriting:</p>
-                <input type="text" id="reg-username" placeholder="Username (Noyob nikneym)...">
+                <p style="color: #aaa; font-size: 13px; margin-bottom: 15px;">Username va parolingizni kiriting:</p>
+                
+                <input type="text" id="reg-username" placeholder="Username..." oninput="checkUsername(this.value)">
+                <span id="username-status" class="status-text"></span>
+
                 <input type="password" id="reg-password" placeholder="Parol...">
-                <input type="password" id="reg-password-confirm" placeholder="Parolni tasdiqlang...">
+                
+                <input type="password" id="reg-password-confirm" placeholder="Parolni tasdiqlang..." oninput="checkPasswordsMatch()">
+                <span id="password-error" class="error-text"></span>
+
                 <button onclick="registerUser()">Ro'yxatdan o'tish</button>
             </div>
 
@@ -108,21 +113,63 @@
                     <span style="font-size: 35px;">👤</span>
                 </div>
                 <p><b>Username:</b> <span id="display-username" style="color: #00ff88;"></span></p>
-                <p><b>O'zgarmas ID:</b> <span id="display-id" style="color: #ff9800;"></span></p>
+                <p><b>ID (O'zgarmas):</b> <span id="display-id" style="color: #ff9800;"></span></p>
                 <hr style="border-color: #2a2a3d; margin: 15px 0;">
                 <h4 style="text-align: left; color: #aaa; margin-bottom: 5px;">Sizning modlaringiz:</h4>
                 <p style="color: #666; font-size: 13px; text-align: left;">Hozircha modlar yuklamagansiz.</p>
-                <button style="background: #ff4757; color: white; margin-top: 20px;" onclick="logout()">Chiqish</button>
+                <button style="background: #ff4757; color: white;" onclick="logout()">Chiqish</button>
             </div>
         </div>
     </div>
 
     <script>
+        // Oldindan band qilingan ba'zi username'lar ro'yxati (test uchun)
+        const existingUsers = ['admin', 'jorik', 'minecraft', 'uzbek'];
+
+        window.onload = function() {
+            // Sahifa ochilganda oldin saqlangan profil bor-yo'qligini tekshiramiz
+            const savedUser = localStorage.getItem('mc_user');
+            const savedId = localStorage.getItem('mc_id');
+            if(savedUser && savedId) {
+                document.getElementById('display-username').innerText = savedUser;
+                document.getElementById('display-id').innerText = savedId;
+                document.getElementById('register-card').style.display = 'none';
+                document.getElementById('profile-card').style.display = 'block';
+            }
+        }
+
         function switchTab(tabId, btn) {
             document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             btn.classList.add('active');
+        }
+
+        function checkUsername(val) {
+            const status = document.getElementById('username-status');
+            if(!val.trim()) {
+                status.innerText = '';
+                return;
+            }
+            if(existingUsers.includes(val.trim().toLowerCase())) {
+                status.style.color = '#ff4757';
+                status.innerText = '❌ Band';
+            } else {
+                status.style.color = '#00ff88';
+                status.innerText = '✔ Band emas';
+            }
+        }
+
+        function checkPasswordsMatch() {
+            const pass = document.getElementById('reg-password').value;
+            const confirmPass = document.getElementById('reg-password-confirm').value;
+            const errorSpan = document.getElementById('password-error');
+
+            if(confirmPass && pass !== confirmPass) {
+                errorSpan.innerText = 'Parollar bir xil emas!';
+            } else {
+                errorSpan.innerText = '';
+            }
         }
 
         function registerUser() {
@@ -131,33 +178,40 @@
             const confirmPassword = document.getElementById('reg-password-confirm').value;
 
             if(!username || !password || !confirmPassword) {
-                alert('Iltimos, barcha maydonlarni to‘ldiring!');
+                alert('Barcha maydonlarni to‘ldiring!');
+                return;
+            }
+
+            if(existingUsers.includes(username.toLowerCase())) {
+                alert('Bu username band! Boshqa nom tanlang.');
                 return;
             }
 
             if(password !== confirmPassword) {
-                alert('Xatolik: Parollar bir xil emas! Iltimos, tekshirib qaytadan kiriting.');
-                return;
+                return; // Xatolik tagida yozilib turibdi
             }
 
-            // Tasodifiy o'zgarmas ID generatsiya qilish
+            // O'zgarmas ID generatsiya qilish
             const uniqueId = 'ID-' + Math.floor(100000 + Math.random() * 900000);
 
-            // Ma'lumotlarni profil oynasiga chiqarish
+            // Brauzer xotirasiga saqlash (sahifa yangilanganda o'chib ketmaydi)
+            localStorage.setItem('mc_user', username);
+            localStorage.setItem('mc_id', uniqueId);
+
             document.getElementById('display-username').innerText = username;
             document.getElementById('display-id').innerText = uniqueId;
 
-            // Oynalarni almashtirish
             document.getElementById('register-card').style.display = 'none';
             document.getElementById('profile-card').style.display = 'block';
-
-            alert('Muvaffaqiyatli ro‘yxatdan o‘tdingiz!');
         }
 
         function logout() {
+            localStorage.removeItem('mc_user');
+            localStorage.removeItem('mc_id');
             document.getElementById('reg-username').value = '';
             document.getElementById('reg-password').value = '';
             document.getElementById('reg-password-confirm').value = '';
+            document.getElementById('username-status').innerText = '';
             
             document.getElementById('profile-card').style.display = 'none';
             document.getElementById('register-card').style.display = 'block';
