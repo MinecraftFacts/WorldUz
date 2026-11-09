@@ -132,7 +132,7 @@ function card(m) {
         alt="${esc(m.title)}">
       <div class="card-body">
         <h3>${esc(m.title)}</h3>
-        <span class="sub">✦ ${esc(userName(m.mc_profiles))}</span>
+        <span class="sub">✦ ${esc(userName(userName(prof(m.user_id)))}</span>
         <div class="stats">
           <span>👁 ${x.views}</span>
           <span>♥ ${x.likes}</span>
@@ -311,22 +311,26 @@ function renderNotifications() {
   renderChatFriends();
 }
 
+  
 async function loadMods() {
   mods = check(
     await db.from('mc_mods')
       .select(
-        'id,user_id,title,description,images,file_path,created_at,'+
-        'mc_profiles(username,nickname)'
+        'id,user_id,title,description,images,file_path,created_at'
       )
-      .order('created_at',{ascending:false})
+      .order('created_at', { ascending: false })
       .limit(100)
   ) || [];
 
   const rows = check(await db.rpc('mc_stats')) || [];
-  stats = new Map(rows.map(x => [x.mod_id,x]));
+
+  stats = new Map(
+    rows.map(x => [x.mod_id, x])
+  );
 
   renderMods();
 }
+
 
 async function loadPeople() {
   people = check(
@@ -1175,7 +1179,7 @@ async function openMod(id) {
     <h2>${esc(m.title)}</h2>
 
     <p class="muted">
-      ✦ ${esc(userName(m.mc_profiles))}
+      ✦ ${esc(userName(prof(m.user_id)))}
     </p>
 
     <p style="white-space:pre-wrap;overflow-wrap:anywhere">
@@ -1527,11 +1531,13 @@ async function boot() {
     me = session.session?.user || null;
 
     await Promise.all([
-      loadPeople(),
-      loadMods()
-    ]);
+  loadPeople(),
+  loadMods()
+]);
 
-    await onAuthChange();
+renderMods();
+
+await onAuthChange();
 
     db.auth.onAuthStateChange((event,session)=>{
       const id = session?.user?.id || null;
