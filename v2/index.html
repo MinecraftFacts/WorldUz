@@ -1,1261 +1,212 @@
-
 <!doctype html>
 <html lang="uz">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#132b31">
-<title>Minecraft World V2.0 — Sinov</title>
-
+<meta name="theme-color" content="#12232b">
+<title>Minecraft World V2.0 — sinov</title>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 
 <style>
-:root {
-  --bg:#0d1923;
-  --panel:#19313e;
-  --line:#43606a;
-  --text:#f0f7f2;
-  --muted:#abc5c9;
-  --green:#b3e4a8;
-  --gold:#e9c17e;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font:15px/1.5 system-ui,Arial;
-  background:
-    radial-gradient(circle at 85% 2%,#2d4b45,transparent 42%),
-    var(--bg);
-  color:var(--text);
-}
-[hidden]{display:none!important}
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-button:disabled{opacity:.55;cursor:wait}
-
-header{
-  position:sticky;
-  top:0;
-  background:#142731ed;
-  border-bottom:1px solid var(--line);
-  z-index:20;
-  padding:14px max(15px,calc((100% - 1060px)/2));
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-}
-.brand{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  font-size:20px;
-  font-weight:850;
-}
-.brand svg{color:var(--green)}
-.brand small{
-  font-size:10px;
-  background:#34533a;
-  padding:3px 6px;
-  border-radius:7px;
-  color:var(--green);
-}
-main{
-  max-width:1060px;
-  margin:auto;
-  padding:25px 15px 110px;
-  position:relative;
-  z-index:2;
-}
-.page{display:none}
-.page.active{display:block}
-h1,h2,h3{margin:0 0 13px}
-h1{font-size:clamp(29px,5vw,45px)}
-p{margin:7px 0}
-small,.muted{color:var(--muted)}
-
-.card,.panel{
-  background:linear-gradient(135deg,#203c47,#142a36);
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:17px;
-  margin:0 0 14px;
-}
-.hero{
-  padding:29px;
-  background:linear-gradient(120deg,#295445,#465b47,#6a5538);
-  border-radius:22px;
-  margin-bottom:23px;
-}
-.hero p{max-width:620px}
-.row{display:flex;gap:10px;align-items:center}
-.wrap{flex-wrap:wrap}
-.between{justify-content:space-between}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:13px;
-}
-.btn{
-  border:1px solid #64977a;
-  border-radius:11px;
-  background:linear-gradient(100deg,var(--gold),var(--green));
-  color:#15242b;
-  padding:10px 14px;
-  font-weight:750;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:7px;
-  text-decoration:none;
-}
-.btn.alt{
-  background:#294653;
-  border-color:var(--line);
-  color:var(--text);
-}
-.btn.small{padding:7px 10px;font-size:12px}
-.btn.danger{
-  background:#593542;
-  color:#fff;
-  border-color:#a36d77;
-}
-.field{
-  width:100%;
-  background:#112733;
-  color:var(--text);
-  border:1px solid var(--line);
-  border-radius:11px;
-  padding:11px;
-  margin:5px 0 13px;
-  display:block;
-}
-textarea{resize:vertical}
-label{font-weight:650}
-.tile{padding:0;overflow:hidden}
-.cover{
-  height:155px;
-  width:100%;
-  object-fit:contain;
-  display:block;
-  background:#091923;
-}
-.tile-body{padding:12px}
-.tile h3{font-size:16px;margin:0 0 5px}
-.chips{
-  display:flex;
-  gap:5px;
-  flex-wrap:wrap;
-  margin:8px 0;
-}
-.chip{
-  font-size:12px;
-  padding:4px 8px;
-  border:1px solid #60827a;
-  border-radius:12px;
-  background:#2c4b4f;
-  color:#def2e8;
-}
-.avatar{
-  width:50px;
-  height:50px;
-  border-radius:50%;
-  object-fit:cover;
-  border:2px solid #86bf96;
-}
-.verified{
-  color:#37a3ff;
-  fill:#144871;
-  width:19px;
-  height:19px;
-  vertical-align:-4px;
-  stroke-width:2.7;
-}
-nav{
-  position:fixed;
-  bottom:0;
-  left:50%;
-  transform:translateX(-50%);
-  width:min(100%,590px);
-  
-  display:grid;
-  grid-template-columns:repeat(7,minmax(72px,1fr));
-  overflow-x:auto;
-  scrollbar-width:none;
-  gap:4px;
-
-  background:#142b37f7;
-  border:1px solid #4c7373;
-  border-radius:20px 20px 0 0;
-  z-index:30;
-  padding:9px;
-}
-nav button{
-  border:0;
-  background:none;
-  color:#c4d8d8;
-  border-radius:12px;
-  padding:8px 2px;
-  display:grid;
-  place-items:center;
-  gap:2px;
-}
-nav button.active{
-  background:#365b48;
-  color:var(--gold);
-}
-nav span{font-size:11px}
-.line{
-  border-bottom:1px solid var(--line);
-  padding:11px 0;
-}
-.line:last-child{border:0}
-.status{
-  position:fixed;
-  bottom:95px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:50;
-  padding:12px 17px;
-  border-radius:13px;
-  background:#31604b;
-  border:1px solid var(--green);
-  max-width:90vw;
-}
-.leaves{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:0;
-  overflow:hidden;
-  opacity:.3;
-}
-.leaf{
-  position:absolute;
-  top:-12%;
-  left:var(--x);
-  color:var(--c);
-  animation:fall var(--t) linear infinite;
-  animation-delay:var(--d);
-}
-@keyframes fall {
-  to{transform:translate(var(--dx),115vh) rotate(600deg)}
-}
-@media(prefers-reduced-motion:reduce){
-  .leaves{display:none}
-}
-@media(max-width:720px){
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .hero{padding:20px}
-  .brand{font-size:16px}
-  .cover{height:125px}
-}
-@media(max-width:370px){
-  .grid{grid-template-columns:1fr}
-}
+:root{--bg:#0b1620;--surface:#162b38;--surface2:#223b48;--line:#43616a;--text:#f3f7ee;--dim:#b8c8cd;--mint:#a7e9b0;--gold:#f1cb7d;--danger:#ffa1a7;--blue:#47a7ff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}svg[aria-hidden="true"]:not([style]){max-width:100%}body{margin:0;min-height:100vh;font:15px/1.5 system-ui,Arial;background:radial-gradient(ellipse at 85% 3%,#27494b 0,transparent 40%),linear-gradient(140deg,#0d1822,#1c2c3b 65%,#1d262d);color:var(--text)}
+[hidden]{display:none!important}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:wait}h1,h2,h3,p{margin:0 0 12px}h1{font-size:clamp(30px,5vw,48px);line-height:1.12}h2{font-size:23px}h3{font-size:17px}a{color:#a4d4e9}small,.muted{color:var(--dim)}.ico{height:19px;width:19px;vertical-align:middle;stroke:currentColor;fill:none;stroke-width:2;flex:none}.ico.big{width:25px;height:25px}
+header{position:sticky;top:0;z-index:30;background:#101e2af2;border-bottom:1px solid var(--line);backdrop-filter:blur(13px)}.header-inner{max-width:1150px;margin:auto;min-height:72px;padding:10px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:clamp(16px,3vw,23px)}.brand .emblem{display:grid;place-items:center;width:40px;height:40px;background:#215344;border-radius:12px;color:var(--mint)}.brand b{color:var(--gold)}.brand span{color:var(--mint)}.tag{border:1px solid #75987e;color:#c2f0ba;background:#304e3e;padding:3px 7px;border-radius:8px;font-size:11px;font-weight:700}.wrap{max-width:1150px;margin:auto;padding:24px 15px 125px;position:relative;z-index:2}.page{display:none}.page.active{display:block}.hero{border:1px solid #708f7e;background:linear-gradient(110deg,#1d4350,#42533e 80%,#805c37);padding:30px;border-radius:25px;margin-bottom:26px}.hero p{max-width:660px;color:#d2dfdb}
+.panel{border:1px solid var(--line);background:linear-gradient(145deg,#203846,#142734);padding:18px;border-radius:19px;margin-bottom:14px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.row{display:flex;align-items:center;gap:10px}.row.wraprow{flex-wrap:wrap}.between{justify-content:space-between}.grow{flex:1;min-width:0}.btn{border:1px solid #598a6b;background:linear-gradient(110deg,var(--gold),var(--mint));border-radius:12px;color:#142330;padding:10px 15px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none}.btn.secondary{background:#273f4b;color:var(--text);border-color:var(--line)}.btn.warn{background:#4e3040;color:#ffe0e1;border-color:#975866}.btn.small{padding:7px 10px;font-size:13px}.btn.iconbtn{padding:9px}.field{display:block;width:100%;background:#10222e;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin:5px 0 13px}.field:focus{outline:2px solid #66ad9a}textarea{resize:vertical}label{font-weight:650}.stat{font-size:12px;color:var(--dim)}.stat .ico{height:15px;width:15px}.chip{display:inline-flex;align-items:center;gap:4px;border:1px solid #658478;background:#2a4551;border-radius:999px;padding:4px 9px;font-size:12px;color:#def3ed}.chips{display:flex;gap:6px;flex-wrap:wrap}.card{border-radius:18px;background:#1a303d;overflow:hidden;border:1px solid var(--line);cursor:pointer}.card:hover{border-color:var(--mint)}.cover{display:block;width:100%;height:170px;object-fit:contain;background:#091b26}.card-body{padding:12px}.card-body h3{margin:0 0 7px;overflow-wrap:anywhere}.ava{width:43px;height:43px;border-radius:50%;object-fit:cover;border:2px solid #5eab88}.ava.big{width:76px;height:76px}.verified{color:var(--blue);width:19px;height:19px;vertical-align:-4px;fill:#153f65;stroke-width:3}.name{overflow-wrap:anywhere}.muted.small{font-size:12px}.boxline{padding:11px 0;border-bottom:1px solid #ffffff18}.boxline:last-child{border:0}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}.tabs button.active{background:#536a4b;border-color:#a1d1aa}.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,650px);display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;z-index:40;padding:8px 9px;background:#142936f7;border:1px solid #597581;border-radius:21px 21px 0 0;box-shadow:0 -7px 30px #0006}.nav button{border:0;border-radius:12px;color:#c2d3d9;background:transparent;min-height:60px;min-width:0;display:grid;place-items:center;gap:1px}.nav button.active{color:var(--gold);background:#47644f}.nav span{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.modal{position:fixed;inset:0;padding:12px;background:#040c11d9;display:grid;place-items:center;z-index:60}.modal-inner{position:relative;background:#18313f;border:1px solid #709b86;border-radius:19px;padding:22px;max-height:90vh;overflow-y:auto;width:min(100%,720px)}.modal-close{position:absolute;top:12px;right:12px}.toast{position:fixed;bottom:102px;left:50%;transform:translateX(-50%);max-width:min(90vw,550px);background:#2b5247;border:1px solid #b1dfaa;border-radius:12px;padding:12px 16px;z-index:100}.bubble-box{height:365px;overflow:auto;padding:12px;background:#0a1e29;border-radius:14px;display:flex;flex-direction:column;gap:8px}.bubble{width:fit-content;max-width:min(82%,500px);align-self:flex-start;padding:8px 11px;border-radius:13px;background:#2b4758;white-space:pre-wrap;overflow-wrap:anywhere}.bubble.mine{align-self:flex-end;background:#48634b}.bubble small{display:block;text-align:right;font-size:10px;margin-top:4px}.bubble img{max-width:230px;max-height:230px;display:block;border-radius:11px}.chat-input{display:flex;align-items:center;gap:8px;margin-top:10px}.chat-input input{flex:1;min-width:0}.leafscape{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:1;opacity:.32}.leaf{position:absolute;top:-12%;left:var(--left);color:var(--color);animation:drop var(--time) linear infinite;animation-delay:var(--delay);width:var(--size);height:var(--size)}.leaf svg{width:100%;height:100%}@keyframes drop{to{transform:translate(var(--shift),115vh) rotate(var(--rotate))}}@media(prefers-reduced-motion:reduce){.leafscape{display:none}}.notice-dot{width:8px;height:8px;background:#6ce89a;border-radius:50%;display:inline-block}.error{color:var(--danger)}.note{padding:11px 13px;border-left:3px solid var(--gold);background:#213c49;border-radius:7px;margin-bottom:15px}.info{color:var(--mint)}.selects{display:grid;grid-template-columns:1fr 1fr;gap:10px}.switch{accent-color:#9bdf9d;width:20px;height:20px}.hint{font-size:12px;color:var(--dim)}.empty{padding:22px 8px;color:var(--dim)}.avatarname{display:flex;align-items:center;gap:9px}.placeholder{height:125px;background:#152932;display:grid;place-items:center;color:#8fb09e}.hero-actions{display:flex;gap:9px;flex-wrap:wrap}.overview{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.metric{border:1px solid var(--line);background:#1b3541;border-radius:12px;padding:13px;text-align:center}.metric strong{display:block;font-size:20px;color:var(--mint)}
+@media(max-width:790px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}.nav{grid-template-columns:repeat(6,1fr)}.nav span{font-size:9px}.hero{padding:20px}.wrap{padding:18px 12px 125px}.panel{padding:14px}.cover{height:135px}}
+@media(max-width:380px){.nav{padding:7px 3px;gap:0}.nav button{min-height:54px}.nav .ico.big{width:22px;height:22px}.nav span{font-size:8px}.grid{gap:8px}.brand{font-size:15px}.brand .emblem{width:34px;height:34px}.card-body{padding:9px}.selects{grid-template-columns:1fr}}
 </style>
 </head>
-
 <body>
-<div id="leaves" class="leaves" aria-hidden="true"></div>
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg"><defs><symbol id="ico-globe-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 5-5 13 0 18M12 3c5 5 5 13 0 18"/></symbol><symbol id="ico-house" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 3l9 7v11H3V10zM9 21v-8h6v8"/></symbol><symbol id="ico-gamepad-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12c2 0 3 1 4 9 .2 2-2 3-3 2l-3-3H8l-3 3c-1 1-3 0-3-2 1-8 2-9 4-9zM8 11v5M5.5 13.5h5M16 12h.01M19 15h.01"/></symbol><symbol id="ico-plus-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M7 12h10"/></symbol><symbol id="ico-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 21v-2c0-4 3-6 6-6s6 2 6 6v2M17 5a3 3 0 0 1 0 6M18 13c3 0 5 3 5 6v2"/></symbol><symbol id="ico-message-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l1-4a8.5 8.5 0 1 1 16-4.5z"/></symbol><symbol id="ico-user-round" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol><symbol id="ico-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 10h18c0-2-3-3-3-10M10 21h4"/></symbol><symbol id="ico-refresh-cw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7V3l-3 3a9 9 0 0 0-14 6M4 17v4l3-3a9 9 0 0 0 14-6M20 3v5h-5M4 21v-5h5"/></symbol><symbol id="ico-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m7-7-7 7 7 7"/></symbol><symbol id="ico-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16"/></symbol><symbol id="ico-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5l14 14M19 5 5 19"/></symbol><symbol id="ico-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V3M7 8l5-5 5 5M4 17v4h16v-4"/></symbol><symbol id="ico-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13m-5-5 5 5 5-5M4 18v3h16v-3"/></symbol><symbol id="ico-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 15 9l7 .5-5.5 5 2 7-6.5-4-6.5 4 2-7L2 9.5 9 9Z"/></symbol><symbol id="ico-shield-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 21 6v6c0 5-4 8-9 10C7 20 3 17 3 12V6z"/><path d="m8 12 3 3 5-6"/></symbol><symbol id="ico-badge-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 2.3 2.1 3.1-.3.9 3 2.8 1.5-1 3 1 3-2.8 1.5-.9 3-3.1-.3L12 22l-2.3-2.5-3.1.3-.9-3L3 15.3l1-3-1-3 2.7-1.5.9-3 3.1.3Z"/><path d="m8 12 3 3 5-6"/></symbol><symbol id="ico-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m3 17 6-6 4 4 3-3 5 5"/></symbol><symbol id="ico-folder-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h7l2 2h9v12H3zM12 11v7M8.5 14.5h7"/></symbol><symbol id="ico-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h14l3 3v15H3V3h1zM7 3v6h10V3M7 21v-9h10v9"/></symbol><symbol id="ico-calendar-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="17" rx="2"/><path d="M7 2v6M17 2v6M3 10h18M12 13v6M9 16h6"/></symbol><symbol id="ico-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7ZM11 13l11-11"/></symbol><symbol id="ico-user-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 21v-2a6 6 0 0 1 12 0v2M19 8v8M15 12h8"/></symbol><symbol id="ico-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2 7 7 2-7 2-2 7-2-7-7-2 7-2zM19 2v4M17 4h4"/></symbol></defs></svg>
 
-<header>
-  <div class="brand">
-    <i data-lucide="globe-2"></i>
-    Minecraft World
-    <small>V2.0 SINOV</small>
-  </div>
-  <a class="btn alt small" href="../">V1.0</a>
-</header>
-
-<main>
-<section id="home" class="page active">
-  <div class="hero">
-    <h1>Minecraft World V2.0</h1>
-    <p>
-      Modlarni versiyaga qarab toping, o‘yinlarga
-      qo‘shiling va tasdiqlangan o‘yinchilarni ko‘ring.
-    </p>
-    <button class="btn" data-page="games">
-      <i data-lucide="gamepad-2"></i>
-      Birga o‘ynaymiz
-    </button>
-  </div>
-
-  <h2>Modlar</h2>
-
-  <div class="row wrap">
-    <input class="field" style="flex:2;min-width:180px"
-      id="modSearch" placeholder="Mod qidirish">
-
-    <select class="field" style="flex:1;min-width:120px"
-      id="editionFilter">
-      <option value="all">Hammasi</option>
-      <option value="bedrock">Bedrock</option>
-      <option value="java">Java</option>
-    </select>
-
-    <input class="field" style="flex:1;min-width:120px"
-      id="versionFilter" placeholder="Versiya: 1.21">
-  </div>
-
-  <div id="modGrid" class="grid"></div>
-  <p class="muted">
-    Mod qo‘shish va mavjud chat uchun hozircha
-    <a href="../">V1.0 sayt</a> ishlaydi.
-  </p>
-</section>
-
-<section id="games" class="page">
-  <div class="row between wrap">
-    <h2>Birga o‘ynaymiz</h2>
-    <button class="btn" id="newInvite">
-      <i data-lucide="plus"></i>
-      Taklif yaratish
-    </button>
-  </div>
-
-  <div id="inviteFormWrap" class="panel" hidden>
-    <h3>Yangi o‘yin taklifi</h3>
-
-    <form id="inviteForm">
-      <label>Sarlavha
-        <input class="field" name="title" required
-          minlength="5" maxlength="100"
-          placeholder="Survival uchun sherik kerak">
-      </label>
-
-      <div class="row wrap">
-        <label style="flex:1">Nashr
-          <select class="field" name="edition">
-            <option value="bedrock">Bedrock</option>
-            <option value="java">Java</option>
-          </select>
-        </label>
-
-        <label style="flex:1">Minecraft versiyasi
-          <input class="field" name="version"
-            required maxlength="35" placeholder="1.21.50">
-        </label>
-      </div>
-
-      <div class="row wrap">
-        <label style="flex:1">Rejim
-          <select class="field" name="mode">
-            <option value="survival">Survival</option>
-            <option value="creative">Creative</option>
-            <option value="minigames">Minigames</option>
-            <option value="other">Boshqa</option>
-          </select>
-        </label>
-
-        <label style="flex:1">O‘yinchilar soni
-          <input class="field" type="number" name="players"
-            value="4" min="2" max="40" required>
-        </label>
-      </div>
-
-      <label>O‘yin boshlanishi
-        <input class="field" type="datetime-local"
-          name="start" required>
-      </label>
-
-      <label>Izoh
-        <textarea class="field" name="description"
-          rows="3" maxlength="1000"></textarea>
-      </label>
-
-      <button class="btn">Taklifni joylash</button>
-      <button class="btn alt" type="button"
-        id="cancelInvite">Bekor qilish</button>
-    </form>
-  </div>
-
-  <div id="inviteList"></div>
-</section>
-
-<section id="profile" class="page">
-  <h2>Profil va sozlamalar</h2>
-
-  <div id="loginBox" class="panel">
-    <p>Eski Minecraft World akkaunting bilan kir.</p>
-
-    <form id="loginForm">
-      <label>Username
-        <input id="username" class="field" required>
-      </label>
-      <label>Parol
-        <input type="password" id="password"
-          class="field" required>
-      </label>
-      <button class="btn">Kirish</button>
-    </form>
-
-    <p class="muted">
-      Yangi akkaunt yaratish uchun
-      <a href="../">eski saytga o‘t</a>.
-    </p>
-  </div>
-
-  <div id="profileBox" hidden>
-    <div class="panel row between wrap">
-      <div class="row">
-        <img id="myAvatar" class="avatar" alt="Avatar">
-        <div>
-          <h3 id="myName"></h3>
-          <small id="myUsername"></small>
-        </div>
-      </div>
-      <button class="btn alt small" id="logout">
-        Chiqish
-      </button>
-    </div>
-
-    <form id="profileForm" class="panel">
-      <h3>Minecraft profili</h3>
-
-      <label>Minecraft nick
-        <input class="field" name="nick" maxlength="40"
-          placeholder="Minecraftdagi nickname">
-      </label>
-
-      <label>Bio havolalar
-        <textarea class="field" name="links" rows="3"
-          placeholder="https://t.me/kanalingiz"></textarea>
-      </label>
-
-      <p class="muted">
-        Har bir HTTPS havolani yangi qatordan yozing.
-      </p>
-
-      <label class="row">
-        <input type="checkbox" name="badgeVisible">
-        Ko‘k tasdiq belgisini ko‘rsatish
-      </label>
-
-      <p></p>
-      <button class="btn">Sozlamalarni saqlash</button>
-    </form>
-
-    <form id="badgeRequestForm" class="panel">
-      <h3>Ko‘k belgi uchun so‘rov</h3>
-      <p class="muted">
-        Admin profilingizni tekshiradi.
-        Belgini faqat admin beradi.
-      </p>
-
-      <label>Nega tasdiqlanish kerak?
-        <textarea class="field" name="reason"
-          minlength="10" maxlength="700" required></textarea>
-      </label>
-
-      <button class="btn">So‘rov yuborish</button>
-      <div id="myBadgeRequests"></div>
-    </form>
-
-    <div class="panel">
-      <h3>Mening o‘yin so‘rovlarim</h3>
-      <div id="myInviteRequests"></div>
-    </div>
-  </div>
-</section>
-
-<section id="admin" class="page">
-  <h2>Admin paneli — V2.0</h2>
-
-  <div class="panel">
-    <h3>Ko‘k belgi so‘rovlari</h3>
-    <div id="adminBadgeRequests"></div>
-  </div>
-
-  <div class="panel">
-    <h3>Akkauntlarga ko‘k belgi berish</h3>
-    <input class="field" id="adminSearch"
-      placeholder="Username qidirish">
-    <div id="adminUsers"></div>
-  </div>
-</section>
+<div id="leafscape" class="leafscape" aria-hidden="true"></div>
+<header><div class="header-inner"><div class="brand"><div class="emblem"><svg class="ico big" aria-hidden="true"><use href="#ico-globe-2"></use></svg></div><div><b>Minecraft</b> <span>World</span> <small class="tag">V2.0 DEV</small></div></div><div class="row"><button class="btn secondary iconbtn" id="noticeBtn" title="Bildirishnomalar"><svg class="ico" aria-hidden="true"><use href="#ico-bell"></use></svg></button><button class="btn secondary iconbtn" id="refreshBtn" title="Yangilash"><svg class="ico" aria-hidden="true"><use href="#ico-refresh-cw"></use></svg></button></div></div></header>
+<main class="wrap">
+<section class="page active" id="page-home"><div class="hero"><div class="chip"><svg class="ico" aria-hidden="true"><use href="#ico-sparkles"></use></svg> Minecraft hamjamiyati</div><h1>Yangi dunyolar,<br>yangi imkoniyatlar</h1><p>Modlarni kashf eting, do‘stlar orttiring, o‘yin tashkil qiling va Minecraft yaratuvchilarini qo‘llab-quvvatlang.</p><div class="hero-actions"><button class="btn" data-go="games"><svg class="ico" aria-hidden="true"><use href="#ico-gamepad-2"></use></svg> Birga o‘ynaymiz</button><button class="btn secondary" data-go="upload"><svg class="ico" aria-hidden="true"><use href="#ico-plus-circle"></use></svg> Mod yuklash</button></div></div><div class="row between wraprow"><h2>Modlar <span id="modNum" class="muted"></span></h2><div class="row wraprow"><select id="editionFilter" class="field" style="margin:0;width:auto"><option value="all">Java va Bedrock</option><option value="bedrock">Bedrock</option><option value="java">Java</option></select><input id="versionFilter" class="field" style="margin:0;width:150px" placeholder="Versiya: 1.21"></div></div><input class="field" id="modSearch" placeholder="Mod nomini qidiring..."><div class="grid" id="modGrid"></div></section>
+<section class="page" id="page-games"><div class="row between wraprow"><h2><svg class="ico" aria-hidden="true"><use href="#ico-gamepad-2"></use></svg> Birga o‘ynaymiz</h2><button class="btn" id="newInviteBtn"><svg class="ico" aria-hidden="true"><use href="#ico-plus"></use></svg> Taklif yaratish</button></div><div class="tabs"><button class="btn secondary small active" data-game-filter="all">Hammasi</button><button class="btn secondary small" data-game-filter="bedrock">Bedrock</button><button class="btn secondary small" data-game-filter="java">Java</button><button class="btn secondary small" data-game-filter="mine">Mening takliflarim</button></div><div class="two" id="inviteGrid"></div><div class="panel"><h3>Taklifimga kelgan so‘rovlar</h3><div id="inviteRequests"></div></div></section>
+<section class="page" id="page-upload"><h2>Mod joylash</h2><p class="note">Minecraft versiyasini ko‘rsatish qo‘shildi. Modlar V1.0 dagi mavjud tasdiqlash tizimidan o‘tadi.</p><div id="uploadGate" class="panel">Mod yuklash uchun akkauntingizga kiring.</div><form id="modForm" class="panel" hidden><label>Mod nomi<input class="field" name="title" required minlength="3" maxlength="80"></label><label>Tavsif<textarea class="field" name="description" rows="4" required minlength="10" maxlength="3000"></textarea></label><div class="selects"><label>Edition<select name="edition" class="field"><option value="bedrock">Bedrock</option><option value="java">Java</option></select></label><label>Minecraft versiyasi<input class="field" name="version" list="mcVersions" placeholder="Masalan: 1.21.100" maxlength="35" required></label></div><datalist id="mcVersions"><option value="0.14"><option value="0.15"><option value="0.16"><option value="1.0"><option value="1.12"><option value="1.16"><option value="1.18"><option value="1.19"><option value="1.20"><option value="1.21"><option value="1.21.100"><option value="1.22"><option value="1.25"><option value="1.26"></datalist><label>Kategoriya<select name="category" class="field"><option value="addon">Addon</option><option value="map">Map</option><option value="world">World</option><option value="texture">Texture</option><option value="skin">Skin</option><option value="shader">Shader</option><option value="resource">Resource</option><option value="other">Other</option></select></label><label>Rasmlar (1–5 ta, 5 MB dan oshmasin)<input class="field" type="file" name="images" accept="image/jpeg,image/png,image/webp" multiple required></label><label>Mod fayli (.mcaddon/.mcpack/.zip/.jar, 50 MB gacha)<input class="field" type="file" name="file" accept=".mcaddon,.mcpack,.zip,.jar" required></label><div class="row wraprow"><button class="btn" type="submit" id="publishBtn"><svg class="ico" aria-hidden="true"><use href="#ico-upload"></use></svg> Tekshiruvga yuborish</button><button class="btn secondary" type="button" id="saveDraftBtn"><svg class="ico" aria-hidden="true"><use href="#ico-save"></use></svg> Qoralama saqlash</button></div></form><div class="panel"><h3>Qoralamalar</h3><div id="drafts"></div></div></section>
+<section class="page" id="page-community"><h2>Hamjamiyat</h2><div class="tabs" id="commTabs"><button class="btn secondary active small" data-community="tournaments">Turnirlar</button><button class="btn secondary small" data-community="clans">Klanlar</button><button class="btn secondary small" data-community="gallery">Galereya</button><button class="btn secondary small" data-community="events">Tadbirlar</button><button class="btn secondary small" data-community="collections">To‘plamlar</button><button class="btn secondary small" data-community="players">O‘yinchilar</button></div><div id="communityContent"></div></section>
+<section class="page" id="page-chats"><h2>Chatlar</h2><div id="chatGate" class="panel">Chat uchun akkauntga kiring.</div><div id="chatWrap" hidden><div id="conversationList" class="panel"></div><div class="panel" id="chatDetail" hidden><div class="row between"><h3 id="chatTitle">Suhbat</h3><button class="btn secondary small" id="chatBack"><svg class="ico" aria-hidden="true"><use href="#ico-arrow-left"></use></svg> Orqaga</button></div><div class="bubble-box" id="chatMessages"></div><form id="chatForm" class="chat-input"><label class="btn secondary iconbtn" title="Rasm yuborish"><svg class="ico" aria-hidden="true"><use href="#ico-image"></use></svg><input id="chatImage" type="file" accept="image/jpeg,image/png,image/webp" hidden></label><input class="field" style="margin:0" id="chatText" placeholder="Xabar yozing" maxlength="500"><button type="submit" class="btn iconbtn"><svg class="ico" aria-hidden="true"><use href="#ico-send"></use></svg></button></form><div id="chatImageName" class="hint"></div></div></div></section>
+<section class="page" id="page-profile"><h2>Profil</h2><div id="authBox" class="panel" style="max-width:530px"><form id="authForm"><h3 id="authTitle">Akkauntga kirish</h3><label>Username<input class="field" id="authUsername" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" required></label><label>Parol<input type="password" id="authPassword" class="field" minlength="8" required></label><label id="confirmWrap" hidden>Parolni takrorlang<input type="password" id="authConfirm" class="field" minlength="8"></label><div class="row wraprow"><button class="btn" type="submit">Kirish</button><button class="btn secondary" type="button" id="authSwitch">Yangi akkaunt</button></div></form></div><div id="profileContent" hidden><div class="panel row"><img id="profileAvatar" class="ava big" alt="Avatar"><div class="grow"><h2 id="profileLabel"></h2><div id="profileHandle" class="muted"></div><div id="profileStats" class="chips"></div></div></div><div class="two"><form class="panel" id="profileForm"><h3>Profil sozlamalari</h3><label>Nik<input class="field" id="profileNickname" required maxlength="35"></label><label>Bio<textarea class="field" id="profileBio" rows="3" maxlength="250"></textarea></label><label>Minecraft nick<input class="field" id="profileMcNick" maxlength="40" placeholder="Minecraftdagi nomingiz"></label><label>Bio havolalari (har qatorga bittadan HTTPS havola)<textarea class="field" id="profileLinks" rows="3" placeholder="https://t.me/kanalim"></textarea></label><label class="row"><input type="checkbox" class="switch" id="badgeVisible"> Ko‘k belgini ko‘rsatish</label><label class="row"><input type="checkbox" class="switch" id="showOnline"> Online holatimni ko‘rsatish</label><button class="btn" type="submit">Saqlash</button></form><div class="panel"><h3><svg class="ico" aria-hidden="true"><use href="#ico-badge-check"></use></svg> Ko‘k tasdiq belgisi</h3><p class="muted">Admin tekshirgan akkauntlar uchun. Belgisi bo‘lsa, uni ko‘rsatishni sozlamadan boshqarasiz.</p><div id="badgeState"></div><form id="badgeRequestForm"><label>So‘rov sababi<textarea class="field" name="reason" minlength="10" maxlength="700" rows="3" placeholder="Akkauntingiz nega tasdiqlanishi kerak?"></textarea></label><button class="btn secondary" type="submit">Tasdiqlash uchun so‘rov yuborish</button></form><hr style="border:0;border-top:1px solid var(--line);margin:20px 0"><h3>O‘yin yutuqlari</h3><div id="xpBox"></div><h3>Kunlik maqsadlar</h3><div id="dailyBox"></div></div></div><div class="panel"><h3>Mening modlarim</h3><div id="mineGrid" class="grid"></div></div><div class="panel"><h3>O‘chirilgan modlar</h3><p class="hint">V1.0 savatchasi bilan birga ishlaydi. 7 kundan keyingi avtomatik tozalash hali o‘rnatilmagan.</p><div id="trashBox"></div></div><div class="row wraprow"><button class="btn secondary" id="adminBtn" hidden>Admin paneli</button><button class="btn warn" id="logoutBtn">Akkauntdan chiqish</button></div></div></section>
+<section class="page" id="page-admin"><h2><svg class="ico" aria-hidden="true"><use href="#ico-shield-check"></use></svg> Admin paneli</h2><div class="panel"><h3>Ko‘k belgi so‘rovlari</h3><div id="adminBadgeRequests"></div></div><div class="panel"><h3>Ko‘k belgi berish / olib tashlash</h3><input id="adminUserSearch" class="field" placeholder="Username qidirish"><div id="adminUsers"></div></div><div class="panel"><h3>Tekshiruvdagi modlar</h3><div id="adminMods"></div></div><div class="panel"><h3>Shikoyatlar</h3><div id="adminReports"></div></div><p class="note">Moderatsiya ON/OFF V1.0 serveringizning amaldagi huquqlariga moslashtirilgach ulanadi. Hozirgi tekshiruv jarayoni o‘zgarmaydi.</p></section>
 </main>
-
-
-<nav>
-  <button data-page="home" class="active">
-    <i data-lucide="house"></i>
-    <span>Asosiy</span>
-  </button>
-
-  <button type="button"
-    onclick="location.href='../'">
-    <i data-lucide="users"></i>
-    <span>Akkauntlar</span>
-  </button>
-
-  <button type="button"
-    onclick="location.href='../'">
-    <i data-lucide="plus-circle"></i>
-    <span>Mod qo‘shish</span>
-  </button>
-
-  <button data-page="games">
-    <i data-lucide="gamepad-2"></i>
-    <span>O‘yinlar</span>
-  </button>
-
-  <button type="button"
-    onclick="location.href='../'">
-    <i data-lucide="message-circle"></i>
-    <span>Chatlar</span>
-  </button>
-
-  <button data-page="profile">
-    <i data-lucide="user-round"></i>
-    <span>Profil</span>
-  </button>
-
-  <button data-page="admin" id="adminNav" hidden>
-    <i data-lucide="shield-check"></i>
-    <span>Admin</span>
-  </button>
-</nav>
-
-
-<div id="status" class="status" role="status" hidden></div>
-
+<nav class="nav" id="navigation"><button class="active" data-go="home"><svg class="ico big" aria-hidden="true"><use href="#ico-house"></use></svg><span>Asosiy</span></button><button data-go="games"><svg class="ico big" aria-hidden="true"><use href="#ico-gamepad-2"></use></svg><span>O‘yinlar</span></button><button data-go="upload"><svg class="ico big" aria-hidden="true"><use href="#ico-plus-circle"></use></svg><span>Mod</span></button><button data-go="community"><svg class="ico big" aria-hidden="true"><use href="#ico-users"></use></svg><span>Hamjamiyat</span></button><button data-go="chats"><svg class="ico big" aria-hidden="true"><use href="#ico-message-circle"></use></svg><span>Chat</span></button><button data-go="profile"><svg class="ico big" aria-hidden="true"><use href="#ico-user-round"></use></svg><span>Profil</span></button></nav>
+<div id="modal" class="modal" hidden><div class="modal-inner"><button class="btn secondary iconbtn modal-close" id="modalClose" aria-label="Yopish"><svg class="ico" aria-hidden="true"><use href="#ico-x"></use></svg></button><div id="modalBody"></div></div></div><div id="toast" role="status" aria-live="polite" class="toast" hidden></div>
 <script>
-(()=>{
-'use strict';
-
-const URL_DB='https://swbnidsmwnqwjzfrlorr.supabase.co';
+/* Minecraft World V2.0. V1.0 uchun ishlatiladigan public (publishable) key. */
+(()=>{'use strict';
+const URL='https://swbnidsmwnqwjzfrlorr.supabase.co';
 const KEY='sb_publishable_-yjtMQSDiq7_L1ZiNfBcSQ_GiXEDPka';
-
 const $=id=>document.getElementById(id);
-
-const E=v=>String(v??'').replace(/[&<>"']/g,c=>({
-  '&':'&amp;',
-  '<':'&lt;',
-  '>':'&gt;',
-  '"':'&quot;',
-  "'":'&#39;'
-}[c]));
-
-const state={
-  db:null,
-  me:null,
-  users:[],
-  mods:[],
-  meta:[],
-  extra:[],
-  badges:[],
-  invites:[],
-  requests:[],
-  badgeRequests:[],
-  admin:false
-};
-
-const getUser=id=>state.users.find(x=>x.id===id);
-
-const getName=id=>{
-  const u=getUser(id);
-  return u?.nickname||u?.username||'O‘yinchi';
-};
-
-const icons=()=>window.lucide?.createIcons();
-
-const read=table=>state.db.from(table).select('*');
-
-const check=r=>{
-  if(r.error)throw r.error;
-  return r.data;
-};
-
-const hasBadge=id=>{
-  const b=state.badges.find(x=>x.user_id===id);
-  const p=state.extra.find(x=>x.user_id===id);
-
-  return !!b &&
-    (!b.expires_at||Date.parse(b.expires_at)>Date.now()) &&
-    p?.badge_visible!==false;
-};
-
-const verified=id=>hasBadge(id)
-  ?'<i data-lucide="badge-check" class="verified"></i>'
-  :'';
-
-const avatar=u=>u?.avatar_path
-  ?state.db.storage.from('mc-avatars')
-    .getPublicUrl(u.avatar_path).data.publicUrl
-  :'data:image/svg+xml,'+encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="#2e5b4c"/><circle cx="50" cy="37" r="20" fill="#b1e4b6"/><path d="M15 100Q15 65 50 65T85 100" fill="#b1e4b6"/></svg>'
-  );
-
-let toastTimer;
-
-function msg(s){
-  $('status').textContent=s;
-  $('status').hidden=false;
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(
-    ()=>$('status').hidden=true,4200
-  );
+const S={db:null,me:null,profile:null,people:[],mods:[],meta:new Map(),ratings:[],badges:new Map(),extra:new Map(),invites:[],requests:[],inviteCounts:new Map(),notes:[],drafts:[],following:[],role:'user',page:'home',gameFilter:'all',community:'tournaments',activeChat:null,chatFriends:[],currentMod:null,reg:false,presence:null,onlineIds:new Set()};
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ico=n=>`<svg class="ico" aria-hidden="true"><use href="#ico-${n}"></use></svg>`;
+const icons=()=>{};
+const must=r=>{if(r.error)throw r.error;return r.data};
+const name=p=>p?.nickname||p?.username||'O‘yinchi';
+const person=id=>S.people.find(x=>x.id===id);
+const alive=id=>{const b=S.badges.get(id),x=S.extra.get(id);return !!b&&(!b.expires_at||Date.parse(b.expires_at)>Date.now())&&x?.badge_visible!==false};
+const badge=id=>alive(id)?`<svg class="ico verified" title="Tasdiqlangan" aria-hidden="true"><use href="#ico-badge-check"></use></svg>`:'';
+const when=x=>x?new Date(x).toLocaleString('uz-UZ',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+const path=(bucket,p)=>p?S.db.storage.from(bucket).getPublicUrl(p).data.publicUrl:'';
+const fallback='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="#245344"/><circle cx="50" cy="36" r="20" fill="#ace4bb"/><path d="M12 100Q12 59 50 59T88 100" fill="#ace4bb"/></svg>');
+const avatar=p=>path('mc-avatars',p?.avatar_path)||fallback;
+const empty=t=>`<div class="empty">${esc(t)}</div>`;
+let timer;
+function toast(t){$('toast').textContent=t;$('toast').hidden=false;clearTimeout(timer);timer=setTimeout(()=>$('toast').hidden=true,4500)}
+function fail(e){console.error(e);toast('Xato: '+(e?.message||String(e)))}
+function modal(h){$('modalBody').innerHTML=h;$('modal').hidden=false;icons()}
+function close(){$('modal').hidden=true;S.currentMod=null}
+function requireAuth(){if(S.me)return true;toast('Avval akkauntga kiring');go('profile');return false}
+function go(p){if(p==='admin'&&!['admin','owner'].includes(S.role))return;S.page=p;document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+p));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.go===p));window.scrollTo(0,0);if(p==='community')renderCommunity().catch(fail);if(p==='chats')renderChats().catch(fail);if(p==='admin')renderAdmin().catch(fail)}
+async function get(t,q='*'){return must(await S.db.from(t).select(q))}
+async function load(){
+ const [people,mods,meta,ratings,extras,badges,invites,requests,notes]=await Promise.all([
+  get('mc_profiles','id,username,nickname,bio,avatar_path,public_id').then(x=>x||[]),
+  get('mc_mods','id,user_id,title,description,images,file_path,category,status,created_at,trashed_at').then(x=>x||[]),
+  get('v2_mod_meta').then(x=>x||[]),get('v2_ratings').then(x=>x||[]),
+  get('v2_profile_extra').then(x=>x||[]),get('v2_badges').then(x=>x||[]),
+  get('v2_game_invites').then(x=>x||[]), S.me?get('v2_invite_requests').then(x=>x||[]):Promise.resolve([]),
+  S.me?get('v2_notifications').then(x=>x||[]):Promise.resolve([])
+ ]);
+ S.people=people;S.mods=mods;S.meta=new Map(meta.map(x=>[x.mod_id,x]));S.ratings=ratings;S.extra=new Map(extras.map(x=>[x.user_id,x]));S.badges=new Map(badges.map(x=>[x.user_id,x]));S.invites=invites.sort((a,b)=>new Date(a.starts_at)-new Date(b.starts_at));S.requests=requests;S.notes=notes;try{const counts=must(await S.db.rpc('v2_invite_counts'));S.inviteCounts=new Map((counts||[]).map(x=>[x.invite_id,Number(x.accepted)]))}catch(e){console.warn('counts:',e);S.inviteCounts=new Map()}
+ if(S.me){
+  S.profile=person(S.me.id)||null;
+  S.role=must(await S.db.rpc('mc_my_role'))||'user';
+  S.drafts=must(await S.db.from('v2_drafts').select('*').order('updated_at',{ascending:false}))||[];
+  S.following=must(await S.db.from('v2_follows').select('*').eq('follower_id',S.me.id))||[];
+ }else{S.profile=null;S.role='user';S.drafts=[];S.following=[]}
+ renderHome();renderGames();renderProfile();renderDrafts();renderNoticeIcon();icons();
 }
-
-function fail(e){
-  console.error(e);
-  msg('Xato: '+(e?.message||String(e)));
+const meta=m=>S.meta.get(m.id)||{edition:'bedrock',game_version:'Aniqlanmagan'};
+function rated(id){const r=S.ratings.filter(x=>x.mod_id===id);return {avg:r.length?(r.reduce((a,x)=>a+x.stars,0)/r.length).toFixed(1):'—',count:r.length}}
+function modCard(m){const r=rated(m.id),z=meta(m),p=person(m.user_id);return `<article class="card" tabindex="0" role="button" data-mod="${esc(m.id)}"><img class="cover" loading="lazy" alt="Mod rasmi" src="${esc(path('mcmod-images',m.images?.[0])||fallback)}"><div class="card-body"><h3>${esc(m.title)}</h3><div class="chips"><span class="chip">${esc(z.edition)}</span><span class="chip">${esc(z.game_version)}</span></div><p class="stat">${esc(name(p))} ${badge(m.user_id)}</p><div class="stat">${ico('star')} ${r.avg} (${r.count})</div></div></article>`}
+function renderHome(){let list=S.mods.filter(x=>x.status==='approved');const q=$('modSearch').value.toLowerCase().trim(),e=$('editionFilter').value,v=$('versionFilter').value.toLowerCase().trim();list=list.filter(m=>m.title.toLowerCase().includes(q)&&(e==='all'||meta(m).edition===e)&&meta(m).game_version.toLowerCase().includes(v));list.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));$('modNum').textContent=`(${list.length})`;$('modGrid').innerHTML=list.map(modCard).join('')||empty('Mod topilmadi');icons()}
+async function openMod(id){const m=S.mods.find(x=>x.id===id);if(!m)return;S.currentMod=id;const p=person(m.user_id),r=rated(id),z=meta(m);const myRating=S.ratings.find(x=>x.mod_id===id&&x.user_id===S.me?.id);modal(`<img class="cover" style="height:250px;border-radius:13px" src="${esc(path('mcmod-images',m.images?.[0])||fallback)}"><h2 style="margin-top:14px">${esc(m.title)}</h2><div class="chips"><span class="chip">${esc(z.edition)}</span><span class="chip">Minecraft ${esc(z.game_version)}</span><span class="chip">${esc(m.category||'addon')}</span></div><p class="muted">${esc(name(p))} ${badge(m.user_id)}</p><p style="white-space:pre-wrap">${esc(m.description)}</p><p>${ico('star')} ${r.avg} (${r.count} baho)</p><div class="row wraprow"><button class="btn" data-download="${esc(id)}">${ico('download')} Yuklab olish</button>${S.me&&m.user_id===S.me.id?`<button class="btn secondary" data-editmod="${esc(id)}">Tahrirlash</button>`:''}${S.me&&m.user_id!==S.me.id?`<button class="btn secondary" data-follow="${esc(m.user_id)}">Obuna ${S.following.some(x=>x.following_id===m.user_id)?'bekor qilish':'bo‘lish'}</button>`:''}</div>${S.me?`<div class="boxline"><b>Baho berish:</b><div class="row wraprow">${[1,2,3,4,5].map(n=>`<button class="btn secondary small" data-rate="${id}" data-stars="${n}">${n}${myRating?.stars===n?' ✓':''} ★</button>`).join('')}</div></div><button class="btn secondary small" data-collect="${id}">To‘plamga qo‘shish</button> <button class="btn secondary small" data-report="${id}" data-target="mod">Shikoyat</button>`:''}<div id="releaseNotes" class="boxline"></div>`);const rel=await get('v2_mod_releases').catch(()=>[]);if($('releaseNotes')&&S.currentMod===id)$('releaseNotes').innerHTML='<b>Versiyalar tarixi</b>'+rel.filter(x=>x.mod_id===id).map(x=>`<p class="muted">${esc(x.version)} — ${esc(x.notes)}</p>`).join('')||'';icons()}
+async function downloadMod(id){const m=S.mods.find(x=>x.id===id);if(!m||m.status!=='approved')return;const bucket=S.db.storage.from('mcmod-files');const signed=await bucket.createSignedUrl(m.file_path,90,{download:true});if(!signed.error&&signed.data?.signedUrl){window.open(signed.data.signedUrl,'_blank','noopener');if(S.me)S.db.rpc('mc_track_mod',{the_mod:id,action:'download'}).then(()=>{}).catch(console.warn);return}throw signed.error||Error('Mod faylini yuklab olishga ruxsat berilmadi')}
+async function rate(id,stars){if(!requireAuth())return;const r=await S.db.from('v2_ratings').upsert({mod_id:id,user_id:S.me.id,stars},{onConflict:'mod_id,user_id'});must(r);S.ratings=await get('v2_ratings');await openMod(id);renderHome();toast('Baho saqlandi')}
+function renderGames(){const f=S.gameFilter;const list=S.invites.filter(x=>f==='all'||(f==='mine'?x.creator_id===S.me?.id:x.edition===f));$('inviteGrid').innerHTML=list.map(x=>{const approved=(S.inviteCounts.get(x.id)||0)+1;const req=S.requests.find(r=>r.invite_id===x.id&&r.user_id===S.me?.id);return `<article class="panel"><div class="row between"><h3>${esc(x.title)}</h3><span class="chip">${esc(x.edition)}</span></div><div class="chips"><span class="chip">${esc(x.game_version)}</span><span class="chip">${esc(x.game_mode)}</span><span class="chip">${approved}/${x.max_players}</span></div><p class="muted">${esc(name(person(x.creator_id)))} · ${when(x.starts_at)}</p><p>${esc(x.description)}</p><div class="row wraprow">${x.creator_id===S.me?.id?`<button class="btn secondary small" data-inviteclose="${x.id}">${x.status==='open'?'Yopish':'Yopilgan'}</button>`:`<button ${!!req||x.status!=='open'?'disabled':''} class="btn small" data-join="${x.id}">${req?'So‘rov: '+esc(req.status):'Qo‘shilmoqchiman'}</button>`}</div></article>`}).join('')||empty('Takliflar hozircha yo‘q');$('inviteRequests').innerHTML=S.requests.filter(r=>r.status==='pending'&&S.invites.some(i=>i.id===r.invite_id&&i.creator_id===S.me?.id)).map(r=>`<div class="boxline row between wraprow"><span>${esc(name(person(r.user_id)))} — ${esc(S.invites.find(x=>x.id===r.invite_id)?.title)}</span><div class="row"><button class="btn small" data-answer="${r.id}" data-accept="yes">Qabul</button><button class="btn small warn" data-answer="${r.id}" data-accept="no">Rad</button></div></div>`).join('')||empty('Yangi so‘rov yo‘q');icons()}
+function inviteForm(){if(!requireAuth())return;modal(`<h2>O‘yin taklifi</h2><form id="inviteForm"><label>Sarlavha<input class="field" name="title" required minlength="5" maxlength="100" placeholder="Survival uchun 3 ta sherik kerak"></label><div class="selects"><label>Edition<select class="field" name="edition"><option value="bedrock">Bedrock</option><option value="java">Java</option></select></label><label>Versiya<input class="field" name="version" list="mcVersions" required maxlength="35" placeholder="1.21"></label></div><div class="selects"><label>Rejim<select name="mode" class="field"><option value="survival">Survival</option><option value="creative">Creative</option><option value="minigames">Minigames</option><option value="other">Boshqa</option></select></label><label>O‘yinchilar soni<input type="number" class="field" name="max" min="2" max="40" value="4" required></label></div><label>O‘yin vaqti<input type="datetime-local" class="field" name="starts" required></label><label>Izoh<textarea class="field" name="desc" maxlength="1000" rows="3"></textarea></label><button class="btn" type="submit">Taklif yaratish</button></form>`)}
+async function submitInvite(f){if(!requireAuth())return;const v=Object.fromEntries(new FormData(f).entries());const starts_at=new Date(v.starts).toISOString();if(new Date(starts_at)<=new Date())throw Error('Kelajakdagi vaqtni tanlang');must(await S.db.from('v2_game_invites').insert({creator_id:S.me.id,title:v.title,edition:v.edition,game_version:v.version,game_mode:v.mode,max_players:Number(v.max),starts_at,description:v.desc}));close();await load();go('games');toast('Taklif joylandi')}
+function renderProfile(){let on=!!S.me;$('authBox').hidden=on;$('profileContent').hidden=!on;$('modForm').hidden=!on;$('uploadGate').hidden=on;$('chatGate').hidden=on;$('chatWrap').hidden=!on;if(!on)return;const p=S.profile||{};const x=S.extra.get(S.me.id)||{};$('profileAvatar').src=avatar(p);$('profileLabel').innerHTML=esc(name(p))+' '+badge(S.me.id);$('profileHandle').textContent='@'+(p.username||'');$('profileNickname').value=p.nickname||p.username||'';$('profileBio').value=p.bio||'';$('profileMcNick').value=x.minecraft_nick||'';$('profileLinks').value=Array.isArray(x.links)?x.links.join('\n'):'';$('badgeVisible').checked=x.badge_visible!==false;$('showOnline').checked=x.show_online===true;const b=S.badges.get(S.me.id);$('badgeState').innerHTML=b?`<p class="info">${ico('badge-check')} ${!b.expires_at?'Muddatsiz':('Amal qiladi: '+when(b.expires_at))}</p>`:'<p class="muted">Hozir tasdiq belgisi yo‘q.</p>';$('mineGrid').innerHTML=S.mods.filter(m=>m.user_id===S.me.id&&m.status!=='trashed'&&m.status!=='archived').map(modCard).join('')||empty('Mod yo‘q');const my=S.mods.filter(m=>m.user_id===S.me.id&&m.status==='trashed');$('trashBox').innerHTML=my.map(m=>`<div class="boxline row between"><span>${esc(m.title)}</span><button class="btn secondary small" data-restore="${m.id}">Tiklash</button></div>`).join('')||empty('O‘chirilgan mod yo‘q');$('adminBtn').hidden=!['owner','admin'].includes(S.role);const approved=S.mods.filter(m=>m.user_id===S.me.id&&m.status==='approved').length;const ratings=S.ratings.filter(r=>S.mods.some(m=>m.id===r.mod_id&&m.user_id===S.me.id)).length;const score=approved*25+ratings*2+S.invites.filter(i=>i.creator_id===S.me.id).length*10;const level=1+Math.floor(score/100);$('profileStats').innerHTML=`<span class="chip">${approved} mod</span><span class="chip">${S.following.length} obuna</span>`;$('xpBox').innerHTML=`<div class="overview"><div class="metric"><strong>${score}</strong>XP</div><div class="metric"><strong>${level}</strong>Level</div><div class="metric"><strong>${approved}</strong>Mod</div></div><p class="hint">XP hozircha profil faolligidan hisoblanadigan sinov ko‘rsatkichi.</p>`;const today=new Date().toISOString().slice(0,10);$('dailyBox').innerHTML=`<div class="boxline">${S.invites.some(i=>i.creator_id===S.me.id&&i.created_at?.startsWith(today))?'✓':'○'} Bugun o‘yin taklifi yaratish</div><div class="boxline">${S.ratings.some(r=>r.user_id===S.me.id&&r.created_at?.startsWith(today))?'✓':'○'} Bugun modga baho berish</div>`;icons()}
+async function saveProfile(f){if(!requireAuth())return;const nick=$('profileNickname').value.trim(),bio=$('profileBio').value.trim(),minecraft_nick=$('profileMcNick').value.trim(),links=$('profileLinks').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);if(links.length>5||links.some(x=>!/^https:\/\/[^\s]+$/i.test(x)))throw Error('Ko‘pi bilan 5 ta HTTPS havola kiriting');must(await S.db.from('mc_profiles').update({nickname:nick,bio}).eq('id',S.me.id));must(await S.db.from('v2_profile_extra').upsert({user_id:S.me.id,minecraft_nick,links,badge_visible:$('badgeVisible').checked,show_online:$('showOnline').checked,updated_at:new Date().toISOString()},{onConflict:'user_id'}));await load();await presence();toast('Profil yangilandi')}
+async function submitBadge(f){if(!requireAuth())return;const reason=f.elements.reason.value.trim();must(await S.db.from('v2_badge_requests').insert({user_id:S.me.id,reason}));f.reset();toast('So‘rov adminga yuborildi')}
+async function auth(ev){ev.preventDefault();const u=$('authUsername').value.trim().toLowerCase(),password=$('authPassword').value;if(S.reg&&$('authConfirm').value!==password)throw Error('Parollar mos emas');let r;if(S.reg){r=await S.db.auth.signUp({email:u+'@members.example.com',password,options:{data:{username:u}}})}else{const alias=must(await S.db.rpc('mc_login_email',{handle:u}));if(!alias)throw Error('Username topilmadi');r=await S.db.auth.signInWithPassword({email:alias,password})}must(r);if(!r.data.session)throw Error('Akkauntni tasdiqlash talab qilinmoqda');S.me=r.data.user;await load();go('profile');toast('Muvaffaqiyatli kirdingiz')}
+async function uploadFile(bucket,f,owner=S.me.id){const ext=f.name.split('.').pop().toLowerCase();const p=owner+'/'+crypto.randomUUID()+'.'+ext;must(await S.db.storage.from(bucket).upload(p,f,{upsert:false}));return p}
+async function submitMod(f){if(!requireAuth())return;const fd=new FormData(f),pics=[...(f.elements.images.files||[])],file=f.elements.file.files[0],ext=file?.name.split('.').pop().toLowerCase();if(pics.length<1||pics.length>5||pics.some(x=>!['image/jpeg','image/png','image/webp'].includes(x.type)||x.size>5*1024*1024))throw Error('1–5 ta JPG/PNG/WEBP rasm tanlang (5 MB gacha)');if(!file||!['mcpack','mcaddon','zip','jar'].includes(ext)||file.size>50*1024*1024)throw Error('Mod fayli .mcpack/.mcaddon/.zip/.jar va 50 MB gacha bo‘lsin');$('publishBtn').disabled=true;const uploaded=[];let created=false;try{const file_path=await uploadFile('mcmod-files',file);uploaded.push(['mcmod-files',file_path]);const images=[];for(const pic of pics){const p=await uploadFile('mcmod-images',pic);uploaded.push(['mcmod-images',p]);images.push(p)}const m=must(await S.db.from('mc_mods').insert({user_id:S.me.id,title:String(fd.get('title')).trim(),description:String(fd.get('description')).trim(),category:fd.get('category'),images,file_path}).select('id,status').single());created=true;must(await S.db.from('v2_mod_meta').insert({mod_id:m.id,edition:fd.get('edition'),game_version:String(fd.get('version')).trim()}));f.reset();await load();go('profile');toast(m.status==='approved'?'Mod e’lon qilindi':'Mod tekshiruvga yuborildi')}catch(e){if(!created){for(const [b,p] of uploaded){S.db.storage.from(b).remove([p]).then(()=>{}).catch(console.warn)}}else{toast('Mod saqlandi, lekin versiya yozilmadi. Admin bilan tekshiring.')}throw e}finally{$('publishBtn').disabled=false}}
+function renderDrafts(){$('drafts').innerHTML=S.drafts.map(x=>`<div class="boxline row between wraprow"><span>${esc(x.title||'Nomsiz')} <small>${esc(x.edition)} ${esc(x.game_version)}</small></span><div class="row"><button class="btn secondary small" data-use-draft="${x.id}">Ochish</button><button class="btn warn small" data-delete-draft="${x.id}">O‘chirish</button></div></div>`).join('')||empty('Qoralamalar yo‘q');icons()}
+async function saveDraft(){if(!requireAuth())return;const f=$('modForm'),fd=new FormData(f);must(await S.db.from('v2_drafts').insert({user_id:S.me.id,title:String(fd.get('title')||''),description:String(fd.get('description')||''),edition:fd.get('edition'),game_version:String(fd.get('version')||'')}));await load();toast('Qoralama saqlandi (fayllar saqlanmaydi)')}
+async function editMod(id){const m=S.mods.find(x=>x.id===id);if(!m||!S.me||m.user_id!==S.me.id)return;close();modal(`<h2>Modni tahrirlash</h2><form id="editModForm" data-id="${id}"><label>Nomi<input class="field" name="title" value="${esc(m.title)}" required></label><label>Tavsifi<textarea class="field" name="desc" rows="3" required>${esc(m.description)}</textarea></label><div class="selects"><label>Edition<select class="field" name="edition"><option value="bedrock" ${meta(m).edition==='bedrock'?'selected':''}>Bedrock</option><option value="java" ${meta(m).edition==='java'?'selected':''}>Java</option></select></label><label>Versiya<input class="field" name="version" value="${esc(meta(m).game_version)}" required></label></div><label>O‘zgarishlar izohi (ixtiyoriy)<textarea class="field" name="release" rows="2" maxlength="800" placeholder="Yangiliklar"></textarea></label><button class="btn">Saqlash</button></form><p class="hint">Fayl va rasmlarni yangilash keyingi bosqichda ulanadi.</p>`)}
+async function submitEdit(f){const id=f.dataset.id,m=S.mods.find(x=>x.id===id);if(!m||m.user_id!==S.me?.id)return;const fd=new FormData(f);must(await S.db.from('mc_mods').update({title:fd.get('title'),description:fd.get('desc')}).eq('id',id));must(await S.db.from('v2_mod_meta').upsert({mod_id:id,edition:fd.get('edition'),game_version:fd.get('version')},{onConflict:'mod_id'}));if(String(fd.get('release')||'').trim())must(await S.db.from('v2_mod_releases').insert({mod_id:id,version:String(fd.get('version')).trim(),notes:String(fd.get('release')).trim()}));close();await load();toast('Mod yangilandi')}
+async function renderAdmin(){if(!['admin','owner'].includes(S.role))return;const [req,reports]=await Promise.all([get('v2_badge_requests'),get('v2_reports')]);$('adminBadgeRequests').innerHTML=req.filter(x=>x.status==='pending').map(r=>`<div class="boxline"><b>${esc(name(person(r.user_id)))}</b><p>${esc(r.reason)}</p><div class="row wraprow"><button class="btn small" data-badge-review="${r.id}" data-badge-ok="1">Tasdiqlash</button><button class="btn small warn" data-badge-review="${r.id}" data-badge-ok="0">Rad etish</button></div></div>`).join('')||empty('So‘rov yo‘q');$('adminMods').innerHTML=S.mods.filter(m=>m.status==='pending').map(m=>`<div class="boxline row between wraprow"><span>${esc(m.title)}</span><div class="row"><button class="btn small" data-mod-review="${m.id}" data-review="approve">Tasdiqlash</button><button class="btn small warn" data-mod-review="${m.id}" data-review="reject">Rad</button></div></div>`).join('')||empty('Modlar yo‘q');$('adminReports').innerHTML=reports.filter(r=>r.status==='open').map(x=>`<div class="boxline">${esc(x.target_type)} — ${esc(x.reason)}</div>`).join('')||empty('Shikoyatlar yo‘q');renderAdminUsers();icons()}
+function renderAdminUsers(){const q=$('adminUserSearch').value.toLowerCase();$('adminUsers').innerHTML=S.people.filter(p=>p.username.toLowerCase().includes(q)).slice(0,25).map(p=>`<div class="boxline row between wraprow"><span>${esc(name(p))} ${badge(p.id)} <small>@${esc(p.username)}</small></span><div class="row wraprow"><button class="btn small" data-grant="${p.id}" data-days="30">30 kun</button><button class="btn small secondary" data-grant="${p.id}" data-days="0">Muddatsiz</button><button class="btn small warn" data-grant="${p.id}" data-days="-1">Olib tashlash</button></div></div>`).join('');icons()}
+function renderNoticeIcon(){$('noticeBtn').title=`Bildirishnomalar (${S.notes.filter(x=>!x.seen).length})`}
+async function showNotices(){if(!requireAuth())return;modal(`<h2>Bildirishnomalar</h2><button class="btn secondary small" id="readAll">Hammasini o‘qildi qilish</button><div>${S.notes.slice(0,80).map(x=>`<div class="boxline">${x.seen?'':`<span class="notice-dot"></span>`} ${esc(x.body)} <small>${when(x.created_at)}</small></div>`).join('')||empty('Bildirishnomalar yo‘q')}</div>`)}
+function leafFall(){if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;const root=$('leafscape');for(let i=0;i<13;i++){const sp=document.createElement('span');sp.className='leaf';sp.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 22l-1-8-7 2 2-5-5-3 7-1-1-6 6 5 5-4 1 5 4 2-5 4 2 6-7-4z"/></svg>';sp.style.cssText=`--left:${i*37%100}%;--color:${['#df9b55','#c0a36b','#ca6f43'][i%3]};--size:${18+i%4*5}px;--time:${16+i%5*5}s;--delay:-${i*2.3}s;--shift:${i%2?'-':'+'}${50+i*13%160}px;--rotate:${330+i*39}deg`;root.append(sp)}}
+async function renderCommunity(){
+ const pane=$('communityContent'),type=S.community;
+ if(type==='tournaments'){
+  const [tours,players]=await Promise.all([get('v2_tournaments'),get('v2_tournament_players')]);
+  pane.innerHTML=`<div class="row between wraprow"><h3>Turnirlar</h3><button class="btn" id="newTournament">${ico('plus')} Turnir yaratish</button></div><div class="two">${tours.map(t=>{const participants=players.filter(p=>p.tournament_id===t.id);return `<div class="panel"><h3>${esc(t.title)}</h3><div class="chips"><span class="chip">${esc(t.edition)}</span><span class="chip">${esc(t.game_version)}</span><span class="chip">${participants.length}/${t.bracket_size}</span></div><p class="muted">${when(t.starts_at)}</p><div class="row wraprow"><button ${participants.length>=t.bracket_size||participants.some(p=>p.user_id===S.me?.id)?'disabled':''} data-join-tournament="${t.id}" class="btn small">${participants.some(p=>p.user_id===S.me?.id)?'Ro‘yxatga olingan':'Ro‘yxatdan o‘tish'}</button><button class="btn secondary small" data-bracket="${t.id}">Setka</button></div></div>`}).join('')||empty('Turnir topilmadi')}</div>`;
+  $('newTournament').onclick=()=>{if(!requireAuth())return;modal(`<h2>Turnir yaratish</h2><form id="tournamentForm"><label>Nomi<input class="field" name="title" required minlength="4" maxlength="100"></label><div class="selects"><label>Edition<select class="field" name="edition"><option value="bedrock">Bedrock</option><option value="java">Java</option></select></label><label>Versiya<input class="field" name="version" required placeholder="1.21"></label></div><label>Ishtirokchilar<select name="size" class="field"><option>8</option><option>16</option><option>32</option></select></label><label>Sana-vaqt<input type="datetime-local" name="starts" class="field" required></label><button class="btn">Yaratish</button></form>`)};
+  pane.dataset.type='tournaments';S.tournaments=tours;S.tournamentPlayers=players;
+ }else if(type==='clans'){
+  const [clans,members]=await Promise.all([get('v2_clans'),get('v2_clan_members')]);S.clans=clans;S.clanMembers=members;
+  pane.innerHTML=`<div class="row between wraprow"><h3>Klanlar</h3><button id="newClan" class="btn">${ico('plus')} Klan ochish</button></div><div class="two">${clans.map(x=>{const joined=members.some(m=>m.clan_id===x.id&&m.user_id===S.me?.id);return `<div class="panel"><h3>${esc(x.name)}</h3><p>${esc(x.description)}</p><p class="muted">${members.filter(m=>m.clan_id===x.id).length} a'zo</p><button data-join-clan="${x.id}" class="btn small" ${joined?'disabled':''}>${joined?'A’zosiz':'Qo‘shilish'}</button></div>`}).join('')||empty('Hali klan yo‘q')}</div>`;
+  $('newClan').onclick=()=>{if(!requireAuth())return;modal(`<h2>Klan yaratish</h2><form id="clanForm"><label>Klan nomi<input class="field" name="name" required minlength="3" maxlength="50"></label><label>Ta’rif<textarea class="field" name="desc" maxlength="700"></textarea></label><button class="btn">Yaratish</button></form>`)};
+ }else if(type==='gallery'){
+  const photos=(await get('v2_gallery')).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  pane.innerHTML=`<div class="row between wraprow"><h3>Skrinshotlar galereyasi</h3><button id="newGallery" class="btn">${ico('image')} Rasm qo‘shish</button></div><div class="grid">${photos.map(x=>`<article class="card"><img class="cover" loading="lazy" src="${esc(path('v2-gallery',x.image_path))}" alt="Minecraft skrinshot"><div class="card-body"><p>${esc(x.caption)}</p><small>${esc(name(person(x.user_id)))}</small>${x.user_id===S.me?.id?`<p><button class="btn warn small" data-remove-photo="${x.id}">O‘chirish</button></p>`:`<button class="btn secondary small" data-report="${x.id}" data-target="gallery">Shikoyat</button>`}</div></article>`).join('')||empty('Galereya bo‘sh')}</div>`;
+  $('newGallery').onclick=()=>{if(!requireAuth())return;modal(`<h2>Rasm joylash</h2><form id="galleryForm"><label>Skrinshot<input class="field" type="file" name="image" accept="image/jpeg,image/png,image/webp" required></label><label>Izoh<input class="field" name="caption" maxlength="400"></label><button class="btn">Joylash</button></form>`)};
+ }else if(type==='events'){
+  const events=(await get('v2_events')).sort((a,b)=>new Date(a.starts_at)-new Date(b.starts_at));
+  pane.innerHTML=`<div class="row between wraprow"><h3>Minecraft tadbirlari</h3><button id="newEvent" class="btn">${ico('calendar-plus')} Tadbir yaratish</button></div><div class="two">${events.map(x=>`<div class="panel"><h3>${esc(x.title)}</h3><p>${esc(x.description)}</p><p class="chip">${when(x.starts_at)}</p></div>`).join('')||empty('Tadbir yo‘q')}</div>`;
+  $('newEvent').onclick=()=>{if(!requireAuth())return;modal(`<h2>Tadbir yaratish</h2><form id="eventForm"><label>Nomi<input class="field" name="title" required minlength="4"></label><label>Tavsif<textarea class="field" name="desc" maxlength="900"></textarea></label><label>Sana-vaqt<input class="field" type="datetime-local" name="starts" required></label><button class="btn">Joylash</button></form>`)};
+ }else if(type==='collections'){
+  const [collections,items]=await Promise.all([get('v2_collections'),get('v2_collection_items')]);S.collections=collections;S.collectionItems=items;
+  pane.innerHTML=`<div class="row between wraprow"><h3>Mod to‘plamlari</h3><button id="newCollection" class="btn">${ico('folder-plus')} To‘plam yaratish</button></div><div class="two">${collections.map(c=>`<article class="panel"><h3>${esc(c.title)}</h3><p>${esc(name(person(c.user_id)))}</p><p>${items.filter(x=>x.collection_id===c.id).length} mod</p><button class="btn secondary small" data-show-collection="${c.id}">Ko‘rish</button></article>`).join('')||empty('To‘plamlar yo‘q')}</div>`;
+  $('newCollection').onclick=()=>{if(!requireAuth())return;modal(`<h2>Mod to‘plami</h2><form id="collectionForm"><label>Nomi<input class="field" name="title" required minlength="2" maxlength="70"></label><label class="row"><input class="switch" type="checkbox" name="public" checked> Ommaga ko‘rinadigan</label><button class="btn">Yaratish</button></form>`)};
+ }else if(type==='players'){
+   pane.innerHTML=`<h3>Akkauntlar</h3><input id="playerSearch" class="field" placeholder="Username yoki Minecraft nick qidiring"><div class="grid" id="playerGrid"></div>`;
+   $('playerSearch').oninput=renderPlayers;
+   renderPlayers();
+ }
+ icons();
 }
-
-function go(p){
-  if(p==='admin'&&!state.admin)return;
-
-  document.querySelectorAll('.page').forEach(x=>{
-    x.classList.toggle('active',x.id===p);
-  });
-
-  document.querySelectorAll('[data-page]').forEach(x=>{
-    x.classList.toggle('active',x.dataset.page===p);
-  });
-
-  window.scrollTo(0,0);
+function renderPlayers(){const q=($('playerSearch')?.value||'').toLowerCase();const el=$('playerGrid');if(!el)return;el.innerHTML=S.people.filter(p=>`${p.username} ${name(p)} ${S.extra.get(p.id)?.minecraft_nick||''}`.toLowerCase().includes(q)).slice(0,300).map(p=>`<div class="panel" style="cursor:pointer" data-player="${p.id}"><div class="avatarname"><img class="ava" src="${esc(avatar(p))}" alt="Avatar"><div><b>${esc(name(p))} ${badge(p.id)}</b><div class="muted small">@${esc(p.username)}</div></div></div><p class="muted">Minecraft: ${esc(S.extra.get(p.id)?.minecraft_nick||'Ko‘rsatilmagan')} ${S.onlineIds.has(p.id)?'<span class="notice-dot"></span> Online':''}</p></div>`).join('')||empty('Akkaunt topilmadi');icons()}
+function showPlayer(id){const p=person(id);if(!p)return;const x=S.extra.get(id)||{};const links=(Array.isArray(x.links)?x.links:[]).filter(u=>/^https:\/\/[^\s]+$/i.test(u)).slice(0,5);modal(`<div class="row"><img class="ava big" src="${esc(avatar(p))}" alt="Avatar"><div><h2>${esc(name(p))} ${badge(id)}</h2><p class="muted">@${esc(p.username)}</p></div></div><p>${esc(p.bio||'Bio yo‘q')}</p><p>Minecraft nick: <b>${esc(x.minecraft_nick||'Ko‘rsatilmagan')}</b></p>${links.map(u=>`<p><a target="_blank" rel="noopener noreferrer" href="${esc(u)}">${esc(u)}</a></p>`).join('')}<div class="row wraprow">${id!==S.me?.id?`<button class="btn" data-add-friend="${id}">${ico('user-plus')} Do‘stga qo‘shish</button><button class="btn secondary" data-follow="${id}">${ico('bell')} Obuna bo‘lish</button>`:''}</div>`)}
+async function presence(){try{if(S.presence){await S.db.removeChannel(S.presence);S.presence=null}if(!S.me||S.extra.get(S.me.id)?.show_online!==true)return;S.presence=S.db.channel('mw-v2-online',{config:{presence:{key:S.me.id}}});S.presence.on('presence',{event:'sync'},()=>{const state=S.presence.presenceState();S.onlineIds=new Set(Object.keys(state));if(S.community==='players')renderPlayers()}).subscribe(async(status)=>{if(status==='SUBSCRIBED')await S.presence.track({since:new Date().toISOString()})})}catch(e){console.warn('Presence:',e)}}
+async function submitCommunity(f){if(!requireAuth())return;const v=Object.fromEntries(new FormData(f).entries());if(f.id==='tournamentForm'){
+ must(await S.db.from('v2_tournaments').insert({owner_id:S.me.id,title:v.title,edition:v.edition,game_version:v.version,bracket_size:Number(v.size),starts_at:new Date(v.starts).toISOString()}));
+ }else if(f.id==='clanForm'){
+ const c=must(await S.db.from('v2_clans').insert({owner_id:S.me.id,name:v.name,description:v.desc}).select('id').single());must(await S.db.from('v2_clan_members').insert({clan_id:c.id,user_id:S.me.id}));
+ }else if(f.id==='galleryForm'){
+ const file=f.elements.image.files[0];if(!file||!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5*1024*1024)throw Error('5 MB gacha JPG/PNG/WEBP rasm bo‘lsin');const image_path=await uploadFile('v2-gallery',file);must(await S.db.from('v2_gallery').insert({user_id:S.me.id,image_path,caption:v.caption}));
+ }else if(f.id==='eventForm'){
+ must(await S.db.from('v2_events').insert({owner_id:S.me.id,title:v.title,description:v.desc,starts_at:new Date(v.starts).toISOString()}));
+ }else if(f.id==='collectionForm'){
+ must(await S.db.from('v2_collections').insert({user_id:S.me.id,title:v.title,is_public:!!f.elements.public.checked}));
+ }
+ close();await renderCommunity();toast('Saqlandi');
 }
-
-function requireAuth(){
-  if(state.me)return true;
-  msg('Avval akkauntga kiring');
-  go('profile');
-  return false;
-}
-
-async function refresh(){
-  state.me=check(await state.db.auth.getUser()).user||null;
-
-  const tables=[
-    'mc_profiles',
-    'mc_mods',
-    'v2_mod_meta',
-    'v2_profile_extra',
-    'v2_badges',
-    'v2_game_invites'
-  ];
-
-  const rows=await Promise.all(
-    tables.map(t=>read(t).then(check))
-  );
-
-  [
-    state.users,
-    state.mods,
-    state.meta,
-    state.extra,
-    state.badges,
-    state.invites
-  ]=rows;
-
-  state.admin=false;
-  state.requests=[];
-  state.badgeRequests=[];
-
-  if(state.me){
-    const role=check(await state.db.rpc('mc_my_role'));
-
-    state.admin=['owner','admin'].includes(String(role));
-
-    state.requests=check(
-      await read('v2_invite_requests')
-    );
-
-    state.badgeRequests=check(
-      await read('v2_badge_requests')
-    );
-  }
-
-  $('adminNav').hidden=!state.admin;
-  $('loginBox').hidden=!!state.me;
-  $('profileBox').hidden=!state.me;
-
-  renderMods();
-  renderInvites();
-  renderProfile();
-
-  if(state.admin)renderAdmin();
-  icons();
-}
-
-function renderMods(){
-  const q=$('modSearch').value.toLowerCase().trim();
-  const edition=$('editionFilter').value;
-  const v=$('versionFilter').value.toLowerCase().trim();
-
-  const list=state.mods
-    .filter(m=>m.status==='approved')
-    .filter(m=>{
-      const meta=state.meta.find(
-        x=>x.mod_id===m.id
-      )||{
-        edition:'bedrock',
-        game_version:'Aniqlanmagan'
-      };
-
-      return (
-        edition==='all'||meta.edition===edition
-      ) &&
-      meta.game_version.toLowerCase().includes(v) &&
-      String(m.title).toLowerCase().includes(q);
-    });
-
-  $('modGrid').innerHTML=list.map(m=>{
-    const z=state.meta.find(
-      x=>x.mod_id===m.id
-    )||{
-      edition:'bedrock',
-      game_version:'Aniqlanmagan'
-    };
-
-    const src=m.images?.[0]
-      ?state.db.storage.from('mcmod-images')
-        .getPublicUrl(m.images[0]).data.publicUrl
-      :'';
-
-    return `
-      <article class="card tile">
-        <img class="cover" src="${E(src)}" alt="Mod">
-        <div class="tile-body">
-          <h3>${E(m.title)}</h3>
-          <small>
-            ${E(getName(m.user_id))}
-            ${verified(m.user_id)}
-          </small>
-
-          <div class="chips">
-            <span class="chip">${E(z.edition)}</span>
-            <span class="chip">${E(z.game_version)}</span>
-          </div>
-
-          <button class="btn small"
-            data-download="${E(m.id)}">
-            <i data-lucide="download"></i>
-            Yuklab olish
-          </button>
-        </div>
-      </article>
-    `;
-  }).join('')||'<p>Mod topilmadi.</p>';
-
-  icons();
-}
-
-function dateTime(v){
-  return new Date(v).toLocaleString('uz-UZ',{
-    dateStyle:'medium',
-    timeStyle:'short'
-  });
-}
-
-function renderInvites(){
-  const pending=state.requests;
-
-  $('inviteList').innerHTML=state.invites
-    .slice()
-    .sort((a,b)=>
-      new Date(a.starts_at)-new Date(b.starts_at)
-    )
-    .map(i=>{
-      const mine=i.creator_id===state.me?.id;
-
-      const own=pending.find(
-        x=>x.invite_id===i.id &&
-          x.user_id===state.me?.id
-      );
-
-      const requests=mine
-        ?pending.filter(
-          x=>x.invite_id===i.id &&
-            x.status==='pending'
-        )
-        :[];
-
-      return `
-        <article class="panel">
-          <div class="row between wrap">
-            <h3>${E(i.title)}</h3>
-            <span class="chip">${E(i.status)}</span>
-          </div>
-
-          <small>
-            ${E(getName(i.creator_id))}
-            ${verified(i.creator_id)}
-          </small>
-
-          <div class="chips">
-            <span class="chip">${E(i.edition)}</span>
-            <span class="chip">${E(i.game_version)}</span>
-            <span class="chip">${E(i.game_mode)}</span>
-            <span class="chip">${E(dateTime(i.starts_at))}</span>
-            <span class="chip">
-              ${i.max_players} kishigacha
-            </span>
-          </div>
-
-          <p>${E(i.description)}</p>
-
-          ${!mine &&
-            i.status==='open' &&
-            Date.parse(i.starts_at)>Date.now()
-            ?`
-              <button class="btn small"
-                data-join="${E(i.id)}"
-                ${own?'disabled':''}>
-                ${own
-                  ?'So‘rov yuborilgan'
-                  :'Qo‘shilmoqchiman'}
-              </button>
-            `
-            :''
-          }
-
-          ${requests.map(r=>`
-            <div class="line row between wrap">
-              <span>${E(getName(r.user_id))}</span>
-              <div class="row">
-                <button class="btn small"
-                  data-answer="${E(r.id)}"
-                  data-approve="true">
-                  Qabul
-                </button>
-                <button class="btn small danger"
-                  data-answer="${E(r.id)}"
-                  data-approve="false">
-                  Rad
-                </button>
-              </div>
-            </div>
-          `).join('')}
-        </article>
-      `;
-    }).join('')||'<p>Hali o‘yin takliflari yo‘q.</p>';
-
-  icons();
-}
-
-function renderProfile(){
-  if(!state.me)return;
-
-  const u=getUser(state.me.id);
-
-  const p=state.extra.find(
-    x=>x.user_id===state.me.id
-  );
-
-  $('myName').innerHTML=
-    E(getName(state.me.id))+' '+verified(state.me.id);
-
-  $('myUsername').textContent='@'+(u?.username||'');
-  $('myAvatar').src=avatar(u);
-
-  const f=$('profileForm');
-
-  f.elements.nick.value=p?.minecraft_nick||'';
-
-  f.elements.links.value=Array.isArray(p?.bio_links)
-    ?p.bio_links.join('\n')
-    :'';
-
-  f.elements.badgeVisible.checked=
-    p?.badge_visible!==false;
-
-  $('myBadgeRequests').innerHTML=
-    state.badgeRequests
-      .filter(x=>x.user_id===state.me.id)
-      .map(x=>`
-        <p class="muted">
-          So‘rov: ${E(x.status)}
-          (${E(dateTime(x.created_at))})
-        </p>
-      `).join('');
-
-  $('myInviteRequests').innerHTML=
-    state.requests
-      .filter(x=>x.user_id===state.me.id)
-      .map(x=>`
-        <p class="line">
-          ${E(
-            state.invites.find(
-              i=>i.id===x.invite_id
-            )?.title||'Taklif'
-          )}
-          — ${E(x.status)}
-        </p>
-      `).join('')||
-      '<p class="muted">So‘rovlar yo‘q.</p>';
-
-  icons();
-}
-
-function renderAdmin(){
-  const req=state.badgeRequests.filter(
-    x=>x.status==='pending'
-  );
-
-  $('adminBadgeRequests').innerHTML=req.map(r=>`
-    <div class="line">
-      <b>${E(getName(r.user_id))}</b>
-      <p>${E(r.reason)}</p>
-
-      <div class="row">
-        <button class="btn small"
-          data-review="${E(r.id)}"
-          data-approve="true">
-          Tasdiqlash
-        </button>
-
-        <button class="btn danger small"
-          data-review="${E(r.id)}"
-          data-approve="false">
-          Rad
-        </button>
-      </div>
-    </div>
-  `).join('')||'<p>Yangi so‘rov yo‘q.</p>';
-
-  const q=$('adminSearch').value.toLowerCase().trim();
-
-  $('adminUsers').innerHTML=state.users
-    .filter(u=>u.username.toLowerCase().includes(q))
-    .slice(0,50)
-    .map(u=>`
-      <div class="line row between wrap">
-        <span>
-          ${E(getName(u.id))}
-          ${verified(u.id)}
-          <small>@${E(u.username)}</small>
-        </span>
-
-        <div class="row wrap">
-          <button class="btn small"
-            data-grant="${E(u.id)}"
-            data-days="30">
-            30 kun
-          </button>
-
-          <button class="btn alt small"
-            data-grant="${E(u.id)}"
-            data-days="0">
-            Muddatsiz
-          </button>
-
-          <button class="btn danger small"
-            data-grant="${E(u.id)}"
-            data-days="-1">
-            Olib tashlash
-          </button>
-        </div>
-      </div>
-    `).join('');
-
-  icons();
-}
-
-async function download(id){
-  const m=state.mods.find(x=>x.id===id);
-
-  if(!m||m.status!=='approved')return;
-
-  const r=check(
-    await state.db.storage
-      .from('mcmod-files')
-      .createSignedUrl(
-        m.file_path,
-        60,
-        {download:true}
-      )
-  );
-
-  location.href=r.signedUrl;
-}
-
-function leaves(){
-  if(matchMedia('(prefers-reduced-motion:reduce)').matches){
-    return;
-  }
-
-  for(let i=0;i<12;i++){
-    const s=document.createElement('span');
-    s.className='leaf';
-
-    s.style.cssText=`
-      --x:${(i*37)%100}%;
-      --t:${14+i%5*4}s;
-      --d:-${i*2}s;
-      --dx:${i%2?-90:110}px;
-      --c:${['#dca162','#b97d42','#e8be79'][i%3]}
-    `;
-
-    s.innerHTML=`
-      <svg width="24" height="24"
-        viewBox="0 0 24 24"
-        fill="currentColor">
-        <path d="M12 22l-1-8-7 2 2-5-5-3 7-1-1-6 6 5 5-4 1 5 4 2-5 4 2 6-7-4z"/>
-      </svg>
-    `;
-
-    $('leaves').append(s);
-  }
-}
-
+async function bracket(id){const t=S.tournaments?.find(x=>x.id===id);if(!t)return;const p=S.tournamentPlayers.filter(x=>x.tournament_id===id).map(x=>name(person(x.user_id)));const filled=[...p,...Array(Math.max(0,t.bracket_size-p.length)).fill('Bo‘sh joy')];modal(`<h2>${esc(t.title)} — setka</h2><p class="hint">Bu ro‘yxatdan avtomatik tuzilgan dastlabki juftliklar. O‘yin natijalari boshqaruvi keyingi bosqichda qo‘shiladi.</p>${Array.from({length:t.bracket_size/2},(_,i)=>`<div class="boxline row between"><span>${esc(filled[i*2])}</span><b>VS</b><span>${esc(filled[i*2+1])}</span></div>`).join('')}`)}
+async function chooseCollection(modId){if(!requireAuth())return;const collections=(await get('v2_collections')).filter(x=>x.user_id===S.me.id);modal(`<h2>Modni to‘plamga qo‘shish</h2>${collections.map(c=>`<div class="boxline row between"><b>${esc(c.title)}</b><button class="btn small" data-add-collect="${c.id}" data-mid="${modId}">Qo‘shish</button></div>`).join('')||empty('Avval Hamjamiyat → To‘plamlar bo‘limida to‘plam yarating.')}`)}
+async function showCollection(id){const c=S.collections?.find(x=>x.id===id);if(!c)return;modal(`<h2>${esc(c.title)}</h2><div class="grid">${(S.collectionItems||[]).filter(x=>x.collection_id===id).map(x=>S.mods.find(m=>m.id===x.mod_id)).filter(x=>x?.status==='approved').map(modCard).join('')||empty('To‘plam bo‘sh')}</div>`)}
+async function showReport(type,id){if(!requireAuth())return;modal(`<h2>Shikoyat yuborish</h2><form id="reportForm" data-type="${esc(type)}" data-target="${esc(id)}"><label>Sababi<textarea class="field" name="reason" minlength="10" maxlength="700" rows="4" required></textarea></label><button class="btn">Admin uchun yuborish</button></form>`)}
+async function renderChats(){if(!S.me)return;const uid=S.me.id;const f=must(await S.db.from('mc_friendships').select('*').or(`user_low.eq.${uid},user_high.eq.${uid}`));S.chatFriends=(f||[]).filter(x=>x.status==='accepted').map(x=>x.user_low===uid?x.user_high:x.user_low);$('conversationList').innerHTML='<h3>Do‘stlar</h3>'+S.chatFriends.map(id=>`<button class="btn secondary" style="margin:4px" data-open-chat="${id}">${esc(name(person(id)))}</button>`).join('')+(!S.chatFriends.length?empty('Chat ochish uchun avval V1.0 dagi akkauntlar bo‘limida do‘st bo‘ling'):'');$('chatDetail').hidden=!S.activeChat;if(S.activeChat)await readChat();icons()}
+async function openChat(id){if(!S.chatFriends.includes(id))return toast('Faqat do‘stlar bilan yozishish mumkin');S.activeChat=id;$('chatDetail').hidden=false;$('conversationList').hidden=true;$('chatTitle').textContent=name(person(id));await readChat()}
+async function readChat(){if(!S.me||!S.activeChat)return;const a=S.me.id,b=S.activeChat;const [msg,img]=await Promise.all([must(await S.db.from('mc_messages').select('id,sender_id,recipient_id,body,created_at').or(`and(sender_id.eq.${a},recipient_id.eq.${b}),and(sender_id.eq.${b},recipient_id.eq.${a})`).order('created_at',{ascending:true}).limit(200)),must(await S.db.from('v2_chat_images').select('*').or(`and(sender_id.eq.${a},recipient_id.eq.${b}),and(sender_id.eq.${b},recipient_id.eq.${a})`).order('created_at',{ascending:true}).limit(80))]);const all=[...msg.map(x=>({...x,type:'text'})),...img.map(x=>({...x,type:'image'}))].sort((x,y)=>new Date(x.created_at)-new Date(y.created_at));const signed=new Map();await Promise.all(img.map(async x=>{try{const r=must(await S.db.storage.from('v2-chat').createSignedUrl(x.path,60));signed.set(x.id,r.signedUrl)}catch(e){console.warn(e)}}));$('chatMessages').innerHTML=all.map(x=>`<div class="bubble ${x.sender_id===a?'mine':''}">${x.type==='text'?esc(x.body):signed.get(x.id)?`<img src="${esc(signed.get(x.id))}" alt="Chat rasmi" loading="lazy">`:'Rasm ochilmadi'}<small>${when(x.created_at)}</small></div>`).join('')||empty('Hali xabar yo‘q');$('chatMessages').scrollTop=$('chatMessages').scrollHeight;icons()}
+async function sendChat(f){if(!requireAuth()||!S.activeChat)return;const body=$('chatText').value.trim(),image=$('chatImage').files[0];if(image){if(!['image/jpeg','image/png','image/webp'].includes(image.type)||image.size>5*1024*1024)throw Error('Rasm 5 MB gacha JPG/PNG/WEBP bo‘lsin');const ext=image.name.split('.').pop().toLowerCase(),pathName=S.me.id+'/'+S.activeChat+'/'+crypto.randomUUID()+'.'+ext;must(await S.db.storage.from('v2-chat').upload(pathName,image));must(await S.db.from('v2_chat_images').insert({sender_id:S.me.id,recipient_id:S.activeChat,path:pathName}))}if(body)must(await S.db.from('mc_messages').insert({sender_id:S.me.id,recipient_id:S.activeChat,body}));if(!body&&!image)return;f.reset();$('chatImageName').textContent='';await readChat()}
 function bind(){
-  document.querySelectorAll('[data-page]').forEach(b=>{
-    b.onclick=()=>go(b.dataset.page);
-  });
-
-  ['modSearch','versionFilter'].forEach(id=>{
-    $(id).oninput=renderMods;
-  });
-
-  $('editionFilter').onchange=renderMods;
-  $('adminSearch').oninput=renderAdmin;
-
-  $('newInvite').onclick=()=>{
-    if(requireAuth()){
-      $('inviteFormWrap').hidden=false;
-    }
-  };
-
-  $('cancelInvite').onclick=()=>{
-    $('inviteFormWrap').hidden=true;
-  };
-
-  $('loginForm').onsubmit=async e=>{
-    e.preventDefault();
-
-    try{
-      const username=$('username').value.trim().toLowerCase();
-
-      const email=check(
-        await state.db.rpc('mc_login_email',{
-          handle:username
-        })
-      );
-
-      if(!email)throw Error('Username topilmadi');
-
-      check(
-        await state.db.auth.signInWithPassword({
-          email,
-          password:$('password').value
-        })
-      );
-
-      await refresh();
-      msg('Kirdingiz');
-    }catch(err){
-      fail(err);
-    }
-  };
-
-  $('logout').onclick=async()=>{
-    try{
-      check(await state.db.auth.signOut());
-      await refresh();
-      go('home');
-    }catch(e){
-      fail(e);
-    }
-  };
-
-  $('profileForm').onsubmit=async e=>{
-    e.preventDefault();
-    if(!requireAuth())return;
-
-    try{
-      const f=e.target;
-
-      const links=f.elements.links.value
-        .split(/\r?\n/)
-        .map(x=>x.trim())
-        .filter(Boolean);
-
-      if(links.length>5 ||
-        links.some(x=>!/^https:\/\/[^\s]+$/i.test(x))
-      ){
-        throw Error('Faqat 5 tagacha HTTPS havola');
-      }
-
-      check(
-        await state.db.from('v2_profile_extra')
-          .upsert({
-            user_id:state.me.id,
-            minecraft_nick:f.elements.nick.value.trim(),
-            bio_links:links,
-            badge_visible:f.elements.badgeVisible.checked,
-            updated_at:new Date().toISOString()
-          },{
-            onConflict:'user_id'
-          })
-      );
-
-      await refresh();
-      msg('Profil saqlandi');
-    }catch(err){
-      fail(err);
-    }
-  };
-
-  $('badgeRequestForm').onsubmit=async e=>{
-    e.preventDefault();
-    if(!requireAuth())return;
-
-    try{
-      check(
-        await state.db.from('v2_badge_requests')
-          .insert({
-            user_id:state.me.id,
-            reason:e.target.elements.reason.value.trim()
-          })
-      );
-
-      e.target.reset();
-      await refresh();
-      msg('So‘rov yuborildi');
-    }catch(err){
-      fail(err);
-    }
-  };
-
-  $('inviteForm').onsubmit=async e=>{
-    e.preventDefault();
-    if(!requireAuth())return;
-
-    try{
-      const f=e.target;
-
-      const v=Object.fromEntries(
-        new FormData(f).entries()
-      );
-
-      const starts_at=new Date(v.start).toISOString();
-
-      if(Date.parse(starts_at)<=Date.now()){
-        throw Error('Kelajakdagi sanani tanlang');
-      }
-
-      check(
-        await state.db.from('v2_game_invites')
-          .insert({
-            creator_id:state.me.id,
-            title:v.title,
-            edition:v.edition,
-            game_version:v.version,
-            game_mode:v.mode,
-            starts_at,
-            max_players:Number(v.players),
-            description:v.description
-          })
-      );
-
-      f.reset();
-      $('inviteFormWrap').hidden=true;
-      await refresh();
-
-      msg('Taklif joylandi');
-    }catch(err){
-      fail(err);
-    }
-  };
-
-  document.addEventListener('click',e=>{
-    const b=e.target.closest(
-      '[data-download],[data-join],[data-answer],' +
-      '[data-review],[data-grant]'
-    );
-
-    if(!b)return;
-
-    (async()=>{
-      if(b.dataset.download){
-        await download(b.dataset.download);
-      }
-
-      if(b.dataset.join){
-        if(!requireAuth())return;
-
-        check(
-          await state.db.from('v2_invite_requests')
-            .insert({
-              invite_id:b.dataset.join,
-              user_id:state.me.id
-            })
-        );
-
-        await refresh();
-        msg('So‘rov yuborildi');
-      }
-
-      if(b.dataset.answer){
-        check(
-          await state.db.rpc('v2_answer_invite',{
-            req_id:b.dataset.answer,
-            accept_request:b.dataset.approve==='true'
-          })
-        );
-
-        await refresh();
-        msg('Javob saqlandi');
-      }
-
-      if(b.dataset.review){
-        check(
-          await state.db.rpc('v2_review_badge',{
-            request_id:b.dataset.review,
-            approve:b.dataset.approve==='true'
-          })
-        );
-
-        await refresh();
-        msg('So‘rov ko‘rib chiqildi');
-      }
-
-      if(b.dataset.grant){
-        const days=Number(b.dataset.days);
-
-        check(
-          await state.db.rpc('v2_set_badge',{
-            target_user:b.dataset.grant,
-            days_count:days>0?days:null,
-            remove_badge:days<0
-          })
-        );
-
-        await refresh();
-        msg('Belgi yangilandi');
-      }
-
-    })().catch(fail);
-  });
+ for(const id of ['modSearch','versionFilter'])$(id).oninput=renderHome;$('editionFilter').onchange=renderHome;
+ document.querySelectorAll('[data-go]').forEach(x=>x.onclick=()=>go(x.dataset.go));
+ document.querySelectorAll('[data-game-filter]').forEach(x=>x.onclick=()=>{S.gameFilter=x.dataset.gameFilter;document.querySelectorAll('[data-game-filter]').forEach(y=>y.classList.toggle('active',x===y));renderGames()});
+ document.querySelectorAll('[data-community]').forEach(x=>x.onclick=()=>{S.community=x.dataset.community;document.querySelectorAll('[data-community]').forEach(y=>y.classList.toggle('active',x===y));renderCommunity().catch(fail)});
+ $('modalClose').onclick=close;$('modal').onclick=e=>{if(e.target===$('modal'))close()};document.addEventListener('keydown',e=>{if(e.key==='Escape')close();if(e.key==='Enter'&&e.target.matches('[data-mod]'))e.target.click()});
+ $('refreshBtn').onclick=()=>load().then(()=>{if(S.page==='community')renderCommunity();if(S.page==='chats')renderChats();toast('Yangilandi')}).catch(fail);
+ $('noticeBtn').onclick=()=>showNotices().catch(fail);
+ $('authSwitch').onclick=()=>{S.reg=!S.reg;$('authTitle').textContent=S.reg?'Akkaunt yaratish':'Akkauntga kirish';$('authSwitch').textContent=S.reg?'Kirishga qaytish':'Yangi akkaunt';$('confirmWrap').hidden=!S.reg;$('authConfirm').required=S.reg};
+ $('authForm').onsubmit=e=>auth(e).catch(fail);$('logoutBtn').onclick=async()=>{try{must(await S.db.auth.signOut());S.me=null;S.activeChat=null;await presence();await load();go('home')}catch(e){fail(e)}};
+ $('profileForm').onsubmit=e=>{e.preventDefault();saveProfile().catch(fail)};$('badgeRequestForm').onsubmit=e=>{e.preventDefault();submitBadge(e.target).catch(fail)};
+ $('modForm').onsubmit=e=>{e.preventDefault();submitMod(e.target).catch(fail)};$('saveDraftBtn').onclick=()=>saveDraft().catch(fail);
+ $('newInviteBtn').onclick=inviteForm;
+ $('adminBtn').onclick=()=>go('admin');$('adminUserSearch').oninput=renderAdminUsers;
+ $('chatBack').onclick=()=>{S.activeChat=null;$('conversationList').hidden=false;$('chatDetail').hidden=true};$('chatForm').onsubmit=e=>{e.preventDefault();sendChat(e.target).catch(fail)};$('chatImage').onchange=e=>$('chatImageName').textContent=e.target.files[0]?.name||'';
+ document.addEventListener('submit',e=>{if(!['inviteForm','tournamentForm','clanForm','galleryForm','eventForm','collectionForm','editModForm','reportForm'].includes(e.target.id))return;e.preventDefault();(async()=>{if(e.target.id==='inviteForm')return submitInvite(e.target);if(e.target.id==='editModForm')return submitEdit(e.target);if(e.target.id==='reportForm'){const f=e.target;must(await S.db.from('v2_reports').insert({reporter_id:S.me.id,target_type:f.dataset.type,target_id:f.dataset.target,reason:f.elements.reason.value.trim()}));close();toast('Shikoyat yuborildi');return}return submitCommunity(e.target)})().catch(fail)});
+ document.addEventListener('click',e=>{const b=e.target.closest('[data-mod],[data-download],[data-rate],[data-follow],[data-join],[data-answer],[data-inviteclose],[data-join-tournament],[data-bracket],[data-join-clan],[data-remove-photo],[data-show-collection],[data-add-collect],[data-collect],[data-report],[data-open-chat],[data-editmod],[data-restore],[data-use-draft],[data-delete-draft],[data-badge-review],[data-grant],[data-mod-review],[data-player],[data-add-friend],#readAll');if(!b)return;const d=b.dataset;
+ (async()=>{
+ if(d.mod){await openMod(d.mod)}
+ else if(d.player){showPlayer(d.player)}
+ else if(d.addFriend){if(!requireAuth())return;must(await S.db.rpc('mc_request_friend',{target:d.addFriend}));close();toast('Do‘stlik so‘rovi yuborildi')}
+ else if(d.download){await downloadMod(d.download)}
+ else if(d.rate){await rate(d.rate,Number(d.stars))}
+ else if(d.follow){if(!requireAuth())return;if(S.following.some(x=>x.following_id===d.follow)){must(await S.db.from('v2_follows').delete().eq('follower_id',S.me.id).eq('following_id',d.follow))}else{must(await S.db.from('v2_follows').insert({follower_id:S.me.id,following_id:d.follow}))}await load();await openMod(S.currentMod||S.mods.find(x=>x.user_id===d.follow)?.id);toast('Obuna yangilandi')}
+ else if(d.join){if(!requireAuth())return;must(await S.db.from('v2_invite_requests').insert({invite_id:d.join,user_id:S.me.id}));await load();toast('Qo‘shilish so‘rovi yuborildi')}
+ else if(d.answer){must(await S.db.rpc('v2_answer_invite',{req_id:d.answer,accept_request:d.accept==='yes'}));await load();toast('Javob saqlandi')}
+ else if(d.inviteclose){must(await S.db.from('v2_game_invites').update({status:'closed'}).eq('id',d.inviteclose));await load()}
+ else if(d.joinTournament){if(!requireAuth())return;must(await S.db.from('v2_tournament_players').insert({tournament_id:d.joinTournament,user_id:S.me.id}));await renderCommunity();toast('Turnirga yozildingiz')}
+ else if(d.bracket){await bracket(d.bracket)}
+ else if(d.joinClan){if(!requireAuth())return;must(await S.db.from('v2_clan_members').insert({clan_id:d.joinClan,user_id:S.me.id}));await renderCommunity();toast('Klanga qo‘shildingiz')}
+ else if(d.removePhoto){if(!confirm('Rasm o‘chirilsinmi?'))return;must(await S.db.from('v2_gallery').delete().eq('id',d.removePhoto));await renderCommunity()}
+ else if(d.showCollection){showCollection(d.showCollection)}
+ else if(d.collect){chooseCollection(d.collect)}
+ else if(d.addCollect){must(await S.db.from('v2_collection_items').upsert({collection_id:d.addCollect,mod_id:d.mid},{onConflict:'collection_id,mod_id'}));close();toast('To‘plamga qo‘shildi')}
+ else if(d.report){showReport(d.target,d.report)}
+ else if(d.openChat){await openChat(d.openChat)}
+ else if(d.editmod){await editMod(d.editmod)}
+ else if(d.restore){must(await S.db.rpc('mc_mod_action',{mid:d.restore,act:'restore'}));await load();toast('Mod tiklandi')}
+ else if(d.useDraft){const x=S.drafts.find(x=>x.id===d.useDraft);if(!x)return;go('upload');const f=$('modForm');f.elements.title.value=x.title;f.elements.description.value=x.description;f.elements.edition.value=x.edition;f.elements.version.value=x.game_version;toast('Qoralama ochildi, fayllarni qayta tanlang')}
+ else if(d.deleteDraft){must(await S.db.from('v2_drafts').delete().eq('id',d.deleteDraft));await load()}
+ else if(d.badgeReview){must(await S.db.rpc('v2_review_badge',{request_id:d.badgeReview,approve:d.badgeOk==='1',days_count:d.badgeOk==='1'?30:null}));await load();await renderAdmin();toast('Qaror saqlandi')}
+ else if(d.grant){const days=Number(d.days),expires=days>0?new Date(Date.now()+days*86400000).toISOString():null;must(await S.db.rpc('v2_set_badge',{target_user:d.grant,expires,revoke_badge:days===-1}));await load();await renderAdmin();toast('Tasdiq belgisi yangilandi')}
+ else if(d.modReview){must(await S.db.rpc('mc_admin_review',{mid:d.modReview,act:d.review}));await load();await renderAdmin();toast('Mod tekshirildi')}
+ else if(b.id==='readAll'){must(await S.db.from('v2_notifications').update({seen:true}).eq('recipient_id',S.me.id));await load();showNotices()}
+ })().catch(fail)
+ });
 }
-
-async function init(){
-  leaves();
-  bind();
-
-  try{
-    if(!window.supabase?.createClient){
-      throw Error('Supabase kutubxonasi yuklanmadi');
-    }
-
-    state.db=window.supabase.createClient(
-      URL_DB,KEY
-    );
-
-    await refresh();
-    icons();
-
-  }catch(e){
-    fail(e);
-  }
-}
-
-window.addEventListener('DOMContentLoaded',init);
-
+async function boot(){leafFall();bind();if(!window.supabase?.createClient){toast('Supabase kutubxonasi yuklanmadi. Internetni tekshiring.');return}try{S.db=window.supabase.createClient(URL,KEY);const ses=must(await S.db.auth.getSession());S.me=ses.session?.user||null;await load();await presence();S.db.auth.onAuthStateChange((ev,s)=>{if(s?.user?.id!==S.me?.id){S.me=s?.user||null;S.activeChat=null;setTimeout(()=>load().then(presence).catch(fail),0)}})}catch(e){fail(e);$('modGrid').innerHTML=empty('V2.0 bazasi hali ulanmagan. V2.0 SQL jadval va ruxsatlarini tekshiring.')}}
+window.addEventListener('DOMContentLoaded',boot);
 })();
 </script>
 </body>
