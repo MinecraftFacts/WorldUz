@@ -1476,27 +1476,24 @@ async function installMinecraft(id) {
 
 $('share-mc').onclick = async () => {
   try {
-    await navigator.share({ files: [file] });
-    trackDownload(id).catch(console.warn);
-  } catch (e) {
-    if (e.name === 'AbortError') return;
+   
+$('share-mc').onclick = () => {
+  const url = URL.createObjectURL(file);
+  const a = document.createElement('a');
 
-    const url = URL.createObjectURL(file);
-    const a = document.createElement('a');
+  a.href = url;
+  a.download = file.name;
 
-    a.href = url;
-    a.download = file.name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
 
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
 
-    setTimeout(() => URL.revokeObjectURL(url), 60000);
-
-    toast('Fayl yuklandi. Uni Minecraft bilan oching.');
-    trackDownload(id).catch(console.warn);
-  }
+  toast('Mod yuklandi. Downloads papkasidan Minecraft bilan oching.');
+  trackDownload(id).catch(console.warn);
 };
+
 
   } else {
     const url = URL.createObjectURL(file);
