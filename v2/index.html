@@ -1,0 +1,1235 @@
+
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#132b31">
+<title>Minecraft World V2.0 — Sinov</title>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+<style>
+:root {
+  --bg:#0d1923;
+  --panel:#19313e;
+  --line:#43606a;
+  --text:#f0f7f2;
+  --muted:#abc5c9;
+  --green:#b3e4a8;
+  --gold:#e9c17e;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font:15px/1.5 system-ui,Arial;
+  background:
+    radial-gradient(circle at 85% 2%,#2d4b45,transparent 42%),
+    var(--bg);
+  color:var(--text);
+}
+[hidden]{display:none!important}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}
+
+header{
+  position:sticky;
+  top:0;
+  background:#142731ed;
+  border-bottom:1px solid var(--line);
+  z-index:20;
+  padding:14px max(15px,calc((100% - 1060px)/2));
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-size:20px;
+  font-weight:850;
+}
+.brand svg{color:var(--green)}
+.brand small{
+  font-size:10px;
+  background:#34533a;
+  padding:3px 6px;
+  border-radius:7px;
+  color:var(--green);
+}
+main{
+  max-width:1060px;
+  margin:auto;
+  padding:25px 15px 110px;
+  position:relative;
+  z-index:2;
+}
+.page{display:none}
+.page.active{display:block}
+h1,h2,h3{margin:0 0 13px}
+h1{font-size:clamp(29px,5vw,45px)}
+p{margin:7px 0}
+small,.muted{color:var(--muted)}
+
+.card,.panel{
+  background:linear-gradient(135deg,#203c47,#142a36);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:17px;
+  margin:0 0 14px;
+}
+.hero{
+  padding:29px;
+  background:linear-gradient(120deg,#295445,#465b47,#6a5538);
+  border-radius:22px;
+  margin-bottom:23px;
+}
+.hero p{max-width:620px}
+.row{display:flex;gap:10px;align-items:center}
+.wrap{flex-wrap:wrap}
+.between{justify-content:space-between}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:13px;
+}
+.btn{
+  border:1px solid #64977a;
+  border-radius:11px;
+  background:linear-gradient(100deg,var(--gold),var(--green));
+  color:#15242b;
+  padding:10px 14px;
+  font-weight:750;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  text-decoration:none;
+}
+.btn.alt{
+  background:#294653;
+  border-color:var(--line);
+  color:var(--text);
+}
+.btn.small{padding:7px 10px;font-size:12px}
+.btn.danger{
+  background:#593542;
+  color:#fff;
+  border-color:#a36d77;
+}
+.field{
+  width:100%;
+  background:#112733;
+  color:var(--text);
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:11px;
+  margin:5px 0 13px;
+  display:block;
+}
+textarea{resize:vertical}
+label{font-weight:650}
+.tile{padding:0;overflow:hidden}
+.cover{
+  height:155px;
+  width:100%;
+  object-fit:contain;
+  display:block;
+  background:#091923;
+}
+.tile-body{padding:12px}
+.tile h3{font-size:16px;margin:0 0 5px}
+.chips{
+  display:flex;
+  gap:5px;
+  flex-wrap:wrap;
+  margin:8px 0;
+}
+.chip{
+  font-size:12px;
+  padding:4px 8px;
+  border:1px solid #60827a;
+  border-radius:12px;
+  background:#2c4b4f;
+  color:#def2e8;
+}
+.avatar{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid #86bf96;
+}
+.verified{
+  color:#37a3ff;
+  fill:#144871;
+  width:19px;
+  height:19px;
+  vertical-align:-4px;
+  stroke-width:2.7;
+}
+nav{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(100%,590px);
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:4px;
+  background:#142b37f7;
+  border:1px solid #4c7373;
+  border-radius:20px 20px 0 0;
+  z-index:30;
+  padding:9px;
+}
+nav button{
+  border:0;
+  background:none;
+  color:#c4d8d8;
+  border-radius:12px;
+  padding:8px 2px;
+  display:grid;
+  place-items:center;
+  gap:2px;
+}
+nav button.active{
+  background:#365b48;
+  color:var(--gold);
+}
+nav span{font-size:11px}
+.line{
+  border-bottom:1px solid var(--line);
+  padding:11px 0;
+}
+.line:last-child{border:0}
+.status{
+  position:fixed;
+  bottom:95px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:50;
+  padding:12px 17px;
+  border-radius:13px;
+  background:#31604b;
+  border:1px solid var(--green);
+  max-width:90vw;
+}
+.leaves{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden;
+  opacity:.3;
+}
+.leaf{
+  position:absolute;
+  top:-12%;
+  left:var(--x);
+  color:var(--c);
+  animation:fall var(--t) linear infinite;
+  animation-delay:var(--d);
+}
+@keyframes fall {
+  to{transform:translate(var(--dx),115vh) rotate(600deg)}
+}
+@media(prefers-reduced-motion:reduce){
+  .leaves{display:none}
+}
+@media(max-width:720px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero{padding:20px}
+  .brand{font-size:16px}
+  .cover{height:125px}
+}
+@media(max-width:370px){
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+<div id="leaves" class="leaves" aria-hidden="true"></div>
+
+<header>
+  <div class="brand">
+    <i data-lucide="globe-2"></i>
+    Minecraft World
+    <small>V2.0 SINOV</small>
+  </div>
+  <a class="btn alt small" href="../">V1.0</a>
+</header>
+
+<main>
+<section id="home" class="page active">
+  <div class="hero">
+    <h1>Minecraft World V2.0</h1>
+    <p>
+      Modlarni versiyaga qarab toping, o‘yinlarga
+      qo‘shiling va tasdiqlangan o‘yinchilarni ko‘ring.
+    </p>
+    <button class="btn" data-page="games">
+      <i data-lucide="gamepad-2"></i>
+      Birga o‘ynaymiz
+    </button>
+  </div>
+
+  <h2>Modlar</h2>
+
+  <div class="row wrap">
+    <input class="field" style="flex:2;min-width:180px"
+      id="modSearch" placeholder="Mod qidirish">
+
+    <select class="field" style="flex:1;min-width:120px"
+      id="editionFilter">
+      <option value="all">Hammasi</option>
+      <option value="bedrock">Bedrock</option>
+      <option value="java">Java</option>
+    </select>
+
+    <input class="field" style="flex:1;min-width:120px"
+      id="versionFilter" placeholder="Versiya: 1.21">
+  </div>
+
+  <div id="modGrid" class="grid"></div>
+  <p class="muted">
+    Mod qo‘shish va mavjud chat uchun hozircha
+    <a href="../">V1.0 sayt</a> ishlaydi.
+  </p>
+</section>
+
+<section id="games" class="page">
+  <div class="row between wrap">
+    <h2>Birga o‘ynaymiz</h2>
+    <button class="btn" id="newInvite">
+      <i data-lucide="plus"></i>
+      Taklif yaratish
+    </button>
+  </div>
+
+  <div id="inviteFormWrap" class="panel" hidden>
+    <h3>Yangi o‘yin taklifi</h3>
+
+    <form id="inviteForm">
+      <label>Sarlavha
+        <input class="field" name="title" required
+          minlength="5" maxlength="100"
+          placeholder="Survival uchun sherik kerak">
+      </label>
+
+      <div class="row wrap">
+        <label style="flex:1">Nashr
+          <select class="field" name="edition">
+            <option value="bedrock">Bedrock</option>
+            <option value="java">Java</option>
+          </select>
+        </label>
+
+        <label style="flex:1">Minecraft versiyasi
+          <input class="field" name="version"
+            required maxlength="35" placeholder="1.21.50">
+        </label>
+      </div>
+
+      <div class="row wrap">
+        <label style="flex:1">Rejim
+          <select class="field" name="mode">
+            <option value="survival">Survival</option>
+            <option value="creative">Creative</option>
+            <option value="minigames">Minigames</option>
+            <option value="other">Boshqa</option>
+          </select>
+        </label>
+
+        <label style="flex:1">O‘yinchilar soni
+          <input class="field" type="number" name="players"
+            value="4" min="2" max="40" required>
+        </label>
+      </div>
+
+      <label>O‘yin boshlanishi
+        <input class="field" type="datetime-local"
+          name="start" required>
+      </label>
+
+      <label>Izoh
+        <textarea class="field" name="description"
+          rows="3" maxlength="1000"></textarea>
+      </label>
+
+      <button class="btn">Taklifni joylash</button>
+      <button class="btn alt" type="button"
+        id="cancelInvite">Bekor qilish</button>
+    </form>
+  </div>
+
+  <div id="inviteList"></div>
+</section>
+
+<section id="profile" class="page">
+  <h2>Profil va sozlamalar</h2>
+
+  <div id="loginBox" class="panel">
+    <p>Eski Minecraft World akkaunting bilan kir.</p>
+
+    <form id="loginForm">
+      <label>Username
+        <input id="username" class="field" required>
+      </label>
+      <label>Parol
+        <input type="password" id="password"
+          class="field" required>
+      </label>
+      <button class="btn">Kirish</button>
+    </form>
+
+    <p class="muted">
+      Yangi akkaunt yaratish uchun
+      <a href="../">eski saytga o‘t</a>.
+    </p>
+  </div>
+
+  <div id="profileBox" hidden>
+    <div class="panel row between wrap">
+      <div class="row">
+        <img id="myAvatar" class="avatar" alt="Avatar">
+        <div>
+          <h3 id="myName"></h3>
+          <small id="myUsername"></small>
+        </div>
+      </div>
+      <button class="btn alt small" id="logout">
+        Chiqish
+      </button>
+    </div>
+
+    <form id="profileForm" class="panel">
+      <h3>Minecraft profili</h3>
+
+      <label>Minecraft nick
+        <input class="field" name="nick" maxlength="40"
+          placeholder="Minecraftdagi nickname">
+      </label>
+
+      <label>Bio havolalar
+        <textarea class="field" name="links" rows="3"
+          placeholder="https://t.me/kanalingiz"></textarea>
+      </label>
+
+      <p class="muted">
+        Har bir HTTPS havolani yangi qatordan yozing.
+      </p>
+
+      <label class="row">
+        <input type="checkbox" name="badgeVisible">
+        Ko‘k tasdiq belgisini ko‘rsatish
+      </label>
+
+      <p></p>
+      <button class="btn">Sozlamalarni saqlash</button>
+    </form>
+
+    <form id="badgeRequestForm" class="panel">
+      <h3>Ko‘k belgi uchun so‘rov</h3>
+      <p class="muted">
+        Admin profilingizni tekshiradi.
+        Belgini faqat admin beradi.
+      </p>
+
+      <label>Nega tasdiqlanish kerak?
+        <textarea class="field" name="reason"
+          minlength="10" maxlength="700" required></textarea>
+      </label>
+
+      <button class="btn">So‘rov yuborish</button>
+      <div id="myBadgeRequests"></div>
+    </form>
+
+    <div class="panel">
+      <h3>Mening o‘yin so‘rovlarim</h3>
+      <div id="myInviteRequests"></div>
+    </div>
+  </div>
+</section>
+
+<section id="admin" class="page">
+  <h2>Admin paneli — V2.0</h2>
+
+  <div class="panel">
+    <h3>Ko‘k belgi so‘rovlari</h3>
+    <div id="adminBadgeRequests"></div>
+  </div>
+
+  <div class="panel">
+    <h3>Akkauntlarga ko‘k belgi berish</h3>
+    <input class="field" id="adminSearch"
+      placeholder="Username qidirish">
+    <div id="adminUsers"></div>
+  </div>
+</section>
+</main>
+
+<nav>
+  <button data-page="home" class="active">
+    <i data-lucide="house"></i>
+    <span>Asosiy</span>
+  </button>
+  <button data-page="games">
+    <i data-lucide="gamepad-2"></i>
+    <span>O‘yinlar</span>
+  </button>
+  <button data-page="profile">
+    <i data-lucide="user-round"></i>
+    <span>Profil</span>
+  </button>
+  <button data-page="admin" id="adminNav" hidden>
+    <i data-lucide="shield-check"></i>
+    <span>Admin</span>
+  </button>
+</nav>
+
+<div id="status" class="status" role="status" hidden></div>
+
+<script>
+(()=>{
+'use strict';
+
+const URL_DB='https://swbnidsmwnqwjzfrlorr.supabase.co';
+const KEY='sb_publishable_-yjtMQSDiq7_L1ZiNfBcSQ_GiXEDPka';
+
+const $=id=>document.getElementById(id);
+
+const E=v=>String(v??'').replace(/[&<>"']/g,c=>({
+  '&':'&amp;',
+  '<':'&lt;',
+  '>':'&gt;',
+  '"':'&quot;',
+  "'":'&#39;'
+}[c]));
+
+const state={
+  db:null,
+  me:null,
+  users:[],
+  mods:[],
+  meta:[],
+  extra:[],
+  badges:[],
+  invites:[],
+  requests:[],
+  badgeRequests:[],
+  admin:false
+};
+
+const getUser=id=>state.users.find(x=>x.id===id);
+
+const getName=id=>{
+  const u=getUser(id);
+  return u?.nickname||u?.username||'O‘yinchi';
+};
+
+const icons=()=>window.lucide?.createIcons();
+
+const read=table=>state.db.from(table).select('*');
+
+const check=r=>{
+  if(r.error)throw r.error;
+  return r.data;
+};
+
+const hasBadge=id=>{
+  const b=state.badges.find(x=>x.user_id===id);
+  const p=state.extra.find(x=>x.user_id===id);
+
+  return !!b &&
+    (!b.expires_at||Date.parse(b.expires_at)>Date.now()) &&
+    p?.badge_visible!==false;
+};
+
+const verified=id=>hasBadge(id)
+  ?'<i data-lucide="badge-check" class="verified"></i>'
+  :'';
+
+const avatar=u=>u?.avatar_path
+  ?state.db.storage.from('mc-avatars')
+    .getPublicUrl(u.avatar_path).data.publicUrl
+  :'data:image/svg+xml,'+encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="#2e5b4c"/><circle cx="50" cy="37" r="20" fill="#b1e4b6"/><path d="M15 100Q15 65 50 65T85 100" fill="#b1e4b6"/></svg>'
+  );
+
+let toastTimer;
+
+function msg(s){
+  $('status').textContent=s;
+  $('status').hidden=false;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(
+    ()=>$('status').hidden=true,4200
+  );
+}
+
+function fail(e){
+  console.error(e);
+  msg('Xato: '+(e?.message||String(e)));
+}
+
+function go(p){
+  if(p==='admin'&&!state.admin)return;
+
+  document.querySelectorAll('.page').forEach(x=>{
+    x.classList.toggle('active',x.id===p);
+  });
+
+  document.querySelectorAll('[data-page]').forEach(x=>{
+    x.classList.toggle('active',x.dataset.page===p);
+  });
+
+  window.scrollTo(0,0);
+}
+
+function requireAuth(){
+  if(state.me)return true;
+  msg('Avval akkauntga kiring');
+  go('profile');
+  return false;
+}
+
+async function refresh(){
+  state.me=check(await state.db.auth.getUser()).user||null;
+
+  const tables=[
+    'mc_profiles',
+    'mc_mods',
+    'v2_mod_meta',
+    'v2_profile_extra',
+    'v2_badges',
+    'v2_game_invites'
+  ];
+
+  const rows=await Promise.all(
+    tables.map(t=>read(t).then(check))
+  );
+
+  [
+    state.users,
+    state.mods,
+    state.meta,
+    state.extra,
+    state.badges,
+    state.invites
+  ]=rows;
+
+  state.admin=false;
+  state.requests=[];
+  state.badgeRequests=[];
+
+  if(state.me){
+    const role=check(await state.db.rpc('mc_my_role'));
+
+    state.admin=['owner','admin'].includes(String(role));
+
+    state.requests=check(
+      await read('v2_invite_requests')
+    );
+
+    state.badgeRequests=check(
+      await read('v2_badge_requests')
+    );
+  }
+
+  $('adminNav').hidden=!state.admin;
+  $('loginBox').hidden=!!state.me;
+  $('profileBox').hidden=!state.me;
+
+  renderMods();
+  renderInvites();
+  renderProfile();
+
+  if(state.admin)renderAdmin();
+  icons();
+}
+
+function renderMods(){
+  const q=$('modSearch').value.toLowerCase().trim();
+  const edition=$('editionFilter').value;
+  const v=$('versionFilter').value.toLowerCase().trim();
+
+  const list=state.mods
+    .filter(m=>m.status==='approved')
+    .filter(m=>{
+      const meta=state.meta.find(
+        x=>x.mod_id===m.id
+      )||{
+        edition:'bedrock',
+        game_version:'Aniqlanmagan'
+      };
+
+      return (
+        edition==='all'||meta.edition===edition
+      ) &&
+      meta.game_version.toLowerCase().includes(v) &&
+      String(m.title).toLowerCase().includes(q);
+    });
+
+  $('modGrid').innerHTML=list.map(m=>{
+    const z=state.meta.find(
+      x=>x.mod_id===m.id
+    )||{
+      edition:'bedrock',
+      game_version:'Aniqlanmagan'
+    };
+
+    const src=m.images?.[0]
+      ?state.db.storage.from('mcmod-images')
+        .getPublicUrl(m.images[0]).data.publicUrl
+      :'';
+
+    return `
+      <article class="card tile">
+        <img class="cover" src="${E(src)}" alt="Mod">
+        <div class="tile-body">
+          <h3>${E(m.title)}</h3>
+          <small>
+            ${E(getName(m.user_id))}
+            ${verified(m.user_id)}
+          </small>
+
+          <div class="chips">
+            <span class="chip">${E(z.edition)}</span>
+            <span class="chip">${E(z.game_version)}</span>
+          </div>
+
+          <button class="btn small"
+            data-download="${E(m.id)}">
+            <i data-lucide="download"></i>
+            Yuklab olish
+          </button>
+        </div>
+      </article>
+    `;
+  }).join('')||'<p>Mod topilmadi.</p>';
+
+  icons();
+}
+
+function dateTime(v){
+  return new Date(v).toLocaleString('uz-UZ',{
+    dateStyle:'medium',
+    timeStyle:'short'
+  });
+}
+
+function renderInvites(){
+  const pending=state.requests;
+
+  $('inviteList').innerHTML=state.invites
+    .slice()
+    .sort((a,b)=>
+      new Date(a.starts_at)-new Date(b.starts_at)
+    )
+    .map(i=>{
+      const mine=i.creator_id===state.me?.id;
+
+      const own=pending.find(
+        x=>x.invite_id===i.id &&
+          x.user_id===state.me?.id
+      );
+
+      const requests=mine
+        ?pending.filter(
+          x=>x.invite_id===i.id &&
+            x.status==='pending'
+        )
+        :[];
+
+      return `
+        <article class="panel">
+          <div class="row between wrap">
+            <h3>${E(i.title)}</h3>
+            <span class="chip">${E(i.status)}</span>
+          </div>
+
+          <small>
+            ${E(getName(i.creator_id))}
+            ${verified(i.creator_id)}
+          </small>
+
+          <div class="chips">
+            <span class="chip">${E(i.edition)}</span>
+            <span class="chip">${E(i.game_version)}</span>
+            <span class="chip">${E(i.game_mode)}</span>
+            <span class="chip">${E(dateTime(i.starts_at))}</span>
+            <span class="chip">
+              ${i.max_players} kishigacha
+            </span>
+          </div>
+
+          <p>${E(i.description)}</p>
+
+          ${!mine &&
+            i.status==='open' &&
+            Date.parse(i.starts_at)>Date.now()
+            ?`
+              <button class="btn small"
+                data-join="${E(i.id)}"
+                ${own?'disabled':''}>
+                ${own
+                  ?'So‘rov yuborilgan'
+                  :'Qo‘shilmoqchiman'}
+              </button>
+            `
+            :''
+          }
+
+          ${requests.map(r=>`
+            <div class="line row between wrap">
+              <span>${E(getName(r.user_id))}</span>
+              <div class="row">
+                <button class="btn small"
+                  data-answer="${E(r.id)}"
+                  data-approve="true">
+                  Qabul
+                </button>
+                <button class="btn small danger"
+                  data-answer="${E(r.id)}"
+                  data-approve="false">
+                  Rad
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </article>
+      `;
+    }).join('')||'<p>Hali o‘yin takliflari yo‘q.</p>';
+
+  icons();
+}
+
+function renderProfile(){
+  if(!state.me)return;
+
+  const u=getUser(state.me.id);
+
+  const p=state.extra.find(
+    x=>x.user_id===state.me.id
+  );
+
+  $('myName').innerHTML=
+    E(getName(state.me.id))+' '+verified(state.me.id);
+
+  $('myUsername').textContent='@'+(u?.username||'');
+  $('myAvatar').src=avatar(u);
+
+  const f=$('profileForm');
+
+  f.elements.nick.value=p?.minecraft_nick||'';
+
+  f.elements.links.value=Array.isArray(p?.bio_links)
+    ?p.bio_links.join('\n')
+    :'';
+
+  f.elements.badgeVisible.checked=
+    p?.badge_visible!==false;
+
+  $('myBadgeRequests').innerHTML=
+    state.badgeRequests
+      .filter(x=>x.user_id===state.me.id)
+      .map(x=>`
+        <p class="muted">
+          So‘rov: ${E(x.status)}
+          (${E(dateTime(x.created_at))})
+        </p>
+      `).join('');
+
+  $('myInviteRequests').innerHTML=
+    state.requests
+      .filter(x=>x.user_id===state.me.id)
+      .map(x=>`
+        <p class="line">
+          ${E(
+            state.invites.find(
+              i=>i.id===x.invite_id
+            )?.title||'Taklif'
+          )}
+          — ${E(x.status)}
+        </p>
+      `).join('')||
+      '<p class="muted">So‘rovlar yo‘q.</p>';
+
+  icons();
+}
+
+function renderAdmin(){
+  const req=state.badgeRequests.filter(
+    x=>x.status==='pending'
+  );
+
+  $('adminBadgeRequests').innerHTML=req.map(r=>`
+    <div class="line">
+      <b>${E(getName(r.user_id))}</b>
+      <p>${E(r.reason)}</p>
+
+      <div class="row">
+        <button class="btn small"
+          data-review="${E(r.id)}"
+          data-approve="true">
+          Tasdiqlash
+        </button>
+
+        <button class="btn danger small"
+          data-review="${E(r.id)}"
+          data-approve="false">
+          Rad
+        </button>
+      </div>
+    </div>
+  `).join('')||'<p>Yangi so‘rov yo‘q.</p>';
+
+  const q=$('adminSearch').value.toLowerCase().trim();
+
+  $('adminUsers').innerHTML=state.users
+    .filter(u=>u.username.toLowerCase().includes(q))
+    .slice(0,50)
+    .map(u=>`
+      <div class="line row between wrap">
+        <span>
+          ${E(getName(u.id))}
+          ${verified(u.id)}
+          <small>@${E(u.username)}</small>
+        </span>
+
+        <div class="row wrap">
+          <button class="btn small"
+            data-grant="${E(u.id)}"
+            data-days="30">
+            30 kun
+          </button>
+
+          <button class="btn alt small"
+            data-grant="${E(u.id)}"
+            data-days="0">
+            Muddatsiz
+          </button>
+
+          <button class="btn danger small"
+            data-grant="${E(u.id)}"
+            data-days="-1">
+            Olib tashlash
+          </button>
+        </div>
+      </div>
+    `).join('');
+
+  icons();
+}
+
+async function download(id){
+  const m=state.mods.find(x=>x.id===id);
+
+  if(!m||m.status!=='approved')return;
+
+  const r=check(
+    await state.db.storage
+      .from('mcmod-files')
+      .createSignedUrl(
+        m.file_path,
+        60,
+        {download:true}
+      )
+  );
+
+  location.href=r.signedUrl;
+}
+
+function leaves(){
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches){
+    return;
+  }
+
+  for(let i=0;i<12;i++){
+    const s=document.createElement('span');
+    s.className='leaf';
+
+    s.style.cssText=`
+      --x:${(i*37)%100}%;
+      --t:${14+i%5*4}s;
+      --d:-${i*2}s;
+      --dx:${i%2?-90:110}px;
+      --c:${['#dca162','#b97d42','#e8be79'][i%3]}
+    `;
+
+    s.innerHTML=`
+      <svg width="24" height="24"
+        viewBox="0 0 24 24"
+        fill="currentColor">
+        <path d="M12 22l-1-8-7 2 2-5-5-3 7-1-1-6 6 5 5-4 1 5 4 2-5 4 2 6-7-4z"/>
+      </svg>
+    `;
+
+    $('leaves').append(s);
+  }
+}
+
+function bind(){
+  document.querySelectorAll('[data-page]').forEach(b=>{
+    b.onclick=()=>go(b.dataset.page);
+  });
+
+  ['modSearch','versionFilter'].forEach(id=>{
+    $(id).oninput=renderMods;
+  });
+
+  $('editionFilter').onchange=renderMods;
+  $('adminSearch').oninput=renderAdmin;
+
+  $('newInvite').onclick=()=>{
+    if(requireAuth()){
+      $('inviteFormWrap').hidden=false;
+    }
+  };
+
+  $('cancelInvite').onclick=()=>{
+    $('inviteFormWrap').hidden=true;
+  };
+
+  $('loginForm').onsubmit=async e=>{
+    e.preventDefault();
+
+    try{
+      const username=$('username').value.trim().toLowerCase();
+
+      const email=check(
+        await state.db.rpc('mc_login_email',{
+          handle:username
+        })
+      );
+
+      if(!email)throw Error('Username topilmadi');
+
+      check(
+        await state.db.auth.signInWithPassword({
+          email,
+          password:$('password').value
+        })
+      );
+
+      await refresh();
+      msg('Kirdingiz');
+    }catch(err){
+      fail(err);
+    }
+  };
+
+  $('logout').onclick=async()=>{
+    try{
+      check(await state.db.auth.signOut());
+      await refresh();
+      go('home');
+    }catch(e){
+      fail(e);
+    }
+  };
+
+  $('profileForm').onsubmit=async e=>{
+    e.preventDefault();
+    if(!requireAuth())return;
+
+    try{
+      const f=e.target;
+
+      const links=f.elements.links.value
+        .split(/\r?\n/)
+        .map(x=>x.trim())
+        .filter(Boolean);
+
+      if(links.length>5 ||
+        links.some(x=>!/^https:\/\/[^\s]+$/i.test(x))
+      ){
+        throw Error('Faqat 5 tagacha HTTPS havola');
+      }
+
+      check(
+        await state.db.from('v2_profile_extra')
+          .upsert({
+            user_id:state.me.id,
+            minecraft_nick:f.elements.nick.value.trim(),
+            bio_links:links,
+            badge_visible:f.elements.badgeVisible.checked,
+            updated_at:new Date().toISOString()
+          },{
+            onConflict:'user_id'
+          })
+      );
+
+      await refresh();
+      msg('Profil saqlandi');
+    }catch(err){
+      fail(err);
+    }
+  };
+
+  $('badgeRequestForm').onsubmit=async e=>{
+    e.preventDefault();
+    if(!requireAuth())return;
+
+    try{
+      check(
+        await state.db.from('v2_badge_requests')
+          .insert({
+            user_id:state.me.id,
+            reason:e.target.elements.reason.value.trim()
+          })
+      );
+
+      e.target.reset();
+      await refresh();
+      msg('So‘rov yuborildi');
+    }catch(err){
+      fail(err);
+    }
+  };
+
+  $('inviteForm').onsubmit=async e=>{
+    e.preventDefault();
+    if(!requireAuth())return;
+
+    try{
+      const f=e.target;
+
+      const v=Object.fromEntries(
+        new FormData(f).entries()
+      );
+
+      const starts_at=new Date(v.start).toISOString();
+
+      if(Date.parse(starts_at)<=Date.now()){
+        throw Error('Kelajakdagi sanani tanlang');
+      }
+
+      check(
+        await state.db.from('v2_game_invites')
+          .insert({
+            creator_id:state.me.id,
+            title:v.title,
+            edition:v.edition,
+            game_version:v.version,
+            game_mode:v.mode,
+            starts_at,
+            max_players:Number(v.players),
+            description:v.description
+          })
+      );
+
+      f.reset();
+      $('inviteFormWrap').hidden=true;
+      await refresh();
+
+      msg('Taklif joylandi');
+    }catch(err){
+      fail(err);
+    }
+  };
+
+  document.addEventListener('click',e=>{
+    const b=e.target.closest(
+      '[data-download],[data-join],[data-answer],' +
+      '[data-review],[data-grant]'
+    );
+
+    if(!b)return;
+
+    (async()=>{
+      if(b.dataset.download){
+        await download(b.dataset.download);
+      }
+
+      if(b.dataset.join){
+        if(!requireAuth())return;
+
+        check(
+          await state.db.from('v2_invite_requests')
+            .insert({
+              invite_id:b.dataset.join,
+              user_id:state.me.id
+            })
+        );
+
+        await refresh();
+        msg('So‘rov yuborildi');
+      }
+
+      if(b.dataset.answer){
+        check(
+          await state.db.rpc('v2_answer_invite',{
+            req_id:b.dataset.answer,
+            accept_request:b.dataset.approve==='true'
+          })
+        );
+
+        await refresh();
+        msg('Javob saqlandi');
+      }
+
+      if(b.dataset.review){
+        check(
+          await state.db.rpc('v2_review_badge',{
+            request_id:b.dataset.review,
+            approve:b.dataset.approve==='true'
+          })
+        );
+
+        await refresh();
+        msg('So‘rov ko‘rib chiqildi');
+      }
+
+      if(b.dataset.grant){
+        const days=Number(b.dataset.days);
+
+        check(
+          await state.db.rpc('v2_set_badge',{
+            target_user:b.dataset.grant,
+            days_count:days>0?days:null,
+            remove_badge:days<0
+          })
+        );
+
+        await refresh();
+        msg('Belgi yangilandi');
+      }
+
+    })().catch(fail);
+  });
+}
+
+async function init(){
+  leaves();
+  bind();
+
+  try{
+    if(!window.supabase?.createClient){
+      throw Error('Supabase kutubxonasi yuklanmadi');
+    }
+
+    state.db=window.supabase.createClient(
+      URL_DB,KEY
+    );
+
+    await refresh();
+    icons();
+
+  }catch(e){
+    fail(e);
+  }
+}
+
+window.addEventListener('DOMContentLoaded',init);
+
+})();
+</script>
+</body>
+</html>
