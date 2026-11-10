@@ -1,280 +1,606 @@
+
 <!doctype html>
-<html lang="uz"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Minecraft World — V0.7</title>
-
-
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Minecraft World — V1.0</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='35' fill='%233b82a1'/%3E%3Cpath d='M8 34L25 20 41 26 51 14 70 27 57 44 62 59 39 73 24 55 11 52Z' fill='%23b6db65'/%3E%3C/svg%3E">
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 <style>
-:root{--bg:#080d13;--panel:#121c24;--panel2:#1b2a33;--line:#31454b;--mint:#50f3ab;--mint2:#13b77f;--text:#f3fbf8;--muted:#9db1b4;--red:#ff6e78;--gold:#e6b95a}
-[hidden]{display:none!important}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;color:var(--text);font:15px/1.55 system-ui,'Segoe UI',sans-serif;background:radial-gradient(ellipse 900px 600px at 95% 0%,#184a4270,transparent),radial-gradient(ellipse 700px 650px at 0% 80%,#0f385650,transparent),var(--bg)}
-body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(#ffffff04 1px,transparent 1px),linear-gradient(90deg,#ffffff04 1px,transparent 1px);background-size:38px 38px;mask-image:linear-gradient(to bottom,black,transparent 85%)}
-button,input,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:wait}a{color:var(--mint)}img{object-fit:cover}h1,h2,h3,p{margin-top:0}h2{font-size:clamp(21px,3vw,27px);letter-spacing:-.5px;margin-bottom:14px}h3{font-size:17px;margin-bottom:6px}small,.muted{color:var(--muted)}
-header{height:78px;background:#0d171fd9;backdrop-filter:blur(16px);border-bottom:1px solid #356257;position:sticky;top:0;z-index:15;display:flex;align-items:center;justify-content:space-between;padding:0 max(19px,calc((100vw - 1120px)/2));gap:16px}
-.logo{display:flex;gap:10px;align-items:center;font-weight:900;color:var(--mint);font-size:clamp(16px,2.5vw,22px);letter-spacing:-.5px}.logo-mark{background:linear-gradient(145deg,#6cf0aa,#078a78);color:#082a22;width:41px;height:41px;border-radius:12px;display:grid;place-items:center;box-shadow:0 8px 30px #0bc78835;font-size:25px}.version{font-size:11px;background:#163e32;color:#8affc4;border:1px solid #397f5d;border-radius:7px;padding:3px 7px;letter-spacing:1px}
-.header-actions{display:flex;gap:12px;align-items:center}.icon-btn{background:#1a2a34;border:1px solid var(--line);color:var(--text);border-radius:12px;width:44px;height:44px;display:grid;place-items:center;position:relative}.icon-btn:hover{border-color:var(--mint)}.ico{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}.counter{position:absolute;top:-7px;right:-7px;background:var(--red);color:#190308;border-radius:20px;min-width:19px;padding:1px 5px;font-weight:900;font-size:11px}
-main{max-width:1120px;margin:auto;padding:27px 20px 110px}.page{display:none}.page.active{display:block}.eyebrow{color:var(--mint);text-transform:uppercase;letter-spacing:2.5px;font-weight:800;font-size:12px}.hero{position:relative;overflow:hidden;padding:40px;border-radius:26px;border:1px solid #377c69;background:linear-gradient(115deg,#172c33ee,#143f3add 60%,#146554a3);margin-bottom:30px;box-shadow:0 15px 45px #0004}.hero:after{content:"◆";position:absolute;right:6%;top:-38px;font-size:240px;line-height:1;color:#95ffcd0d;transform:rotate(-16deg)}.hero h1{font-size:clamp(31px,5vw,54px);line-height:1.12;letter-spacing:-1.5px;margin:12px 0}.hero h1 b{color:#8fffb9}.hero p{max-width:460px;color:#c1d7d0}.row{display:flex;align-items:center;gap:11px}.between{justify-content:space-between}.stack{display:grid;gap:16px}.wrap{display:flex;flex-wrap:wrap;gap:10px}.section-title{display:flex;align-items:center;justify-content:space-between;margin:23px 0 15px}
-.field{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:#0a171f;color:#f1fcf7;outline:none}.field:focus{border-color:var(--mint);box-shadow:0 0 0 3px #48e7a61c}textarea{resize:vertical}label{display:grid;gap:7px;font-size:14px;font-weight:700}.hint{font-size:12px;color:var(--muted);display:block;min-height:17px}.hint.bad{color:var(--red)}.hint.good{color:var(--mint)}.search{max-width:370px;width:100%;margin-bottom:17px}
-.btn{border:0;background:linear-gradient(110deg,#77f9b4,#39d3b4);color:#06251b;font-weight:900;padding:12px 16px;border-radius:12px;white-space:nowrap}.btn:hover{filter:brightness(1.08)}.btn.secondary{background:#243941;color:#d1ece3;border:1px solid #3c6262}.btn.danger{background:#432b37;color:#ffb6bf;border:1px solid #7b4550}.btn.sm{padding:8px 12px;font-size:12px}.panel{border:1px solid var(--line);background:linear-gradient(160deg,#192630ee,#111b24ec);border-radius:19px;padding:20px;box-shadow:0 12px 30px #0002}.form-panel{max-width:610px;margin:0 auto}.form-panel h2{margin-bottom:18px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{border-radius:19px;overflow:hidden;background:var(--panel);border:1px solid var(--line);cursor:pointer;transition:transform .16s,border-color .16s}.card:hover{border-color:#59dcad;transform:translateY(-3px)}.card img{width:100%;height:172px;display:block;background:#13232b}.card-body{padding:14px}.card h3{overflow-wrap:anywhere}.sub{font-size:12px;color:var(--mint)}.stats{display:flex;gap:11px;flex-wrap:wrap;font-size:12px;color:#b7c7ca;padding-top:10px}.stats span{display:flex;gap:4px;align-items:center}
-.avatar{width:70px;height:70px;border-radius:50%;border:2px solid #58e7a8;background:#25463d}.avatar.sm{width:46px;height:46px}.user-card{display:flex;align-items:center;gap:13px;cursor:pointer}.user-card:hover{border-color:var(--mint)}.user-card .grow{min-width:0;flex:1}.user-card h3,.user-card small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;margin:0}
-.dropzone{display:flex;align-items:center;justify-content:center;gap:12px;flex-direction:column;text-align:center;min-height:130px;border:2px dashed #48786d;border-radius:18px;background:linear-gradient(145deg,#132e2c,#10202a);cursor:pointer;padding:22px;transition:.15s}.dropzone:hover,.dropzone.drag{border-color:var(--mint);background:#1b4035}.dropzone .ico{width:32px;height:32px;color:var(--mint)}.dropzone strong{font-size:15px}.dropzone small{font-weight:400}.dropzone input{position:absolute;width:1px;height:1px;opacity:0}.previews{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.previews img{width:100px;height:72px;border-radius:10px}.uploaded-name{font-size:12px;color:var(--mint);overflow-wrap:anywhere}
-.chat-layout{display:grid;grid-template-columns:300px 1fr;gap:15px;min-height:560px}.friend-list{display:grid;gap:8px;max-height:540px;overflow:auto}.friend-row{border:1px solid var(--line);background:#162833;color:#fff;border-radius:13px;padding:10px;text-align:left;display:flex;align-items:center;gap:10px;width:100%}.friend-row.active{border-color:var(--mint);background:#19473b}.friend-row .grow{flex:1;min-width:0;text-align:left}.friend-row small{display:block}.chat-box{display:flex;flex-direction:column;min-height:500px}.messages{background:#09171e;flex:1;min-height:350px;max-height:470px;overflow:auto;border-radius:13px;padding:12px;display:flex;flex-direction:column;gap:10px;margin:12px 0}.bubble{max-width:80%;align-self:flex-start;background:#263a42;padding:10px 13px;border-radius:13px;overflow-wrap:anywhere;white-space:pre-wrap}.bubble.mine{align-self:flex-end;background:#195d46}.bubble small{display:block;font-size:10px;opacity:.65;text-align:right}.compose{display:flex;gap:8px}
-.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);display:grid;grid-template-columns:repeat(5,1fr);gap:7px;padding:10px;background:#14232bef;border:1px solid #40645b;border-bottom:0;border-radius:22px 22px 0 0;backdrop-filter:blur(20px);width:min(100%,520px);z-index:30;box-shadow:0 -14px 35px #0006}.nav-btn{border:0;background:transparent;color:#a8bdbc;border-radius:14px;height:54px;position:relative}.nav-btn.active{background:#225641;color:#83ffba}.nav-btn .ico{width:26px;height:26px}.nav-dot{position:absolute;top:5px;right:calc(50% - 20px);width:9px;height:9px;border-radius:50%;background:var(--red)}
-.modal{position:fixed;inset:0;z-index:40;background:#02070bc9;display:grid;place-items:center;padding:15px}.modal-panel{position:relative;width:min(100%,720px);max-height:88vh;overflow:auto;border:1px solid #477168;background:#13242cf5;border-radius:22px;padding:23px;box-shadow:0 25px 90px #000a}.close{position:absolute;right:14px;top:14px}.cover{width:100%;height:260px;border-radius:15px;background:#122521}.thumbs{display:flex;gap:7px;overflow-x:auto;margin:10px 0}.thumbs img{width:86px;height:63px;border-radius:9px;cursor:pointer}.notices{display:grid;gap:8px}.notice{border:1px solid var(--line);padding:12px;border-radius:12px;background:#192f37}.notice.unread{border-color:#4e977e;background:#1d4037}.comment{padding:11px 0;border-bottom:1px solid #ffffff16}.comment small{display:block}.comment p{white-space:pre-wrap;overflow-wrap:anywhere;margin:4px 0 0}.pills{font-size:12px;background:#20393b;color:#b2f7d6;border:1px solid #386959;padding:5px 10px;border-radius:50px}.toast{position:fixed;bottom:95px;left:50%;transform:translateX(-50%);padding:13px 18px;background:#21493b;border:1px solid #4a9471;border-radius:12px;z-index:99;max-width:90%;box-shadow:0 8px 30px #0008}
-@media(max-width:750px){header{padding:0 15px}.{font-size:16px}.hero{padding:28px 20px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card img{height:135px}.card-body{padding:10px}.chat-layout{grid-template-columns:1fr}.friend-list{max-height:190px}.chat-box{min-height:420px}.messages{min-height:270px}.panel{padding:15px}}
-@media(max-width:410px){main{padding:18px 12px 110px}.card img{height:112px}.card h3{font-size:14px}.header-actions{gap:6px}.-mark{width:34px;height:34px}.version{font-size:10px}}
-
-/* V0.6 Telegramga yaqin sodda chat interfeysi */
-.telegram-shell{max-width:830px;min-height:570px;margin:auto;background:linear-gradient(160deg,#13232d,#0d1c24);border:1px solid #31564d;border-radius:22px;padding:18px;position:relative;box-shadow:0 14px 45px #0005}
-.conversation-list{display:flex;flex-direction:column;margin:17px -5px 74px}
-.conversation{border:0;border-bottom:1px solid #ffffff0f;background:transparent;color:#f1fff7;display:flex;align-items:center;gap:14px;padding:14px 10px;text-align:left;width:100%;border-radius:13px;cursor:pointer;transition:background .15s}
-.conversation:hover{background:#1b3837}.conversation.unread{background:#15382f}.conversation .avatar{height:55px;width:55px;flex:none}
-.convo-middle{min-width:0;flex:1;display:grid;gap:4px}.convo-middle strong{font-size:17px}.unread .convo-middle strong{font-weight:900;color:#a3ffcf}
-.convo-preview{color:#9db0b4;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;max-width:500px;font-size:13px}.unread .convo-preview{color:#f2fff8;font-weight:700}
-.convo-meta{display:grid;justify-items:end;gap:8px}.convo-meta small{font-size:11px;white-space:nowrap}.unread-badge{background:#39d19b;color:#05261a;font-size:12px;font-weight:900;border-radius:999px;padding:2px 7px;min-width:23px;text-align:center}
-.chat-plus{position:absolute;bottom:19px;left:20px;width:44px;height:44px;border-radius:50%;border:0;background:#46e8ab;color:#06291e;font-size:32px;font-weight:400;box-shadow:0 8px 22px #0008;display:grid;place-items:center}
-.chat-add-panel{position:absolute;left:20px;bottom:75px;width:min(340px,calc(100% - 40px));max-height:380px;overflow:auto;padding:17px;background:#1a3038;border:1px solid #4e8a79;border-radius:17px;z-index:4;box-shadow:0 16px 40px #000a}
-.chat-add-panel h3{margin:0 0 12px}.chat-add-panel .conversation{padding:9px 5px}.chat-add-panel .avatar{height:40px;width:40px}
-.telegram-header{display:flex;align-items:center;gap:12px;border-bottom:1px solid #345247;padding:0 0 12px}.telegram-header .grow{display:grid;gap:2px;flex:1}.telegram-header strong{font-size:18px}.telegram-header small{display:block;font-size:12px}
-.chat-back{border:0;color:#a0f9c9;background:#204337;border-radius:11px;font-size:30px;width:38px;height:41px;line-height:1}
-#chat-conversation{display:flex;flex-direction:column;height:min(78vh,720px)}#chat-conversation[hidden]{display:none!important}
-#chat-conversation .messages{flex:1;min-height:140px;max-height:none;background:transparent;background-image:radial-gradient(#58bd8a0b 1px,transparent 1px);background-size:22px 22px}
-#chat-conversation .bubble{border-radius:14px 14px 14px 3px}#chat-conversation .bubble.mine{border-radius:14px 14px 3px 14px}
-#chat-conversation .compose{padding-top:8px}#chat-conversation .compose .field{border-radius:24px}#chat-conversation .compose .btn{border-radius:50%;height:47px;width:47px;padding:0;flex:none}
-.request-line{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid #ffffff18}
-@media(max-width:550px){.telegram-shell{padding:12px;min-height:520px}.conversation{gap:10px;padding:12px 6px}.conversation .avatar{height:48px;width:48px}.convo-preview{max-width:190px}.convo-meta small{font-size:10px}}
-</style></head><body>
-<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
-<symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11H3zM9 21v-8h6v8"/></symbol>
-<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M17 5a3 3 0 0 1 0 6M18 14a6 6 0 0 1 4 6"/></symbol>
-<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></symbol>
-<symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11a8 8 0 0 1-8 8H5l-2 2V11a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8Z"/><path d="M8 11h8M8 14h5"/></symbol>
-<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
-<symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 10h18c0-2-3-3-3-10M10 21h4"/></symbol>
-<symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 16v4h16v-4"/></symbol>
-<symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="9" r="2"/><path d="m4 18 6-6 4 4 3-3 4 4"/></symbol>
-<symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 5.4a5 5 0 0 0-7 0L12 7l-1.8-1.6a5 5 0 0 0-7 7L12 21l8.8-8.6a5 5 0 0 0 0-7Z"/></symbol>
-<symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M5 3h14v18l-7-5-7 5z"/></symbol>
-</defs></svg>
-<header><div class=""><span class="logo-mark">◆</span> Minecraft Facts UZ <span class="version">V0.6</span></div>
-<div class="header-actions"><button id="notifications-button" class="icon-btn" title="Bildirishnomalar" aria-label="Bildirishnomalar"><svg class="ico"><use href="#i-bell"/></svg><span id="notif-badge" class="counter" hidden>0</span></button></div></header>
-<main>
-<section id="home" class="page active"><div class="hero"><span class="eyebrow">Minecraft hamjamiyati</span><h1>Modlaringni ulash,<br><b>olamingni kengaytir.</b></h1><p>Eng yangi modlar, do‘stlar va sevimli kolleksiyalaring — barchasi bir joyda.</p></div><div class="section-title"><h2>🔥 Modlar</h2><span id="mod-count" class="pills">0 ta</span></div><input id="mod-search" class="field search" type="search" placeholder="Mod qidirish..."><div id="mod-list" class="grid"></div></section>
-<section id="accounts" class="page"><div class="section-title"><h2>👥 Accountlar</h2><span id="account-count" class="pills">0 ta</span></div><input id="account-search" class="field search" type="search" placeholder="Username, nik yoki ID bo‘yicha qidirish..."><div id="account-list" class="grid"></div></section>
-<section id="upload" class="page"><h2>➕ Mod qo‘shish</h2><div id="upload-gate" class="panel form-panel">Mod yuklash uchun avval Profil orqali akkauntga kir.</div><form id="upload-form" class="panel form-panel stack" hidden><label>Mod nomi *<input id="mod-title" class="field" required minlength="3" maxlength="70" placeholder="Masalan, Better Blocks"></label><label>Mod tavsifi *<textarea id="mod-description" class="field" required rows="4" minlength="10" maxlength="2500" placeholder="Mod nimalar qo‘shadi?"></textarea></label>
-<label>Rasmlar * (1–5 ta)<span class="dropzone" id="image-zone"><svg class="ico"><use href="#i-image"/></svg><strong>Rasmlarni tanlash yoki shu yerga tashlash</strong><small>JPG, PNG, WEBP • Har biri 5 MB gacha</small><input id="mod-images" type="file" accept="image/png,image/jpeg,image/webp" multiple required></span></label><div class="previews" id="image-previews"></div><label>Mod fayli *<span class="dropzone" id="file-zone"><svg class="ico"><use href="#i-upload"/></svg><strong>Mod faylini tanlash yoki shu yerga tashlash</strong><small>.mcpack, .mcaddon, .zip, .jar • 50 MB gacha</small><input id="mod-file" type="file" accept=".mcpack,.mcaddon,.zip,.jar" required></span></label><div class="uploaded-name" id="file-name"></div><button id="publish" class="btn" type="submit">✦ Modni joylash</button></form></section>
-<section id="chats" class="page">
-<h2>💬 Xabarlar</h2>
-<div id="chat-gate" class="panel">Suhbatlashish uchun avval Profil orqali akkauntga kir.</div>
-<div id="chat-layout" hidden>
-  <div id="chat-list-view" class="telegram-shell">
-    <div class="row between"><h3 style="margin:0">Suhbatlar</h3><span class="muted">Oxirgi yozishmalar</span></div>
-    <div id="conversation-list" class="conversation-list"></div>
-    <button id="chat-plus" type="button" class="chat-plus" title="Yangi chat" aria-label="Do‘stga yozish">+</button>
-    <div id="chat-add-panel" class="chat-add-panel" hidden></div>
+:root{
+  --bg:#101925;
+  --surface:#182837;
+  --surface2:#213548;
+  --text:#f6f4e8;
+  --muted:#b0c0c8;
+  --line:#3b5361;
+  --accent:#e7bb61;
+  --blue:#83bfdb;
+  --mint:#a7e6a1;
+  --red:#ff6879
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--text);
+  font:15px/1.55 system-ui,Arial,sans-serif;
+  background:
+    radial-gradient(ellipse at 90% 10%,#48709865,transparent 45%),
+    radial-gradient(ellipse at 5% 60%,#bb843642,transparent 50%),
+    linear-gradient(155deg,#131e2a,#172436 56%,#262635)
+}
+[hidden]{display:none!important}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}
+h1,h2,h3,p{margin:0 0 12px}
+h1{font-size:clamp(29px,5vw,53px);line-height:1.1}
+h2{font-size:23px}
+h3{font-size:17px}
+small,.muted{color:var(--muted)}
+.icon{width:20px;height:20px;stroke-width:2}
+.only-icon .icon{width:23px;height:23px}
+a{color:var(--blue)}
+header{
+  position:sticky;top:0;z-index:20;display:flex;
+  align-items:center;justify-content:space-between;gap:9px;
+  background:#111d2be9;backdrop-filter:blur(18px);
+  border-bottom:1px solid #728d9e65;
+  padding:12px max(14px,calc((100vw - 1130px)/2))
+}
+.headside{display:flex;align-items:center;gap:8px}
+.brand{
+  border:0;background:none;color:inherit;display:flex;
+  gap:9px;align-items:center;font-weight:900;
+  font-size:clamp(16px,2.9vw,22px)
+}
+.brand .worldmark{
+  display:grid;place-items:center;border-radius:12px;
+  background:#244f60;width:38px;height:38px;color:var(--mint)
+}
+.brand .brown{color:#d69a5f}
+.brand .green{color:#a3e9a8}
+.v{
+  font-size:11px;border:1px solid #a8b882;
+  background:#2d4c3d;border-radius:7px;
+  padding:2px 6px;color:#d5edb8
+}
+.btn,.iconbtn{
+  border:1px solid transparent;border-radius:13px;
+  padding:11px 16px;color:#162336;
+  background:linear-gradient(115deg,#f1cd84,#9bdab0);
+  font-weight:800;display:inline-flex;
+  align-items:center;justify-content:center;
+  gap:7px;transition:filter .15s
+}
+.btn:hover,.iconbtn:hover{filter:brightness(1.12)}
+.btn.secondary,.iconbtn{
+  background:#293e4d;color:var(--text);
+  border-color:#547181
+}
+.btn.danger{
+  background:#4c303c;color:#ffbfc3;border-color:#8d5060
+}
+.btn.small{padding:7px 11px;font-size:12px}
+.iconbtn{
+  width:41px;height:41px;padding:8px;position:relative
+}
+.count{
+  position:absolute;right:-5px;top:-6px;
+  background:var(--red);color:#111;border-radius:15px;
+  padding:1px 5px;font-size:11px;min-width:18px
+}
+main{
+  max-width:1130px;margin:auto;
+  padding:23px 16px 110px
+}
+.page{display:none}
+.page.active{display:block}
+.hero{
+  padding:clamp(24px,5vw,50px);
+  border-radius:27px;border:1px solid #b3956a6e;
+  background:
+    linear-gradient(120deg,#314658dd,#384e65c9 45%,#816c418a),
+    radial-gradient(circle at right,#c59b4080,transparent);
+  box-shadow:0 18px 70px #0002;margin-bottom:26px
+}
+.hero b{color:#f6d28b}
+.hero p{color:#d7e2e9;max-width:540px}
+.tag{
+  font-weight:800;font-size:11px;
+  letter-spacing:2px;color:#efd79a
+}
+.row{display:flex;gap:11px;align-items:center}
+.between{justify-content:space-between}
+.wrap{flex-wrap:wrap}
+.stack{display:grid;gap:15px}
+.filters{
+  display:flex;gap:9px;overflow:auto;
+  padding-bottom:8px;margin-bottom:13px
+}
+.chip{
+  border:1px solid #5a7181;border-radius:20px;
+  background:#263c4c;color:#dce7ec;
+  padding:8px 14px;white-space:nowrap
+}
+.chip.on{
+  background:var(--accent);color:#1d2932;
+  border-color:var(--accent)
+}
+.field{
+  width:100%;color:var(--text);background:#101e2b;
+  border:1px solid #536c7a;border-radius:12px;
+  padding:12px 13px;outline:none
+}
+.field:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px #e7bb6126
+}
+.search{max-width:440px;margin-bottom:17px}
+.panel,.card{
+  background:#182b3cdb;border:1px solid #4c6a7b;
+  border-radius:19px;box-shadow:0 14px 32px #07121b44
+}
+.panel{padding:21px}
+.formpanel{max-width:670px;margin:auto}
+.grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px
+}
+.card{
+  overflow:hidden;cursor:pointer;
+  transition:transform .2s,border-color .2s
+}
+.card:hover{
+  transform:translateY(-3px);border-color:#e7bb61
+}
+.modcover{
+  width:100%;height:174px;display:block;
+  background:#0d1824;object-fit:contain;padding:7px
+}
+.cardmain{padding:14px}
+.cardmain h3{overflow-wrap:anywhere}
+.stats{
+  display:flex;align-items:center;gap:13px;
+  color:var(--muted);flex-wrap:wrap;font-size:12px
+}
+.stats span{display:flex;gap:4px;align-items:center}
+.stats .icon{width:15px;height:15px}
+.avatar{
+  height:70px;width:70px;flex-shrink:0;
+  border-radius:50%;object-fit:cover;
+  background:#386471;border:2px solid var(--accent)
+}
+.avatar.sm{width:46px;height:46px}
+.userrow{display:flex;gap:12px;align-items:center;cursor:pointer}
+.userrow h3{margin:0}
+.userrow small{display:block}
+.flexfill{flex:1;min-width:0}
+.hint{
+  min-height:17px;display:block;font-size:12px;
+  color:var(--muted)
+}
+.hint.bad{color:#ff8792}
+.hint.good{color:#a6f8b1}
+label{display:grid;gap:6px;font-weight:650}
+.drop{
+  padding:23px;border:2px dashed #8a9c8b;
+  background:#20384a;border-radius:16px;
+  min-height:128px;display:grid;place-items:center;
+  text-align:center;gap:8px;cursor:pointer
+}
+.drop:hover{border-color:var(--accent)}
+.drop input{
+  position:absolute;width:1px;height:1px;opacity:0
+}
+.previews{display:flex;gap:9px;flex-wrap:wrap}
+.previews img{
+  width:91px;height:73px;object-fit:contain;
+  background:#142633;border-radius:9px
+}
+.drop .icon{
+  width:31px;height:31px;color:var(--accent)
+}
+.bottom{
+  position:fixed;bottom:0;left:50%;
+  transform:translateX(-50%);
+  background:#152636f2;border:1px solid #617786;
+  border-bottom:0;backdrop-filter:blur(14px);
+  display:grid;grid-template-columns:repeat(5,1fr);
+  gap:5px;padding:10px;width:min(100%,520px);
+  border-radius:22px 22px 0 0;z-index:30
+}
+.nav{
+  border:0;border-radius:12px;background:transparent;
+  color:#b7c9d4;height:52px;position:relative
+}
+.nav.active{background:#4b624c;color:#ffdc94}
+.nav .icon{width:25px;height:25px}
+.navdot{
+  position:absolute;right:22%;top:7px;
+  width:9px;height:9px;background:#ff7c7c;
+  border-radius:50%
+}
+.modal{
+  position:fixed;inset:0;z-index:50;
+  background:#03070bcc;display:grid;
+  place-items:center;padding:12px
+}
+.dialog{
+  position:relative;width:min(100%,760px);
+  max-height:90dvh;overflow-y:auto;
+  background:linear-gradient(150deg,#1b3142,#172a38);
+  border:1px solid #7093a1;border-radius:22px;padding:21px
+}
+.close{position:sticky;top:0;float:right;z-index:1}
+.bigimage{
+  height:clamp(210px,45vw,330px);width:100%;
+  display:block;object-fit:contain;
+  background:#0a1723;border-radius:16px
+}
+.thumbs{
+  display:flex;gap:9px;margin:10px 0 16px;overflow:auto
+}
+.thumbs img{
+  width:90px;height:68px;object-fit:contain;
+  background:#102332;border-radius:9px;cursor:pointer
+}
+.actionicon{
+  border:1px solid #516c79;border-radius:14px;
+  background:#273b4c;color:#e4f0f6;padding:10px 15px;
+  min-width:74px;display:grid;gap:5px;place-items:center
+}
+.actionicon .icon{width:24px;height:24px}
+.actionicon.like.on{color:#ff6682}
+.actionicon.like.on svg{fill:#ff6682}
+.actionicon.save.on{color:#f7ffff}
+.actionicon.save.on svg{fill:#f7ffff}
+.actionicon small{font-size:11px}
+.comment{
+  padding:10px 0;border-bottom:1px solid #ffffff22;
+  overflow-wrap:anywhere
+}
+.author{
+  border:0;background:transparent;color:var(--blue);
+  padding:0;font-weight:750;
+  display:inline-flex;align-items:center;gap:8px
+}
+.author .avatar{height:34px;width:34px}
+.chatlist{max-width:720px;margin:auto;min-height:320px}
+.conversation{
+  width:100%;display:flex;align-items:center;
+  gap:12px;background:#253b4f;border:0;
+  border-bottom:1px solid #456073;
+  color:var(--text);padding:13px;text-align:left
+}
+.conversation:hover{background:#38566b}
+.convoinfo{flex:1;min-width:0}
+.convoinfo strong,.convoinfo small{
+  display:block;overflow:hidden;white-space:nowrap;
+  text-overflow:ellipsis
+}
+.unread{
+  background:var(--accent);color:#172329;
+  border-radius:30px;padding:2px 8px;
+  font-size:12px;font-weight:900
+}
+.fab{
+  position:absolute;bottom:17px;left:17px;
+  height:44px;width:44px;border-radius:50%;
+  border:0;background:var(--accent);color:#172537;
+  display:grid;place-items:center
+}
+.chatarea{max-width:750px;margin:auto}
+.messages{
+  min-height:320px;max-height:56vh;overflow:auto;
+  padding:17px;background:#0d1e2d;border-radius:14px;
+  display:flex;flex-direction:column;gap:10px
+}
+.bubble{
+  border-radius:13px;background:#31465a;max-width:83%;
+  padding:10px 13px;align-self:start;
+  overflow-wrap:anywhere;white-space:pre-wrap
+}
+.bubble.mine{background:#596443;align-self:end}
+.bubble small{
+  display:block;text-align:right;font-size:10px
+}
+.notice{
+  background:#283e51;border:1px solid #587589;
+  color:#fff;border-radius:11px;display:block;
+  width:100%;padding:12px;margin:8px 0;text-align:left
+}
+.notice.new{
+  border-color:#e3b96a;background:#4c4939
+}
+#toast{
+  position:fixed;bottom:91px;left:50%;
+  transform:translateX(-50%);
+  z-index:99;background:#344d48;
+  border:1px solid var(--accent);
+  padding:12px 17px;max-width:92%;
+  border-radius:12px;box-shadow:0 10px 30px #0008
+}
+.twocol{
+  display:grid;grid-template-columns:1fr 1fr;gap:15px
+}
+.subhead{
+  display:flex;justify-content:space-between;
+  align-items:center;gap:9px;margin:21px 0 12px
+}
+.adminonly{border-color:#d6ae57}
+.dangertext{color:var(--red)}
+@media(max-width:740px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .modcover{height:126px}
+  .cardmain{padding:10px}
+  .cardmain h3{font-size:14px}
+  .panel{padding:15px}
+  .twocol{grid-template-columns:1fr}
+  .hero{padding:26px 20px}
+  .brand{font-size:15px}
+  .v{font-size:10px}
+}
+@media(max-width:400px){
+  main{padding:17px 12px 105px}
+  .modcover{height:105px}
+  .stats{gap:7px;font-size:10px}
+  .headside{gap:3px}
+  .brand{gap:5px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="headside">
+    <button id="settings-btn" class="iconbtn" aria-label="Settings">
+      <i data-lucide="settings" class="icon"></i>
+    </button>
+    <button id="brand-btn" class="brand">
+      <span class="worldmark">
+        <i data-lucide="globe-2" class="icon"></i>
+      </span>
+      <span class="brown">Minecraft</span>
+      <span class="green">World</span>
+      <span class="v">V1.0</span>
+    </button>
   </div>
-  <div id="chat-conversation" class="telegram-shell" hidden>
-    <div class="telegram-header">
-      <button id="chat-back" type="button" class="chat-back" aria-label="Orqaga">‹</button>
-      <img id="conversation-avatar" class="avatar sm" alt="Avatar">
-      <div class="grow"><strong id="conversation-name">Chat</strong><small id="conversation-id" class="muted"></small></div>
+  <button id="notif-btn" class="iconbtn" aria-label="Notifications">
+    <i data-lucide="bell" class="icon"></i>
+    <span id="notif-num" class="count" hidden>0</span>
+  </button>
+</header>
+<main>
+  <section id="home" class="page active">
+    <div class="hero">
+      <span class="tag" data-i="community"></span>
+      <h1 data-i="hero"></h1>
+      <p data-i="heroSub"></p>
     </div>
-    <div id="messages" class="messages"></div>
-    <form id="chat-form" class="compose"><input id="chat-text" class="field" required maxlength="500" placeholder="Xabar yozish..." disabled><button id="chat-send" class="btn" disabled>➤</button></form>
+    <div class="subhead">
+      <h2 data-i="mods"></h2>
+      <span id="mod-num" class="muted"></span>
+    </div>
+    <input id="mod-search" class="field search" data-ph="searchMods">
+    <div id="sort-list" class="filters"></div>
+    <div id="category-list" class="filters"></div>
+    <div id="mod-grid" class="grid"></div>
+  </section>
+
+  <section id="accounts" class="page">
+    <div class="subhead">
+      <h2 data-i="accounts"></h2>
+      <span id="user-num" class="muted"></span>
+    </div>
+    <input id="people-search" class="field search" data-ph="searchUsers">
+    <div id="people-grid" class="grid"></div>
+  </section>
+
+  <section id="upload" class="page">
+    <h2 data-i="upload"></h2>
+    <div id="upload-gate" class="panel" data-i="loginFirst"></div>
+    <form id="mod-form" class="panel formpanel stack" hidden>
+      <h3 id="mod-form-heading" data-i="newMod"></h3>
+      <label>
+        <span data-i="category"></span>
+        <select id="mod-category" class="field" required></select>
+      </label>
+      <label>
+        <span data-i="modName"></span>
+        <input id="mod-name" class="field"
+          required minlength="3" maxlength="70">
+      </label>
+      <label>
+        <span data-i="description"></span>
+        <textarea id="mod-desc" class="field"
+          required minlength="10" maxlength="2500" rows="4"></textarea>
+      </label>
+      <label>
+        <span data-i="images"></span>
+        <span class="drop">
+          <i data-lucide="images" class="icon"></i>
+          <strong data-i="addImages"></strong>
+          <small data-i="imagesHint"></small>
+          <input id="mod-images" type="file"
+            accept="image/jpeg,image/png,image/webp" multiple>
+        </span>
+      </label>
+      <div class="previews" id="mod-image-preview"></div>
+      <label>
+        <span data-i="modFile"></span>
+        <span class="drop">
+          <i data-lucide="file-up" class="icon"></i>
+          <strong data-i="addFile"></strong>
+          <small data-i="fileHint"></small>
+          <input id="mod-file" type="file"
+            accept=".mcpack,.mcaddon,.zip,.jar">
+        </span>
+      </label>
+      <small id="mod-file-selected"></small>
+      <div class="row wrap">
+        <button id="mod-save-btn" class="btn"
+          type="submit" data-i="submitReview"></button>
+        <button type="button" id="cancel-edit"
+          class="btn secondary" hidden data-i="cancel"></button>
+      </div>
+    </form>
+  </section>
+
+  <section id="chats" class="page">
+    <h2 data-i="chats"></h2>
+    <div id="chat-gate" class="panel" data-i="loginFirst"></div>
+    <div id="chat-wrap" hidden>
+      <div class="panel chatlist" id="chat-list"
+        style="position:relative;padding-bottom:75px;min-height:440px">
+        <div class="subhead">
+          <h3 data-i="conversations"></h3>
+          <span id="conversation-num" class="muted"></span>
+        </div>
+        <div id="conversation-list"></div>
+        <button id="new-chat" class="fab"
+          title="Add contact" aria-label="Add contact">
+          <i data-lucide="plus" class="icon"></i>
+        </button>
+      </div>
+      <div id="chat-detail" class="panel chatarea" hidden>
+        <div class="row">
+          <button id="back-chat" class="iconbtn">
+            <i data-lucide="arrow-left" class="icon"></i>
+          </button>
+          <img id="chat-avatar" class="avatar sm">
+          <button id="chat-person" class="author">
+            <strong id="chat-name"></strong>
+          </button>
+        </div>
+        <div id="messages" class="messages" style="margin:15px 0"></div>
+        <form id="message-form" class="row">
+          <input id="message-text" class="field"
+            required maxlength="500" data-ph="writeMessage">
+          <button class="btn" aria-label="Send">
+            <i data-lucide="send" class="icon"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section id="profile" class="page">
+    <h2 data-i="profile"></h2>
+    <div id="auth-box" class="panel formpanel">
+      <h3 id="auth-head" data-i="login"></h3>
+      <form id="auth-form" class="stack">
+        <label>
+          <span data-i="username"></span>
+          <input id="auth-user" class="field"
+            required minlength="3" maxlength="20" autocomplete="username">
+          <small id="user-hint" class="hint"></small>
+        </label>
+        <label>
+          <span data-i="password"></span>
+          <input id="auth-pass" type="password"
+            class="field" minlength="8" required
+            autocomplete="current-password">
+          <small id="pass-hint" class="hint"></small>
+        </label>
+        <label id="repeat-wrap" hidden>
+          <span data-i="repeatPassword"></span>
+          <input id="auth-repeat" type="password"
+            class="field" minlength="8">
+          <small id="repeat-hint" class="hint"></small>
+        </label>
+        <button id="auth-submit" class="btn"
+          type="submit" data-i="login"></button>
+      </form>
+      <button id="auth-toggle" class="btn secondary"
+        style="margin-top:14px;width:100%" data-i="register"></button>
+      <small data-i="noRecovery"></small>
+    </div>
+    <div id="profile-box" hidden>
+      <div class="panel row">
+        <img id="profile-avatar" class="avatar">
+        <div>
+          <h2 id="profile-name" style="margin:0"></h2>
+          <span id="profile-handle" class="muted"></span>
+          <small id="my-role" style="display:block"></small>
+        </div>
+      </div>
+      <form id="profile-form" class="panel stack"
+        style="margin:15px 0;max-width:700px">
+        <label>
+          <span data-i="username"></span>
+          <input id="profile-username" class="field"
+            minlength="3" maxlength="20" required>
+        </label>
+        <label>
+          <span data-i="nickname"></span>
+          <input id="profile-nickname" class="field"
+            maxlength="35" required>
+        </label>
+        <label>
+          <span data-i="bio"></span>
+          <textarea id="profile-bio" class="field"
+            maxlength="240" rows="3"></textarea>
+        </label>
+        <label>
+          <span data-i="avatar"></span>
+          <span class="drop">
+            <i data-lucide="image-plus" class="icon"></i>
+            <strong data-i="changeAvatar"></strong>
+            <input id="avatar-file" type="file"
+              accept="image/jpeg,image/png,image/webp">
+          </span>
+        </label>
+        <small id="avatar-selected"></small>
+        <button class="btn" type="submit" data-i="save"></button>
+      </form>
+      <div class="panel" style="margin:14px 0">
+        <h3 data-i="friendRequests"></h3>
+        <div id="request-list"></div>
+      </div>
+      <div class="subhead"><h2 data-i="savedMods"></h2></div>
+      <div class="grid" id="saved-grid"></div>
+      <div class="subhead"><h2 data-i="myMods"></h2></div>
+      <div class="grid" id="mine-grid"></div>
+      <div id="admin-panel" class="panel adminonly"
+        style="margin-top:20px" hidden>
+        <h2 data-i="adminPanel"></h2>
+        <h3 data-i="reviewQueue"></h3>
+        <div id="review-list"></div>
+      </div>
+      <button id="logout" class="btn danger"
+        style="margin-top:20px" data-i="logout"></button>
+    </div>
+  </section>
+</main>
+<nav class="bottom" aria-label="Navigation">
+  <button class="nav active" data-page="home" aria-label="Home">
+    <i data-lucide="house" class="icon"></i>
+  </button>
+  <button class="nav" data-page="accounts" aria-label="Accounts">
+    <i data-lucide="users" class="icon"></i>
+  </button>
+  <button class="nav" data-page="upload" aria-label="Upload">
+    <i data-lucide="plus-circle" class="icon"></i>
+  </button>
+  <button class="nav" data-page="chats" aria-label="Chats">
+    <i data-lucide="message-circle" class="icon"></i>
+    <span id="chat-dot" class="navdot" hidden></span>
+  </button>
+  <button class="nav" data-page="profile" aria-label="Profile">
+    <i data-lucide="user-round" class="icon"></i>
+  </button>
+</nav>
+<div id="modal" class="modal" hidden>
+  <div class="dialog">
+    <button id="modal-close" class="iconbtn close">
+      <i data-lucide="x" class="icon"></i>
+    </button>
+    <div id="modal-body"></div>
   </div>
 </div>
-</section>
-<section id="profile" class="page"><h2>👤 Profil</h2><div id="auth-box" class="panel form-panel"><h3 id="auth-title">Akkauntga kirish</h3><form id="auth-form" class="stack"><label>Username<input id="username" class="field" autocomplete="username" required maxlength="20" minlength="3" placeholder="username"><span class="hint" id="user-hint"></span></label><label>Parol<input id="password" class="field" type="password" required minlength="8" autocomplete="current-password" placeholder="Kamida 8 belgi"><span class="hint" id="pass-hint"></span></label><label id="confirm-wrap" hidden>Parolni takrorlash<input id="confirm" class="field" type="password" minlength="8" placeholder="Qaytadan kiriting"><span class="hint" id="confirm-hint"></span></label><button class="btn" id="auth-submit" type="submit">Kirish</button></form><button class="btn secondary" id="toggle-auth" style="width:100%;margin-top:12px">Yangi akkaunt ochish</button><p class="muted" style="font-size:12px;margin:15px 0 0">Email so‘ralmaydigan sinov tizimi: parolni tiklash hozircha mavjud emas.</p></div>
-<div id="profile-box" hidden><div class="panel row" style="margin-bottom:15px"><img id="my-avatar" class="avatar" alt="Avatar"><div><h2 id="my-name" style="margin:0"></h2><span class="muted" id="my-handle"></span></div></div><form id="profile-form" class="panel stack" style="max-width:650px"><label>Nik<input id="nickname" class="field" maxlength="35" required></label><label>Bio<textarea id="bio" class="field" maxlength="240" rows="3"></textarea></label><label>Avatar<span class="dropzone" id="avatar-zone"><svg class="ico"><use href="#i-image"/></svg><strong>Profil rasmini tanlash</strong><small>JPG, PNG yoki WEBP — 5 MB gacha</small><input id="avatar-file" type="file" accept="image/jpeg,image/png,image/webp"></span></label><div id="avatar-name" class="uploaded-name"></div><button class="btn">Profilni saqlash</button></form><div class="panel" style="margin-top:15px"><h3>🤝 Do‘stlik so‘rovlari</h3><div id="requests"></div></div><div class="panel" style="margin-top:15px"><h3>🚫 Bloklanganlar</h3><div id="blocked-list"></div></div><div class="section-title"><h2>🔖 Saqlangan modlar</h2></div><div id="saved-list" class="grid"></div><div class="section-title"><h2>📦 Mening modlarim</h2></div><div id="my-mods" class="grid"></div><button id="logout" class="btn danger" style="margin-top:22px">Chiqish</button></div></section>
-</main>
-<nav class="bottom" aria-label="Menyu"><button data-page="home" class="nav-btn active" title="Home" aria-label="Home"><svg class="ico"><use href="#i-home"/></svg></button><button data-page="accounts" class="nav-btn" title="Accountlar" aria-label="Accountlar"><svg class="ico"><use href="#i-users"/></svg></button><button data-page="upload" class="nav-btn" title="Mod qo‘shish" aria-label="Mod qo‘shish"><svg class="ico"><use href="#i-plus"/></svg></button><button data-page="chats" class="nav-btn" title="Chat" aria-label="Chat"><svg class="ico"><use href="#i-chat"/></svg><span id="chat-dot" class="nav-dot" hidden></span></button><button data-page="profile" class="nav-btn" title="Profil" aria-label="Profil"><svg class="ico"><use href="#i-user"/></svg></button></nav>
-<div id="modal" class="modal" hidden><div class="modal-panel"><button id="close-modal" class="icon-btn close" aria-label="Yopish">✕</button><div id="modal-body"></div></div></div>
-<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-// Minecraft Facts UZ — V0.6. Supabase publishable key only.
-(() => {
-  'use strict';
-  const SUPABASE_URL = 'https://swbnidsmwnqwjzfrlorr.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_-yjtMQSDiq7_L1ZiNfBcSQ_GiXEDPka';
-  const $ = id => document.getElementById(id);
-  const safe = x => String(x ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const empty = msg => `<p class="muted">${safe(msg)}</p>`;
-  const defaultAvatar = 'data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="80" height="80" fill="#175141"/><circle cx="40" cy="28" r="15" fill="#a1ebce"/><path d="M10 78Q10 43 40 43T70 78" fill="#a1ebce"/></svg>');
-  const state = { db:null, me:null, users:[], mods:[], stats:new Map(), friends:[], notifs:[], likes:new Set(), saves:new Set(), blocks:[], lastMessages:[], activeChat:null, activeMod:null, register:false, channel:null };
-  const getUser = id => state.users.find(u=>u.id===id);
-  const userLabel = u => u?.nickname || u?.username || 'Foydalanuvchi';
-  const asset = (bucket,path) => path && state.db ? state.db.storage.from(bucket).getPublicUrl(path).data.publicUrl : '';
-  const ava = u => asset('mc-avatars',u?.avatar_path) || defaultAvatar;
-  const time = s => s ? new Date(s).toLocaleString('uz-UZ',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'}) : '';
-  const stat = id => state.stats.get(id) || {likes:0,views:0,downloads:0,comments:0};
-  const isFriend = id => state.friends.some(f=>f.status==='accepted' && (f.user_low===id || f.user_high===id));
-  const friendIds = () => !state.me ? [] : state.friends.filter(f=>f.status==='accepted').map(f=>f.user_low===state.me.id?f.user_high:f.user_low);
-  const req = async promise => { const out = await promise; if(out.error) throw out.error; return out.data; };
-  let toastTimeout, usernameTimeout;
-  function toast(message){ $('toast').textContent=message; $('toast').hidden=false; clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>$('toast').hidden=true,4600); }
-  function report(e){console.error(e);toast('Xato: '+(e?.message||String(e)));}
-  function navigate(id){
-    document.querySelectorAll('main .page').forEach(x=>x.classList.toggle('active',x.id===id));
-    document.querySelectorAll('.nav-btn').forEach(x=>x.classList.toggle('active',x.dataset.page===id));
-    window.scrollTo(0,0);
-    if(id==='chats'){showChatList();loadConversations().catch(report);}
-    if(id==='profile' && state.me) markRequestViewed().catch(console.warn);
-  }
-  function showModal(html){$('modal-body').innerHTML=html;$('modal').hidden=false;}
-  function closeModal(){$('modal').hidden=true;state.activeMod=null;}
-  function card(m){const s=stat(m.id);return `<article class="card" role="button" tabindex="0" data-mod="${safe(m.id)}"><img src="${safe(asset('mcmod-images',m.images?.[0]))}" alt="${safe(m.title)}" loading="lazy"><div class="card-body"><h3>${safe(m.title)}</h3><small class="sub">✦ ${safe(userLabel(getUser(m.user_id)))}</small><div class="stats"><span>👁 ${s.views}</span><span>♥ ${s.likes}</span><span>⬇ ${s.downloads}</span><span>💬 ${s.comments}</span></div></div></article>`;}
-  function drawMods(){const q=$('mod-search').value.trim().toLowerCase();const arr=state.mods.filter(x=>`${x.title} ${x.description}`.toLowerCase().includes(q));$('mod-count').textContent=arr.length+' ta';$('mod-list').innerHTML=arr.map(card).join('')||empty('Hozircha mod yo‘q.');drawProfileMods();}
-  function drawProfileMods(){if(!state.me)return;$('my-mods').innerHTML=state.mods.filter(m=>m.user_id===state.me.id).map(card).join('')||empty('Mod qo‘shilmagan.');$('saved-list').innerHTML=state.mods.filter(m=>state.saves.has(m.id)).map(card).join('')||empty('Saqlangan mod yo‘q.');}
-  async function loadUsers(){state.users=await req(state.db.from('mc_profiles').select('id,username,nickname,bio,avatar_path,public_id,created_at').order('created_at',{ascending:true}).limit(1000))||[];drawUsers();drawMods();}
-  async function loadMods(){
-    // No FK embedding: avoids the "more than one relationship" error.
-    state.mods=await req(state.db.from('mc_mods').select('id,user_id,title,description,images,file_path,created_at').order('created_at',{ascending:false}).limit(100))||[];
-    try{const rows=await req(state.db.rpc('mc_stats'));state.stats=new Map((rows||[]).map(r=>[r.mod_id,r]));}catch(e){console.warn('Stats unavailable',e);state.stats=new Map();}
-    drawMods();
-  }
-  function drawUsers(){const q=$('account-search').value.trim().toLowerCase();const arr=state.users.filter(u=>`${u.username} ${u.nickname} ${u.public_id||''}`.toLowerCase().includes(q));$('account-count').textContent=arr.length+' ta';$('account-list').innerHTML=arr.map(u=>`<article class="panel user-card" role="button" tabindex="0" data-person="${safe(u.id)}" style="margin:0"><img class="avatar sm" src="${safe(ava(u))}" alt="Avatar"><div class="grow"><h3>${safe(userLabel(u))}</h3><small>@${safe(u.username)} · ID #${safe(u.public_id||'?')}</small></div>${state.me&&isFriend(u.id)?'<span class="pills">✓</span>':''}</article>`).join('')||empty('Akkaunt topilmadi.');}
-  function drawAuth(){const signed=!!state.me;for(const [id,value] of [['auth-box',!signed],['profile-box',signed],['upload-gate',!signed],['upload-form',signed],['chat-gate',!signed],['chat-layout',signed]]) $(id).hidden=!value;
-    if(!signed)return;
-    const me=getUser(state.me.id);
-    $('my-avatar').src=ava(me);$('my-name').textContent=userLabel(me);$('my-handle').textContent='@'+(me?.username||'')+' · ID #'+(me?.public_id||'?');$('nickname').value=me?.nickname||me?.username||'';$('bio').value=me?.bio||'';
-    drawProfileMods();drawRequests();drawBlocks();
-  }
-  function drawRequests(){if(!state.me)return;const incoming=state.friends.filter(f=>f.status==='pending'&&f.requester!==state.me.id);$('requests').innerHTML=incoming.map(f=>{const id=f.user_low===state.me.id?f.user_high:f.user_low;return `<div class="request-line"><span>${safe(userLabel(getUser(id)))}</span><div class="row"><button class="btn sm" data-answer="${safe(id)}" data-accept="true">Qabul qilish</button><button class="btn secondary sm" data-answer="${safe(id)}" data-accept="false">Rad etish</button></div></div>`;}).join('')||empty('Yangi so‘rov yo‘q.');}
-  function drawBlocks(){if(!state.me)return;$('blocked-list').innerHTML=state.blocks.map(b=>`<div class="request-line"><span>${safe(userLabel(getUser(b.blocked)))}</span><button class="btn secondary sm" data-unblock="${safe(b.blocked)}">Blokdan chiqarish</button></div>`).join('')||empty('Bloklanganlar yo‘q.');}
-  async function loadPrivate(){if(!state.me){state.friends=[];state.notifs=[];state.blocks=[];state.likes=new Set();state.saves=new Set();updateBadges();return;}
-    const id=state.me.id;
-    const jobs=await Promise.allSettled([
-      req(state.db.from('mc_friendships').select('*').or(`user_low.eq.${id},user_high.eq.${id}`)),
-      req(state.db.from('mc_notifications').select('*').eq('recipient_id',id).order('created_at',{ascending:false}).limit(150)),
-      req(state.db.from('mc_blocks').select('blocked').eq('blocker',id)),
-      req(state.db.from('mc_mod_likes').select('mod_id').eq('user_id',id)),
-      req(state.db.from('mc_mod_saved').select('mod_id').eq('user_id',id))
-    ]);
-    const get=(i,def=[])=>jobs[i].status==='fulfilled'?jobs[i].value||def:(console.warn(jobs[i].reason),def);
-    state.friends=get(0);state.notifs=get(1);state.blocks=get(2);state.likes=new Set(get(3).map(x=>x.mod_id));state.saves=new Set(get(4).map(x=>x.mod_id));
-    drawRequests();drawBlocks();drawUsers();drawProfileMods();updateBadges();
-  }
-  function updateBadges(){const count=state.notifs.filter(n=>!n.seen).length;$('notif-badge').hidden=count===0;$('notif-badge').textContent=count>99?'99+':count;$('chat-dot').hidden=!state.notifs.some(n=>!n.seen&&n.kind==='message');}
-  async function markNotifications(filter){if(!state.me)return;const affected=state.notifs.filter(n=>!n.seen&&filter(n));if(!affected.length)return;
-    await req(state.db.from('mc_notifications').update({seen:true}).in('id',affected.map(n=>n.id)).eq('recipient_id',state.me.id));affected.forEach(n=>n.seen=true);updateBadges();}
-  async function markRequestViewed(){await markNotifications(n=>n.kind==='request');}
-  async function openProfile(id){const p=getUser(id);if(!p)return;const friend=state.friends.find(f=>f.user_low===id||f.user_high===id);let buttons='';
-    if(state.me&&state.me.id!==id){if(state.blocks.some(b=>b.blocked===id))buttons=`<button class="btn secondary" data-unblock="${id}">Blokdan chiqarish</button>`;
-      else if(friend?.status==='accepted')buttons=`<button class="btn" data-start-chat="${id}">💬 Xabar yozish</button>`;
-      else if(friend?.status==='pending'&&friend.requester===id)buttons=`<button class="btn" data-answer="${id}" data-accept="true">Qabul qilish</button><button class="btn secondary" data-answer="${id}" data-accept="false">Rad etish</button>`;
-      else if(friend?.status==='pending')buttons='<span class="pills">So‘rov yuborilgan</span>';
-      else buttons=`<button class="btn" data-request="${id}">+ Do‘stga qo‘shish</button>`;
-      if(!state.blocks.some(b=>b.blocked===id))buttons+=` <button class="btn danger sm" data-block="${id}">Bloklash</button>`;
-    }
-    showModal(`<div class="row" style="padding-right:45px"><img class="avatar" src="${safe(ava(p))}" alt="Avatar"><div><h2 style="margin:0">${safe(userLabel(p))}</h2><small>@${safe(p.username)} · ID #${safe(p.public_id||'?')}</small></div></div><p style="white-space:pre-wrap;margin-top:18px">${safe(p.bio||'Bio yo‘q.')}</p><div class="wrap">${buttons}</div><h3 style="margin-top:25px">Modlari</h3><div class="grid">${state.mods.filter(m=>m.user_id===id).map(card).join('')||empty('Hali mod yo‘q.')}</div>`);
-    if(state.me)await markNotifications(n=>n.actor_id===id&&n.kind==='accepted').catch(console.warn);
-  }
-  async function sendFriend(id){await req(state.db.rpc('mc_request_friend',{target:id}));await loadPrivate();closeModal();toast('Do‘stlik so‘rovi yuborildi');}
-  async function answerFriend(id,agree){await req(state.db.rpc('mc_answer_friend',{sender:id,agree}));await markNotifications(n=>n.actor_id===id&&n.kind==='request');await loadPrivate();closeModal();toast(agree?'Do‘stlik qabul qilindi':'So‘rov rad etildi');}
-  async function blockUser(id){if(!confirm('Bloklaysizmi?'))return;await req(state.db.rpc('mc_block_person',{target:id}));await loadPrivate();closeModal();}
-  async function unblockUser(id){await req(state.db.from('mc_blocks').delete().eq('blocker',state.me.id).eq('blocked',id));await loadPrivate();closeModal();}
-  // Chat: only conversations with messages, newest first. Friends chosen using the small + button.
-  async function loadConversations(){if(!state.me)return;
-    const id=state.me.id;
-    state.lastMessages=await req(state.db.from('mc_messages').select('id,sender_id,recipient_id,body,created_at,read_at').or(`sender_id.eq.${id},recipient_id.eq.${id}`).order('created_at',{ascending:false}).limit(400))||[];
-    drawConversations();
-  }
-  function unreadBy(id){return state.lastMessages.filter(m=>m.sender_id===id&&m.recipient_id===state.me.id&&!m.read_at).length;}
-  function drawConversations(){if(!state.me)return;const latest=new Map();for(const m of state.lastMessages){const other=m.sender_id===state.me.id?m.recipient_id:m.sender_id;if(isFriend(other)&&!latest.has(other))latest.set(other,m);}
-    let html='';for(const [id,msg] of latest){const p=getUser(id);const unread=unreadBy(id);html+=`<button class="conversation ${unread?'unread':''}" data-start-chat="${safe(id)}"><img class="avatar" src="${safe(ava(p))}" alt="Avatar"><span class="convo-middle"><strong>${safe(userLabel(p))}</strong><span class="convo-preview">${msg.sender_id===state.me.id?'Siz: ':''}${safe(msg.body)}</span></span><span class="convo-meta"><small>${safe(time(msg.created_at))}</small>${unread?`<b class="unread-badge">${unread}</b>`:''}</span></button>`;}
-    $('conversation-list').innerHTML=html||empty('Hali suhbat yo‘q. Pastdagi + orqali do‘stga yozing.');
-  }
-  function showChatList(){$('chat-list-view').hidden=false;$('chat-conversation').hidden=true;$('chat-add-panel').hidden=true;state.activeChat=null;}
-  function showFriendChooser(){if(!state.me)return toast('Avval akkauntga kiring');const list=friendIds();$('chat-add-panel').innerHTML=`<h3>Kimga yozamiz?</h3><input class="field" id="friend-search" placeholder="Do‘st qidirish..." aria-label="Do‘st qidirish"><div id="choose-friend-list">${list.map(id=>friendChoice(id)).join('')||empty('Hali do‘st yo‘q.')}</div>`;$('chat-add-panel').hidden=false;$('friend-search').oninput=()=>{const q=$('friend-search').value.toLowerCase();$('choose-friend-list').innerHTML=list.filter(id=>userLabel(getUser(id)).toLowerCase().includes(q)).map(friendChoice).join('')||empty('Topilmadi');};}
-  function friendChoice(id){const p=getUser(id);return `<button class="conversation compact" data-start-chat="${safe(id)}"><img class="avatar sm" src="${safe(ava(p))}" alt=""><strong>${safe(userLabel(p))}</strong></button>`;}
-  async function openChat(id){if(!state.me||!isFriend(id))return toast('Avval do‘st bo‘lish kerak');const p=getUser(id);state.activeChat=id;$('chat-list-view').hidden=true;$('chat-conversation').hidden=false;$('chat-add-panel').hidden=true;$('conversation-name').textContent=userLabel(p);$('conversation-id').textContent='ID #'+(p?.public_id||'?');$('conversation-avatar').src=ava(p);$('chat-text').disabled=false;$('chat-send').disabled=false;await readChat();}
-  async function readChat(){const id=state.activeChat;if(!state.me||!id)return;
-    const m=state.me.id;const rows=await req(state.db.from('mc_messages').select('sender_id,recipient_id,body,created_at,read_at').or(`and(sender_id.eq.${m},recipient_id.eq.${id}),and(sender_id.eq.${id},recipient_id.eq.${m})`).order('created_at',{ascending:true}).limit(200))||[];
-    if(state.activeChat!==id)return;
-    $('messages').innerHTML=rows.map(x=>`<div class="bubble ${x.sender_id===m?'mine':''}">${safe(x.body)}<small>${safe(time(x.created_at))}</small></div>`).join('')||empty('Birinchi xabarni yozing.');$('messages').scrollTop=$('messages').scrollHeight;
-    await req(state.db.from('mc_messages').update({read_at:new Date().toISOString()}).eq('recipient_id',m).eq('sender_id',id).is('read_at',null));
-    await markNotifications(n=>n.kind==='message'&&n.actor_id===id);
-    await loadConversations();
-  }
-  async function sendMessage(ev){ev.preventDefault();if(!state.me||!state.activeChat)return;const body=$('chat-text').value.trim();if(!body)return;
-    $('chat-send').disabled=true;try{await req(state.db.from('mc_messages').insert({sender_id:state.me.id,recipient_id:state.activeChat,body}));$('chat-text').value='';await readChat();}catch(e){report(e);}finally{$('chat-send').disabled=false;}}
-  function displayNotifications(){if(!state.me)return toast('Avval akkauntga kir');showModal(`<h2>🔔 Bildirishnomalar</h2><button class="btn secondary sm" data-mark-all>Hammasini o‘qildi qilish</button><div class="notices" style="margin-top:15px">${state.notifs.map(n=>`<button class="notice ${n.seen?'':'unread'}" style="color:inherit;text-align:left;cursor:pointer" data-notice="${n.id}">${safe((({request:'Do‘stlik so‘rovi',accepted:'Do‘stlik qabul qilindi',message:'Yangi xabar',comment:'Modga izoh'})[n.kind]||'Bildirishnoma')+' — '+userLabel(getUser(n.actor_id)))}<small style="display:block">${safe(time(n.created_at))}</small></button>`).join('')||empty('Bildirishnomalar yo‘q.')}</div>`);}
-  async function openNotice(id){const n=state.notifs.find(n=>String(n.id)===String(id));if(!n)return;
-    await markNotifications(x=>x.id===n.id);closeModal();if(n.kind==='message'){navigate('chats');await loadConversations();await openChat(n.actor_id);}else if(n.kind==='request'){navigate('profile');await markRequestViewed();}else if(n.kind==='accepted'){navigate('accounts');await openProfile(n.actor_id);}else if(n.kind==='comment')await openMod(n.ref);
-  }
-  async function openMod(id){const m=state.mods.find(x=>x.id===id);if(!m)return;state.activeMod=id;const s=stat(id);const imgs=(m.images||[]).map(p=>asset('mcmod-images',p));
-    showModal(`<img class="cover" id="big-image" src="${safe(imgs[0])}" alt="Mod rasmi"><div class="thumbs">${imgs.map(u=>`<img src="${safe(u)}" data-photo="${safe(u)}" alt="Rasm">`).join('')}</div><h2>${safe(m.title)}</h2><small>✦ ${safe(userLabel(getUser(m.user_id)))}</small><p style="white-space:pre-wrap;overflow-wrap:anywhere;margin:15px 0">${safe(m.description)}</p><div class="stats"><span>👁 ${s.views}</span><span>♥ ${s.likes}</span><span>⬇ ${s.downloads}</span><span>💬 ${s.comments}</span></div><div class="wrap" style="margin-top:16px"><button class="btn secondary" data-like="${id}">${state.likes.has(id)?'♥ Like bosilgan':'♡ Like'}</button><button class="btn secondary" data-save="${id}">${state.saves.has(id)?'✓ Saqlangan':'🔖 Saqlash'}</button><a class="btn" data-download="${id}" target="_blank" rel="noopener" href="${safe(asset('mcmod-files',m.file_path)+'?download')}">⬇ Yuklab olish</a></div><h3 style="margin-top:24px">Izohlar</h3><div id="comments"></div>${state.me?'<form id="comment-form" class="compose" style="margin-top:12px"><input class="field" id="comment-input" maxlength="500" required placeholder="Izoh yozish..."><button class="btn">Yuborish</button></form>':empty('Izoh yozish uchun akkauntga kiring.')}`);
-    if(state.me)state.db.rpc('mc_track_mod',{the_mod:id,action:'view'}).then(()=>refreshStats()).catch(console.warn);
-    await loadComments(id);
-  }
-  async function refreshStats(){try{const rows=await req(state.db.rpc('mc_stats'));state.stats=new Map((rows||[]).map(r=>[r.mod_id,r]));drawMods();}catch(e){console.warn(e);}}
-  async function loadComments(id){try{const rows=await req(state.db.from('mc_mod_comments').select('id,user_id,body,created_at').eq('mod_id',id).order('created_at',{ascending:false}).limit(80));if(state.activeMod!==id||!$('comments'))return;$('comments').innerHTML=(rows||[]).map(c=>`<div class="comment"><b>${safe(userLabel(getUser(c.user_id)))}</b><small>${safe(time(c.created_at))}</small><p>${safe(c.body)}</p></div>`).join('')||empty('Hali izoh yo‘q.');}catch(e){report(e);}}
-  async function toggleReaction(kind,id){if(!state.me)return toast('Avval akkauntga kir');const isLike=kind==='like',t=isLike?'mc_mod_likes':'mc_mod_saved',set=isLike?state.likes:state.saves;if(set.has(id)){await req(state.db.from(t).delete().eq('user_id',state.me.id).eq('mod_id',id));set.delete(id);}else{await req(state.db.from(t).insert({user_id:state.me.id,mod_id:id}));set.add(id);}await refreshStats();await openMod(id);}
-  async function addComment(ev){ev.preventDefault();if(!state.me||!state.activeMod)return;const body=$('comment-input').value.trim(),id=state.activeMod;if(!body)return;await req(state.db.from('mc_mod_comments').insert({mod_id:id,user_id:state.me.id,body}));$('comment-input').value='';await loadComments(id);await refreshStats();}
-  async function trackDownload(id){if(state.me)state.db.rpc('mc_track_mod',{the_mod:id,action:'download'}).then(()=>refreshStats()).catch(console.warn);}
-  function authHints(id,text,ok=false){const n=$(id);n.textContent=text;n.className='hint '+(text?(ok?'good':'bad'):'');}
-  function switchAuth(){state.register=!state.register;$('auth-title').textContent=state.register?'Yangi akkaunt ochish':'Akkauntga kirish';$('confirm-wrap').hidden=!state.register;$('confirm').required=state.register;$('auth-submit').textContent=state.register?'Ro‘yxatdan o‘tish':'Kirish';$('toggle-auth').textContent=state.register?'Kirishga qaytish':'Yangi akkaunt ochish';['user-hint','pass-hint','confirm-hint'].forEach(x=>authHints(x,''));}
-  async function validateUsername(){const u=$('username').value.trim().toLowerCase();if(!/^[a-z0-9_]{3,20}$/.test(u))return authHints('user-hint','3–20 ta lotin harfi, raqam yoki _'),false;
-    try{const p=await req(state.db.from('mc_profiles').select('id').eq('username',u).maybeSingle());const ok=state.register?!p:!!p;authHints('user-hint',state.register?(p?'Username band':'Username bo‘sh'):(p?'Username topildi':'Username topilmadi'),ok);return ok;}catch(e){authHints('user-hint','Tekshirish imkonsiz');return false;}}
-  function validatePassword(){const p=$('password').value,ok=p.length>=8;authHints('pass-hint',ok?'Parol uzunligi yetarli':'Kamida 8 belgi kerak',ok);return ok;}
-  function validateConfirm(){if(!state.register)return true;const ok=$('confirm').value!==''&&$('confirm').value===$('password').value;authHints('confirm-hint',ok?'Parollar mos':'Parollar mos emas',ok);return ok;}
-  async function authSubmit(ev){ev.preventDefault();if(!validatePassword()||!validateConfirm())return;const u=$('username').value.trim().toLowerCase();if(!/^[a-z0-9_]{3,20}$/.test(u))return authHints('user-hint','Username noto‘g‘ri');const b=$('auth-submit');b.disabled=true;
-    try{const credentials={email:u+'@members.example.com',password:$('password').value};const r=state.register?await state.db.auth.signUp({...credentials,options:{data:{username:u}}}):await state.db.auth.signInWithPassword(credentials);if(r.error)throw r.error;if(!r.data.session)throw Error('Email tasdiqlashni tekshiring');state.me=r.data.user;await onUserChange();$('auth-form').reset();toast('Xush kelibsiz!');}catch(e){authHints('pass-hint','Username yoki parol xato');report(e);}finally{b.disabled=false;}}
-  function validImage(file){return file&&['image/jpeg','image/png','image/webp'].includes(file.type)&&file.size<=5*1024*1024;}
-  async function uploadAsset(bucket,file){const ext=file.name.split('.').pop().toLowerCase(),path=state.me.id+'/'+crypto.randomUUID()+'.'+ext;await req(state.db.storage.from(bucket).upload(path,file,{upsert:false}));return path;}
-  async function saveProfile(ev){ev.preventDefault();if(!state.me)return;const update={nickname:$('nickname').value.trim(),bio:$('bio').value.trim()};if(!update.nickname)return toast('Nikni yozing');try{const f=$('avatar-file').files[0];if(f){if(!validImage(f))throw Error('Avatar JPG/PNG/WEBP, 5 MB gacha');update.avatar_path=await uploadAsset('mc-avatars',f);}await req(state.db.from('mc_profiles').update(update).eq('id',state.me.id));await loadUsers();drawAuth();toast('Profil saqlandi');}catch(e){report(e);}}
-  async function uploadMod(ev){ev.preventDefault();if(!state.me)return toast('Avval akkauntga kir');const title=$('mod-title').value.trim(),description=$('mod-description').value.trim(),imgs=[...$('mod-images').files],file=$('mod-file').files[0];const ext=file?.name.split('.').pop().toLowerCase();if(title.length<3||description.length<10)return toast('Nom va tavsifni to‘ldiring');if(!imgs.length||imgs.length>5||imgs.some(f=>!validImage(f)))return toast('1–5 ta rasm, har biri 5 MB gacha');if(!file||!['mcpack','mcaddon','zip','jar'].includes(ext)||file.size>50*1024*1024)return toast('Mod fayli noto‘g‘ri (50 MB gacha)');$('publish').disabled=true;try{const file_path=await uploadAsset('mcmod-files',file);const images=[];for(const f of imgs)images.push(await uploadAsset('mcmod-images',f));await req(state.db.from('mc_mods').insert({user_id:state.me.id,title,description,file_path,images}));$('upload-form').reset();$('image-previews').replaceChildren();$('file-name').textContent='';await loadMods();navigate('home');toast('Mod joylandi!');}catch(e){report(e);}finally{$('publish').disabled=false;}}
-  function attachUpload(input,zone,change){const el=$(input),box=$(zone);el.addEventListener('change',change);box.addEventListener('dragover',e=>{e.preventDefault();box.classList.add('drag');});box.addEventListener('dragleave',()=>box.classList.remove('drag'));box.addEventListener('drop',e=>{e.preventDefault();box.classList.remove('drag');try{el.files=e.dataTransfer.files;change();}catch(err){console.warn(err);}});}
-  function subscribe(){if(state.channel){state.db.removeChannel(state.channel);state.channel=null;}if(!state.me)return;state.channel=state.db.channel('mc-v06-'+state.me.id)
-    .on('postgres_changes',{event:'*',schema:'public',table:'mc_messages'},()=>{if(state.activeChat)readChat().catch(console.warn);else loadConversations().catch(console.warn);})
-    .on('postgres_changes',{event:'*',schema:'public',table:'mc_friendships'},()=>loadPrivate().catch(console.warn))
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'mc_notifications'},()=>loadPrivate().then(()=>toast('🔔 Yangi bildirishnoma')).catch(console.warn)).subscribe();}
-  async function onUserChange(){await Promise.allSettled([loadUsers(),loadMods(),loadPrivate()]);drawAuth();if(state.me)await loadConversations().catch(console.warn);else{state.lastMessages=[];showChatList();}subscribe();}
-  function addEvents(){
-    document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.page)));
-    $('close-modal').onclick=closeModal;$('modal').onclick=e=>{if(e.target===$('modal'))closeModal();};$('notifications-button').onclick=displayNotifications;
-    $('mod-search').oninput=drawMods;$('account-search').oninput=drawUsers;
-    $('chat-plus').onclick=showFriendChooser;$('chat-back').onclick=()=>{showChatList();loadConversations().catch(report);};
-    $('chat-form').onsubmit=sendMessage;$('auth-form').onsubmit=authSubmit;$('toggle-auth').onclick=switchAuth;
-    $('profile-form').onsubmit=saveProfile;$('upload-form').onsubmit=uploadMod;
-    $('logout').onclick=async()=>{try{await req(state.db.auth.signOut());state.me=null;await onUserChange();navigate('home');}catch(e){report(e);}};
-    $('username').oninput=()=>{clearTimeout(usernameTimeout);usernameTimeout=setTimeout(()=>validateUsername().catch(console.warn),400);};
-    $('password').oninput=()=>{validatePassword();validateConfirm();};$('confirm').oninput=validateConfirm;
-    attachUpload('mod-images','image-zone',()=>{$('image-previews').replaceChildren();[...$('mod-images').files].slice(0,5).forEach(f=>{const i=document.createElement('img');const u=URL.createObjectURL(f);i.src=u;i.onload=()=>URL.revokeObjectURL(u);$('image-previews').append(i);});});
-    attachUpload('mod-file','file-zone',()=>$('file-name').textContent=$('mod-file').files[0]?.name||'');
-    attachUpload('avatar-file','avatar-zone',()=>$('avatar-name').textContent=$('avatar-file').files[0]?.name||'');
-    document.addEventListener('submit',e=>{if(e.target.id==='comment-form')addComment(e).catch(report);});
-    document.addEventListener('click',async e=>{const b=e.target.closest('[data-mod],[data-person],[data-request],[data-answer],[data-start-chat],[data-block],[data-unblock],[data-notice],[data-mark-all],[data-like],[data-save],[data-download],[data-photo]');if(!b)return;
-      try{if(b.dataset.mod)await openMod(b.dataset.mod);
-        else if(b.dataset.person)await openProfile(b.dataset.person);
-        else if(b.dataset.request)await sendFriend(b.dataset.request);
-        else if(b.dataset.answer)await answerFriend(b.dataset.answer,b.dataset.accept==='true');
-        else if(b.dataset.startChat)await openChat(b.dataset.startChat);
-        else if(b.dataset.block)await blockUser(b.dataset.block);
-        else if(b.dataset.unblock)await unblockUser(b.dataset.unblock);
-        else if(b.dataset.notice)await openNotice(b.dataset.notice);
-        else if(b.hasAttribute('data-mark-all')){await markNotifications(()=>true);displayNotifications();}
-        else if(b.dataset.like)await toggleReaction('like',b.dataset.like);
-        else if(b.dataset.save)await toggleReaction('save',b.dataset.save);
-        else if(b.dataset.download)trackDownload(b.dataset.download);
-        else if(b.dataset.photo&&$('big-image'))$('big-image').src=b.dataset.photo;
-      }catch(err){report(err);}
-    });
-    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='Enter'&&e.target.matches('[data-mod],[data-person]'))e.target.click();});
-    document.addEventListener('visibilitychange',()=>{if(!document.hidden&&state.me){loadPrivate().catch(console.warn);loadConversations().catch(console.warn);}});
-  }
-  async function start(){
-    addEvents(); // Navigation and buttons remain active even if backend is unavailable.
-    try{
-      if(!window.supabase?.createClient)throw Error('Supabase kutubxonasi yuklanmadi');
-      state.db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-      const session=await req(state.db.auth.getSession());state.me=session.session?.user||null;
-      await onUserChange();
-      state.db.auth.onAuthStateChange((event,session)=>{const next=session?.user||null;if(next?.id!==state.me?.id){state.me=next;setTimeout(()=>onUserChange().catch(report),0);}});
-    }catch(e){report(e);$('mod-list').innerHTML=empty('Serverga ulanib bo‘lmadi. Menyu ishlaydi, ammo modlar vaqtincha ko‘rinmasligi mumkin.');}
-  }
-  document.addEventListener('DOMContentLoaded',start);
-})();
-
-</script>
-</body></html>
+<div id="toast" hidden role="status" aria-live="polite"></div>
+<script defer src="app-v1.js"></script>
+</body>
+</html>
