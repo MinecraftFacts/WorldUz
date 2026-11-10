@@ -1335,6 +1335,14 @@ async function openMod(id){
         target="_blank" rel="noopener">
         ${ico('download')} ${t('download')} · ${s.downloads}
       </a>
+      
+${/\.(mcaddon|mcpack)$/i.test(m.file_path||'') ? `
+  <button type="button" class="btn secondary"
+    data-install="${id}">
+    ${ico('package-open')} Minecraftda ochish
+  </button>
+` : ''}
+
     </div>
 
     ${actions}
@@ -1430,6 +1438,63 @@ async function addComment(ev){
   $('comment-input').value='';
   await loadComments(id);
   await reloadStats();
+}
+  
+async function installMinecraft(id) {
+  const m = state.mods.find(x => x.id === id);
+  if (!m) return;
+
+  const ext = (m.file_path || '').split('.').pop().toLowerCase();
+
+  if (!['mcaddon', 'mcpack'].includes(ext)) {
+    toast('Bu fayl Minecraft Bedrock uchun emas');
+    return;
+  }
+
+  toast('Mod fayli tayyorlanmoqda...');
+
+  const response = await fetch(asset('mcmod-files', m.file_path));
+  if (!response.ok) {
+    throw Error('Mod faylini olib bo‘lmadi');
+  }
+
+  const blob = await response.blob();
+  const file = new File([blob], 'Minecraft-Mod.' + ext, {
+    type: 'application/octet-stream'
+  });
+
+  if (navigator.canShare?.({ files: [file] })) {
+    modal(`
+      <h3>Mod tayyor</h3>
+      <p>Minecraftga yuborish tugmasini bosing va
+      ochilgan ro‘yxatdan Minecraftni tanlang.</p>
+      <button type="button" class="btn" id="share-mc">
+        ${ico('package-open')} Minecraftga yuborish
+      </button>
+    `);
+
+    $('share-mc').onclick = async () => {
+      try {
+        await navigator.share({ files: [file] });
+        await trackDownload(id);
+      } catch (e) {
+        if (e.name !== 'AbortError') err(e);
+      }
+    };
+  } else {
+    const url = URL.createObjectURL(file);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = file.name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+
+    toast('Fayl yuklandi. Downloads papkasidan oching.');
+    await trackDownload(id);
+  }
 }
 
 async function trackDownload(id){
@@ -2043,7 +2108,9 @@ function bind(){
       '[data-sort],[data-category],[data-person],' +
       '[data-chat],[data-friend],[data-answer],' +
       '[data-block],[data-mod],[data-photo],' +
-      '[data-like],[data-save],[data-download],' +
+      
+'[data-like],[data-save],[data-download],[data-install],' +
+
       '[data-notice],[data-markall],[data-action],' +
       '[data-edit],[data-review],[data-admin],' +
       '[data-ban],[data-unban]'
@@ -2090,6 +2157,10 @@ function bind(){
 
       }else if(d.download){
         await trackDownload(d.download);
+        
+}else if(d.install){
+  await installMinecraft(d.install);
+
 
       }else if(d.notice){
         await openNotice(d.notice);
