@@ -1473,14 +1473,31 @@ async function installMinecraft(id) {
       </button>
     `);
 
-    $('share-mc').onclick = async () => {
-      try {
-        await navigator.share({ files: [file] });
-        await trackDownload(id);
-      } catch (e) {
-        if (e.name !== 'AbortError') err(e);
-      }
-    };
+
+$('share-mc').onclick = async () => {
+  try {
+    await navigator.share({ files: [file] });
+    trackDownload(id).catch(console.warn);
+  } catch (e) {
+    if (e.name === 'AbortError') return;
+
+    const url = URL.createObjectURL(file);
+    const a = document.createElement('a');
+
+    a.href = url;
+    a.download = file.name;
+
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+
+    toast('Fayl yuklandi. Uni Minecraft bilan oching.');
+    trackDownload(id).catch(console.warn);
+  }
+};
+
   } else {
     const url = URL.createObjectURL(file);
     const a = document.createElement('a');
