@@ -179,7 +179,11 @@ nav{
   transform:translateX(-50%);
   width:min(100%,590px);
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  nav{
+grid-template-columns:repeat(7,minmax(72px,1fr));
+overflow-x:auto;
+scrollbar-width:none;
+}
   gap:4px;
   background:#142b37f7;
   border:1px solid #4c7373;
@@ -474,24 +478,47 @@ nav span{font-size:11px}
 </section>
 </main>
 
+
 <nav>
   <button data-page="home" class="active">
     <i data-lucide="house"></i>
     <span>Asosiy</span>
   </button>
+
+  <button type="button"
+    onclick="location.href='../'">
+    <i data-lucide="users"></i>
+    <span>Akkauntlar</span>
+  </button>
+
+  <button type="button"
+    onclick="location.href='../'">
+    <i data-lucide="plus-circle"></i>
+    <span>Mod qo‘shish</span>
+  </button>
+
   <button data-page="games">
     <i data-lucide="gamepad-2"></i>
     <span>O‘yinlar</span>
   </button>
+
+  <button type="button"
+    onclick="location.href='../'">
+    <i data-lucide="message-circle"></i>
+    <span>Chatlar</span>
+  </button>
+
   <button data-page="profile">
     <i data-lucide="user-round"></i>
     <span>Profil</span>
   </button>
+
   <button data-page="admin" id="adminNav" hidden>
     <i data-lucide="shield-check"></i>
     <span>Admin</span>
   </button>
 </nav>
+
 
 <div id="status" class="status" role="status" hidden></div>
 
