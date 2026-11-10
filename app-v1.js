@@ -1474,9 +1474,6 @@ async function installMinecraft(id) {
     `);
 
 
-$('share-mc').onclick = async () => {
-  try {
-   
 $('share-mc').onclick = () => {
   const url = URL.createObjectURL(file);
   const a = document.createElement('a');
