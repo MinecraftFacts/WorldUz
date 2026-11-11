@@ -1125,12 +1125,11 @@ async function readChat(){
 
   const messages=ok(r)||[];
 
-  $('messages').innerHTML=messages.map(m=>`
-    <div class="bubble ${m.sender_id===state.me.id?'mine':''}">
-      ${safe(m.body)}
-      <small>${fmt(m.created_at)}</small>
-    </div>
-  `).join('')||`<p class="muted">${t('empty')}</p>`;
+
+$('messages').innerHTML=messages.map(m=>
+  `<div class="bubble ${m.sender_id===state.me.id?'mine':''}"><span class="bubble-text">${safe(m.body)}</span><small>${fmt(m.created_at)}</small></div>`
+).join('')||`<p class="muted">${t('empty')}</p>`;
+
 
   $('messages').scrollTop=$('messages').scrollHeight;
 
