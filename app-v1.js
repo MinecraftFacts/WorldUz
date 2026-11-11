@@ -49,6 +49,10 @@ window.MW_SHOW_PERSON = showPerson;
 window.MW_OPEN_CHAT = openChat;
 window.MW_READCHAT = readChat;
 
+window.MW_ORIGINAL = state;
+window.MW_NAVIGATE = navigate;
+window.MW_SHOW_PERSON = showPerson;
+
 const categories = [
 
   'addon','skin','world','map',
