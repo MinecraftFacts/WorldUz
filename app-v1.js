@@ -37,10 +37,20 @@ const state = {
   activeChat:null, activeMod:null, editId:null,
   sort:'new', category:'all', register:false,
   lang:localStorage.getItem('mw_lang')||'uz',
+
   timer:null
 };
 
+window.MW_ORIGINAL = state;
+window.MW_NAVIGATE = navigate;
+window.MW_MOD_ACTION = modAction;
+window.MW_OPEN_MOD = openMod;
+window.MW_SHOW_PERSON = showPerson;
+window.MW_OPEN_CHAT = openChat;
+window.MW_READCHAT = readChat;
+
 const categories = [
+
   'addon','skin','world','map',
   'texture','shader','settings','resource','other'
 ];
