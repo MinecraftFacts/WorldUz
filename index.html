@@ -629,6 +629,126 @@ label{display:grid;gap:6px;font-weight:650}
 <script defer src="world-badges.js"></script>
 
 
+<script>
+(() => {
+  'use strict';
+
+  const $ = id => document.getElementById(id);
+  const S = () => window.MW_ORIGINAL;
+
+  function updateButtons() {
+    const s = S();
+    if (!s?.me) return;
+
+    // ADMIN PANELIGA TEZ O'TISH
+    const adminPanel = $('admin-panel');
+    const profile = $('profile-box');
+
+    if (
+      profile &&
+      adminPanel &&
+      ['admin', 'owner'].includes(s.role) &&
+      !$('mw-admin-shortcut')
+    ) {
+      const btn = document.createElement('button');
+      btn.id = 'mw-admin-shortcut';
+      btn.type = 'button';
+      btn.className = 'btn secondary';
+      btn.style.margin = '12px 0';
+      btn.textContent = 'Admin panelini ochish';
+
+      btn.onclick = () => {
+        adminPanel.hidden = false;
+        adminPanel.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      };
+
+      profile.prepend(btn);
+    }
+
+    // MOD EGASIGA O'CHIRISH TUGMASI
+    const grid = $('mine-grid');
+    if (!grid) return;
+
+    grid.querySelectorAll('[data-mod]').forEach(card => {
+      const id = card.dataset.mod;
+
+      const mod = s.mods.find(m => m.id === id);
+
+      if (!mod || mod.user_id !== s.me.id) return;
+
+      if (card.querySelector('[data-mw-own-trash]')) {
+        return;
+      }
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn danger small';
+      btn.dataset.mwOwnTrash = id;
+      btn.textContent = 'O‘chirish';
+      btn.style.margin = '10px';
+
+      card.append(btn);
+    });
+  }
+
+  // Tugmani bosganda modni savatchaga o'tkazish
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('[data-mw-own-trash]');
+    if (!btn) return;
+
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    const s = S();
+    const id = btn.dataset.mwOwnTrash;
+    const mod = s?.mods?.find(m => m.id === id);
+
+    if (!s?.me || mod?.user_id !== s.me.id) {
+      alert('Bu mod sizga tegishli emas.');
+      return;
+    }
+
+    if (!confirm('Mod o‘chirilganlar bo‘limiga o‘tkazilsinmi?')) {
+      return;
+    }
+
+    (async () => {
+      btn.disabled = true;
+
+      try {
+        if (typeof window.MW_MOD_ACTION !== 'function') {
+          throw new Error('Modni o‘chirish funksiyasi ulanmagan');
+        }
+
+        await window.MW_MOD_ACTION(id, 'trash');
+      } catch (error) {
+        console.error(error);
+        alert('Xato: ' + (error.message || error));
+      } finally {
+        btn.disabled = false;
+      }
+    })();
+  }, true);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    updateButtons();
+
+    const grid = $('mine-grid');
+
+    if (grid) {
+      new MutationObserver(updateButtons).observe(grid, {
+        childList: true
+      });
+    }
+
+    setInterval(updateButtons, 2000);
+  });
+})();
+</script>
+
 </body>
 </html>
 
