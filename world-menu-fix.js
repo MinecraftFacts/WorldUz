@@ -406,22 +406,40 @@
         <div id="mw-game-list"></div>
       </section>
 
-      <section id="mw-community" class="page">
-        <h2>Hamjamiyat</h2>
 
-        <div class="mw-menu-box">
+<section id="mw-community" class="page">
+  <h2>Hamjamiyat</h2>
+
+  <div class="community-grid">
+
+    <div class="community-col">
+      <div class="community-head">
+        <div>
           <h3>Turnirlar</h3>
-          <p class="mw-menu-hint">
-            Ishtirokchilar va turnirlar ro‘yxati
+          <p class="community-sub">
+            Minecraft turnirlari va ishtirokchilar
           </p>
-          <div id="mw-tournament-list"></div>
         </div>
+      </div>
 
-        <div class="mw-menu-box">
-          <h3>Minecraft klanlari</h3>
-          <p>Coming soon — tez orada</p>
+      <div id="mw-tournament-list"
+           class="turnir-list"></div>
+    </div>
+
+    <div class="community-side">
+      <div class="clan-box">
+        <h3>Minecraft klanlari</h3>
+
+        <div class="coming-soon">
+          <strong>Coming soon</strong>
+          <p>Tez orada qo‘shiladi.</p>
         </div>
-      </section>
+      </div>
+    </div>
+
+  </div>
+</section>
+
     `);
 
     $('mw-game-create').onclick = () => {
