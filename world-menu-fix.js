@@ -738,47 +738,136 @@
     await loadCommunity();
   }
 
-  async function viewTournament(id) {
-    const rows = ok(
+
+async function viewTournament(id) {
+  try {
+    const tournament = ok(
+      await db().from('v2_tournaments')
+        .select('*')
+        .eq('id', id)
+        .single()
+    );
+
+    const players = ok(
       await db().from('v2_tournament_players')
         .select('user_id')
         .eq('tournament_id', id)
     ) || [];
 
-    const box = $('mw-tournament-list');
-    const view = document.createElement('div');
+    // Eski ochilgan oynani yopamiz
+    document.getElementById('mw-t-popup')?.remove();
 
-    view.className = 'mw-menu-box';
+    const empty = players.length === 0;
 
-    view.innerHTML = `
-      <h3>Ishtirokchilar</h3>
+    const modal = document.createElement('div');
+    modal.id = 'mw-t-popup';
+    modal.className = 'turnir-modal show';
 
-      ${rows.map(x => `
-        <div class="mw-menu-row"
-          style="margin:8px 0">
-
-          ${avatar(x.user_id) ? `
-            <img class="mw-menu-avatar"
-              src="${esc(avatar(x.user_id))}"
-              alt="">
-          ` : ''}
-
-          <b>${esc(name(x.user_id))}</b>
-          ${badge(x.user_id)}
+    modal.innerHTML = `
+      <div class="turnir-modal-box ${empty ? 'small' : ''}">
+        <div class="turnir-modal-head">
+          <h4>Ishtirokchilar (${players.length})</h4>
+          <button class="btn secondary small"
+            id="mw-popup-close" type="button">
+            Yopish
+          </button>
         </div>
-      `).join('') || 'Hali ishtirokchilar yo‘q'}
 
-      <button class="btn secondary small"
-        type="button" id="mw-t-close">
-        Yopish
-      </button>
+        <h3>${esc(tournament.title)}</h3>
+
+        ${empty ? `
+          <div class="turnir-empty">
+            <h5>Hali ishtirokchi yo‘q</h5>
+            <p>Turnirga birinchi bo‘lib qo‘shiling.</p>
+          </div>
+        ` : `
+          <div class="turnir-users">
+            ${players.map(x => `
+              <div class="turnir-user">
+                ${avatar(x.user_id) ? `
+                  <img
+                    src="${esc(avatar(x.user_id))}"
+                    alt="Avatar">
+                ` : `
+                  <div class="avatar-fallback">
+                    ${esc(name(x.user_id).charAt(0))}
+                  </div>
+                `}
+
+                <div class="turnir-user-name">
+                  <span>${esc(name(x.user_id))}</span>
+                  ${badge(x.user_id)}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `}
+
+        <div style="margin-top:16px">
+          <p>
+            ${players.length}/${tournament.bracket_size}
+            ishtirokchi
+          </p>
+
+          <div class="mw-menu-row">
+            <button class="btn" id="mw-popup-join"
+              type="button">
+              Qatnashish
+            </button>
+          </div>
+        </div>
+      </div>
     `;
 
-    box.prepend(view);
+    document.body.append(modal);
 
-    view.querySelector('#mw-t-close').onclick =
-      () => view.remove();
+    const close = () => modal.remove();
+
+    modal.querySelector('#mw-popup-close')
+      .onclick = close;
+
+    modal.addEventListener('click', e => {
+      if (e.target === modal) close();
+    });
+
+    const join = modal.querySelector('#mw-popup-join');
+
+    const already = players.some(
+      x => x.user_id === uid()
+    );
+
+    const available =
+      !already &&
+      players.length < tournament.bracket_size &&
+      Date.parse(tournament.starts_at) > Date.now();
+
+    if (!available) {
+      join.disabled = true;
+      join.textContent = already
+        ? 'Siz qatnashyapsiz'
+        : 'Qabul yopilgan';
+    }
+
+    join.onclick = async () => {
+      if (!authNeeded()) return;
+
+      join.disabled = true;
+
+      try {
+        await joinTournament(id);
+        close();
+        await viewTournament(id);
+      } catch (error) {
+        join.disabled = false;
+        fail(error);
+      }
+    };
+
+  } catch (error) {
+    fail(error);
   }
+}
+
 
   async function start() {
     if (ready) return;
