@@ -74,6 +74,10 @@
       line-height:1.1;
     }
 
+#mw-t-create-button {
+  display: none !important;
+}
+
     .mw-menu-actions {
       display:flex;
       flex-wrap:wrap;
