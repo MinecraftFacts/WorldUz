@@ -723,7 +723,15 @@
 
   async function loadCommunity() {
     const box = $('mw-tournament-list');
-    box.textContent = 'Yuklanmoqda...';
+    box.innerHTML = `
+  <div class="coming-soon"
+    style="text-align:center;padding:45px 15px;">
+    <h2>Coming soon</h2>
+    <p>Turnirlar tez orada ishga tushadi.</p>
+  </div>
+`;
+return;
+
 
     const tournaments = ok(
       await db().from('v2_tournaments')
