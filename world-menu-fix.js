@@ -778,17 +778,12 @@ return;
 
           <div class="mw-menu-row">
 
-<button class="btn small"
-  data-mw-tview="${t.id}">
-  Ishtirokchilar
-</button>
+          
+         <button class="btn small"
+          data-mw-tview="${t.id}">
+          Ishtirokchilar
+        </button>
 
-<button class="btn secondary small"
-  type="button"
-  disabled
-  title="Turnir setkasi tez orada qo‘shiladi">
-  Setka — Coming soon
-</button>
 
               uid() &&
               !joined &&
