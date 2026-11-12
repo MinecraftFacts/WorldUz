@@ -779,7 +779,7 @@ return;
           <div class="mw-menu-row">
 
           
-         <button class="btn small"
+       <button class="btn small"
           data-mw-tview="${t.id}">
           Ishtirokchilar
         </button>
